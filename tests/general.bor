@@ -1,0 +1,149 @@
+any test = import "test.bor";
+
+# GENERAL
+
+any prec() {
+    return obj {
+        public any foo = 'obj';
+    };
+}
+
+test.assert((14400 / 60 / 60) ^ ' ' ^ (1 + 1 ^ 1 + 1) ^  ' ' ^ prec().foo, "4 22 obj", "operators precedence should be right");
+test.assert(true && true, true, "'&&' should be true when both operands are true");
+test.assert(true && false, false, "'&&' should be false when at least one operand is false");
+test.assert(true || false, true, "'||' should be true when at least one operand is true");
+test.assert(false || false, false, "'||' should be false when both operands are false");
+
+# OPERATORS
+
+test.assert("hello" ^ "world", "helloworld", "'^' should return the concatenation of two values");
+test.assert(1 + 2, 3, "'+' should return the sum of two values");
+test.assert(1 - 2, -1, "'-' should return the subtraction of two values");
+test.assert(10 * 2, 20, "'*' should return the multiplication of two values");
+test.assert(10 / 2, 5, "'/' should return the division of two values");
+test.assert(10 ** 5, 100000, "'**' should return the pow of the value");
+test.assert(42.2 % 3, 0.20000000000000284, "'%' should return the remainder of a division");
+test.assert(!true, false, "'!' should negate expression");
+test.assert(1 == 1, true, "'==' should be true for equal integers");
+test.assert(1 == 4, false, "'==' should be false for non equal integers");
+test.assert(1 == 1.000, true, "'==' should be true for equal real numbers");
+test.assert(1 == 1.001, false, "'==' should be false for non equal real numbers");
+test.assert(1 != 4, true, "'!=' should be true for non equal numbers");
+test.assert(1 <= 2.5, true, "'<=' should be true when left operand is lower");
+test.assert(1 >= 2.5, false, "'>=' should be false when left operand is lower");
+test.assert("one" eq "one", true, "'eq' should be true for equal strings");
+test.assert("hello world" eq "hello worldd", false, "'eq' should be false for non equal strings");
+test.assert("one" ne "one", false, "'ne' should be false for equal strings");
+test.assert("hello world" ne "hello worldd", true, "'ne' should be true for non equal strings");
+test.assert([ 1,2,3 ] === [ 2,2,3 ], false, "'===' should be false for operands of different type or value");
+test.assert([ 1,2,3 ] === [ 1,2,3 ], true, "'===' should be true for operands of equal type and value");
+test.assert(foo.bar.again ?? 123, 123, "'??' should safely return the first non-null value");
+
+any new_data = [
+    'name' = 'juan',
+    'age' = 23,
+];
+
+test.assert([ 'name' = 'alex', ...new_data ], [ 'name' = 'juan', 'age' = 23 ], "'...' should expand an array inside another array");
+
+any element = "hello";
+element << String.toUpper;
+test.assert(element, "HELLO", "'<<' should set the element value to the result of the function by using the same element as argument");
+
+any foo = obj {
+    public any bar = 'hello there';
+};
+
+test.assert(foo.bar, 'hello there', "'.' should access a property");
+test.assert(first?.second?.third, null, "'?.' should safely access a property");
+
+any i = 0;
+test.assert(i++, 0, "'++' should return the value and then increment it when used as postfix");
+i = 0;
+test.assert(++i, 1, "'++' should increment the value and then return it when used as prefix");
+i = 0;
+test.assert(i--, 0, "'--' should return the value and then decrement it when used as postfix");
+i = 0;
+test.assert(--i, -1, "'--' should decrement the value and then return it when used as prefix");
+i = 0;
+i += 4;
+test.assert(i, 4, "'+=' should increment the element value");
+i -= 4;
+test.assert(i, 0, "'-=' should decrement the element value");
+i = 5;
+i *= 4;
+test.assert(i, 20, "'*=' should multiply the element value");
+i = 5;
+i /= 4;
+test.assert(i, 1.25, "'/=' should divide the element value");
+i = "hello";
+i ^= " again";
+test.assert(i, "hello again", "'^=' should concatenate the element value");
+i = 42.2;
+i %= 3;
+test.assert(i, 0.20000000000000284, "'%=' should set the element value to the reminder of the division");
+
+# ELEMENTS
+
+any a = 10;
+any b = a;
+any c;
+
+test.assert(a, 10, "declaration should work with inline assignation");
+test.assert(c, null, "declared element should be null by default");
+test.assert(a, b, "assignation should work by value");
+
+a = 1;
+b = &a;
+a++;
+
+test.assert(b, 2, "assignation should work by reference");
+
+string str = 'a' ^ 'a';
+number num = 1 + 1;
+array arr = [];
+object objct = obj {};
+function func = f() {};
+const any constant = 1;
+
+test.assert(str, "aa", "string declaration should work");
+test.assert(num, 2, "number declaration should work");
+test.assert(arr, [], "array declaration should work");
+test.assert(objct, obj {}, "object declaration should work");
+test.assert(func, f() {}, "function declaration should work");
+test.assert(constant, 1, "constant declaration should work");
+test.assert(1 + 0 /*100*/, 1, "comments should be ignored");
+
+any mod_obj = obj {
+    public any index = 0;
+
+    public any increment = f() {
+        this.index++;
+    };
+};
+
+mod_obj.increment();
+mod_obj.index++;
+
+test.assert(mod_obj.index, 2, "object property access should work");
+test.assert("hello"[0], 'h', "index access in string should work correctly");
+test.assert("hello"[123], null, "index access in string should return null when an invalid index is given");
+
+any scoping = obj {
+    public any item = 'foo';
+
+    public any bar = f() {
+        return item;
+    };
+};
+
+any scopingFunc() {
+    any bar = obj {
+        public any item;
+    };
+
+    bar.item = 'bar';
+    return bar.item;
+}
+
+test.assert(scopingFunc() ^ scoping.bar(), "barfoo", "scope should work correctly");

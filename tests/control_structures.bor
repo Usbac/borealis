@@ -1,0 +1,127 @@
+any test = import "test.bor";
+
+# IF / ELSE
+
+if (false) {
+    test.assert(false, true, "should not enter in falsy if");
+} else if (1 == 1) {
+    test.assert(true, true, "should enter inside 'else if' truly condition");
+} else if (true) {
+    test.assert(false, true, "should not enter in falsy else if");
+} else {
+    test.assert(false, true, "should not enter in last else after a true if");
+}
+
+if (1 === 1) {
+    test.assert(true, true, "should enter inside 'if' truly condition");
+}
+
+# WHILE
+
+any i = 0;
+while (i < 10) {
+    i++;
+}
+
+test.assert(i == 10, true, "while loop should iterate the right amount of times");
+
+i = 0;
+while (true) {
+    break;
+    i++;
+}
+
+while (false) {
+    test.assert(false, true, "should not enter in falsy while");
+}
+
+# CONTINUE & BREAK
+
+test.assert(i, 0, "loop should break after a 'break' statement");
+
+i = 0;
+while (true) {
+    break if (1 === 1);
+    i++;
+}
+
+test.assert(i, 0, "loop should break after a 'break if' truly statement");
+
+i = 0;
+while (true) {
+    break if (0 === 1);
+    i++;
+    break if (1 === 1);
+    i++;
+}
+
+test.assert(i, 1, "loop should not break after a 'break if' falsy statement");
+
+i = 0;
+while (i < 10) {
+    i++;
+    continue;
+    i++;
+}
+
+test.assert(i, 10, "loop should go to next iteration after a 'continue' statement");
+
+i = 0;
+while (i < 10) {
+    i++;
+    continue if (1 == 1);
+    i++;
+}
+
+test.assert(i, 10, "loop should go to next iteration after a 'continue if' truly statement");
+
+i = 0;
+while (i < 10) {
+    i++;
+    continue if (1 == 0);
+    i++;
+}
+
+test.assert(i, 10, "loop should not go to next iteration after a 'continue if' falsy statement");
+
+# FOREACH
+
+any arr = [ 1,2,3,4 ];
+any result = [];
+foreach ([ 1,2,3,4 ], key: val) {
+    result[key] = val;
+}
+
+test.assert(result, arr, "foreach loop should iterate correctly with keys and values");
+
+result = [];
+foreach ([ 1,2,3,4 ], val) {
+    result[] = val;
+}
+
+test.assert(result, arr, "foreach loop should iterate correctly with only values");
+
+foreach ([], val) {
+    test.assert(false, true, "should not enter in the foreach of an empty element");
+}
+
+# CASE
+
+any case_val = 0;
+
+case (4) {
+    1: {
+        case_val = 'one';
+    }
+    2: {
+        case_val = 'two';
+    }
+    3: {
+        case_val = 'three';
+    }
+    4: {
+        case_val = 'four';
+    }
+}
+
+test.assert(case_val, "four", "case should execute the correct statement");

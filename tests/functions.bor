@@ -1,0 +1,82 @@
+any test = import "test.bor";
+
+# FUNCTIONS
+
+any foo() {
+    return 'this works';
+}
+
+any bar() {
+    any i = 0;
+    i++;
+}
+
+any first() {
+    any var = 1;
+    return 5;
+}
+
+any second() {
+    any var = 0;
+    return first();
+}
+
+any getFunc() {
+    return f() {
+        return f() {
+            return 420;
+        };
+    };
+}
+
+any expo(n) {
+    if (n == 1) {
+        return n;
+    }
+
+    return n * expo(n - 1);
+}
+
+any getSum(a, b) {
+    return a + b;
+}
+
+any sumArgs(...args) {
+    any result = '';
+
+    foreach (args, val) {
+        result ^= val;
+    }
+
+    return result;
+}
+
+any getExtra(first, ...args) {
+    return first ^ args[0];
+}
+
+any earlyReturn(cond) {
+    return if (cond);
+    return 'hello';
+}
+
+any getArgs(a1, a2, a3) {
+    return [ a1, a2, a3 ];
+}
+
+any closure = f(arg1, arg2) {
+    return arg1 + arg2;
+};
+
+test.assert(foo(), 'this works', "function call should return the right value");
+test.assert(closure(3, 4), 7, "closure call should return the right value");
+test.assert(bar(), null, "function call should return null when no value is returned");
+test.assert(second(), 5, "nested function calls and their scope should work");
+test.assert(getFunc()()(), 420, "nested closure calls should work");
+test.assert(expo(5), 120, "recursive function calls should work");
+test.assert(getSum(3, 7), 10, "Function call arguments should be mapped correctly");
+test.assert(sumArgs(4, 6, 8, 12), '46812', "spread argument should work correctly");
+test.assert(getExtra('hello', 'world'), 'helloworld', "spread argument after normal argument should work correctly");
+test.assert(earlyReturn(true), null, "return if should return if condition is true");
+test.assert(earlyReturn(false), "hello", "return if should not return if condition is false");
+test.assert(getArgs(1, ...[ 2, 3 ]), [ 1, 2, 3 ], "spread operator should use the array argument as arguments list");

@@ -1,0 +1,20 @@
+any test = import "test.bor";
+
+printLine("\nGeneral");
+import "general.bor";
+printLine("\nControl structures");
+import "control_structures.bor";
+printLine("\nFunctions");
+import "functions.bor";
+import "stdlib.bor";
+
+any code = 'OK';
+any color = "\x1b[32m";
+
+if (test.errors > 0) {
+    code = 'ERR';
+    color = "\x1b[31m";
+}
+
+printLine(String.sprintf("\n%s%s\x1b[0m (%i tests, %i errors)", color, code, test.total, test.errors));
+exit(test.errors != 0);

@@ -1,0 +1,244 @@
+any test = import "test.bor";
+
+# String
+
+printLine("\nStdlib String");
+
+test.assert(String.toUpper("helloñ"), "HELLOÑ", "String.toUpper should return the given string in uppercase");
+test.assert(String.toLower("HELLOÑ"), "helloñ", "String.toLower should return the given string in lowercase");
+test.assert(String.getLength("是abc"), 4, "String.getLength should return the string length");
+test.assert(String.getByteLength("是不a"), 7, "String.getByteLength should return the number of bytes in the string");
+test.assert(String.includes("hello how are you?", "you"), true, "String.includes should return true when the substring exists in the string");
+test.assert(String.includes("hello how are you?", "you??"), false, "String.includes should return false when the substring does not exists in the string");
+test.assert(String.trim("  comment: "), "comment:", "String.trim should remove by default spaces around the string");
+test.assert(String.trim("hahahacomment:ha", "ha"), "comment:", "String.trim should remove the substring around in the string");
+test.assert(String.leftTrim("hahahacomment:ha", "ha"), "comment:ha", "String.leftTrim should remove the trailing substring in the string");
+test.assert(String.rightTrim("hahahacomment:ha", "ha"), "hahahacomment:", "String.rightTrim should remove the leading substring in the string");
+test.assert(String.indexOf("hello world", "world"), 6, "String.indexOf should return the position of the substring in the string");
+test.assert(String.lastIndexOf("hello world", "o"), 7, "String.lastIndexOf should return the last position of the substring in the string");
+test.assert(String.indexOf("hello world", "worldd"), -1, "String.indexOf should return -1 if the substring is not in the string");
+test.assert(String.lastIndexOf("hello world", "oo"), -1, "String.lastIndexOf should return -1 if the substring is not in the string");
+test.assert(String.split("hello world how are you", " "), [ "hello", "world", "how", "are", "you"], "String.split should split the string into an array by the given delimiter");
+test.assert(String.endsWith("how are you?", "you?"), true, "String.endsWith should return true when the string ends with the substring");
+test.assert(String.startsWith("how are you?", "how "), true, "String.startsWith should return true when the string starts with the substring");
+test.assert(String.getChar("abcdefghi", 6), "g", "String.getChar should return the char at the given position");
+test.assert(String.slice("1234567890", 4), "567890", "String.slice should slice the string from the given starting index");
+test.assert(String.slice("1234567890", 4, 7), "567", "String.slice should slice the string the given starting position to the final index");
+test.assert(String.repeat("ale", 4), "alealealeale", "String.repeat should repeat the string the given number of times");
+test.assert(String.isWhitespace(" \n\t  "), true, "String.isWhitespace should return true when the string has only whitespaces");
+test.assert(String.replace("i'm 23 years old, just 23", "23", "18"), "i'm 18 years old, just 18", "String.replace should replace all the substring ocurrences in the string");
+test.assert(String.remove("i'm 23 years old, just 23", "23"), "i'm  years old, just ", "String.remove should remove all the substring ocurrences in the string");
+test.assert(String.compare("hello there?", "hello there?"), true, "String.compare should return true when both strings are equal");
+test.assert(String.compare("hello there?", "hello there??"), false, "String.compare should return false when both strings are different");
+test.assert(String.compareI("hello THERE?", "hello there?"), true, "String.compareI should return true when both strings are equal (case insensitive)");
+test.assert(String.compareI("Hello THERe?", "hello there??"), false, "String.compareI should return false when both strings are different (case insensitive)");
+test.assert(String.containsChars("longyearbyen", "aeyo"), true, "String.containsChars should return true when all the characters appear in the string");
+test.assert(String.interpolate("today {name} will be {age} years old", [ 'name' = 'alex', 'age' = 23 ]), "today alex will be 23 years old", "String.interpolate should interpolate the array values in the string");
+test.assert(String.sprintf("hey %s you have %d days", "alex", "365"), "hey alex you have 365 days", "String.sprintf should format the values in the string");
+test.assert(String.padStart("key => val", 15, "-"), "-----key => val", "String.padStart should add leading characters to comply with the given length");
+test.assert(String.padEnd("key => val", 15, "-"), "key => val-----", "String.padEnd should add trailing characters to comply with the given length");
+test.assert(String.reverse("abcdefg"), "gfedcba", "String.reverse should should reverse the string");
+test.assert(String.count("good morning, soon...", "oo"), 2, "String.count should return the number of times the substring is in the string");
+test.assert(String.isUpper("WHAT ARE YOU DOING?"), true, "String.isUpper should return true when all the string characters are uppercase");
+test.assert(String.isLower("what are you doing here?"), true, "String.isLower should return true when all the string characters are lowercase");
+test.assert(String.capitalize("welcome back"), "Welcome back", "String.capitalize should return the string capitalized");
+test.assert(String.fromCharCodes(2023, 65, 61), "ߧA=", "String.fromCharCodes should return a string created from the specified sequence of UTF-8 code units");
+
+# Array
+
+printLine("\nStdlib Array");
+
+test.assert(Array.get([ 'name' = 'a', 'age' = 23 ], 'age'), 23, "Array.get should return the value with the given key in the array");
+test.assert(Array.get([ 'name' = 'a', 'age' = 23 ], 'city'), null, "Array.get should return null when the key doesn't exists in the array");
+test.assert(Array.getSize([ 'name' = 'a', 'age' = 23, 'city' = 'Longyearbyen' ]), 3, "Array.getSize should return the number of elements in the array");
+
+any arr = [ 1 ];
+Array.push(arr, [ 2 ]);
+test.assert(arr, [ 1, [ 2 ] ], "Array.push should push the given value in the array");
+
+Array.prepend(arr, "you");
+test.assert(arr, [ '2' = 'you', '0' = 1, '1' = [ 2 ] ], "Array.prepend should prepend the given value in the array");
+
+any pop = Array.pop(arr);
+test.assert(pop, [ 2 ], "Array.pop should return the last item in the array");
+test.assert(arr, [ '2' = 'you', '0' = 1 ], "Array.pop should remove the last item in the array");
+
+any shift = Array.shift(arr);
+test.assert(shift, 'you', "Array.shift should return the first item in the array");
+test.assert(arr, [ '0' = 1 ], "Array.shift should remove the first item in the array");
+
+test.assert(Array.getKeys([ 'name' = 'asd', 'age' = 123, 'city' = 'NY']), [ 'name', 'age', 'city' ], "Array.getKeys should return the array keys");
+test.assert(Array.hasKey([ 'name' = 'asd', 'age' = 123, 'city' = 'NY'], 'age'), true, "Array.hasKey should return true when the key exists");
+test.assert(Array.hasKey([ 'name' = 'asd', 'age' = 123, 'city' = 'NY'], 'width'), false, "Array.hasKey should return false when the key does not exists");
+test.assert(Array.join([ 'hello', 'world', 'again' ]), "helloworldagain", "Array.join should return the given string joined");
+test.assert(Array.join([ 'hello', 'world', 'again' ], " "), "hello world again", "Array.join should return the given string joined by the given glue");
+test.assert(Array.has([ 'name' = 'asd', 'age' = 123, 'city' = [ 0 ] ], [ 0 ]), true, "Array.has should return true when the value exists");
+
+any reversed = [ 'name' = 'asd', 'age' = 123, 'city' = [ 0 ] ];
+Array.reverse(reversed);
+test.assert(reversed, [ 'city' = [ 0 ], 'age' = 123, 'name' = 'asd' ], "Array.reverse should reverse the array");
+
+test.assert(Array.range(0, 5), [ 0,1,2,3,4,5 ], "Array.range should return an array with the given range");
+test.assert(Array.range(0, 5, 2), [ 0,2,4 ], "Array.range should return an array with the given range and steps");
+
+arr = [ 6,2,7,3,6,7,9,0,1,2,3 ];
+Array.sort(arr);
+any sorted = [];
+foreach (arr, val) {
+    sorted []= val;
+}
+test.assert(sorted, [ 0,1,2,2,3,3,6,6,7,7,9 ], "Array.sort should sort the array");
+
+test.assert(Array.column([
+    [
+        'name' = 'alex',
+        'age' = 23,
+    ],
+    [
+        'name' = 'evan',
+        'age' = 29,
+    ],
+    [
+        'name' = 'carlos',
+        'age' = 32,
+    ],
+], 'name'), [ 'alex', 'evan', 'carlos' ], "Array.column should return the values from a single column in the array");
+
+test.assert(Array.map([ 1, 2, 3 ], f(e) { return e + 1; }), [ 2, 3, 4 ], "Array.map should map the given array");
+test.assert(Array.filter([ 1, 2, 3, 4, 5, 6 ], f(e) { return e % 2 == 0; }), [ 1 = 2, 3 = 4, 5 = 6 ], "Array.filter should filter the given array");
+test.assert(Array.reduce([ 1, 2, 3 ], f(acc, el) { return acc + el; }), 6, "Array.reduce should reduce the given array to a single value");
+test.assert(Array.merge([ 'name' = 'a', 'age' = 23 ], [ 'name' = 'b', 'city' = 'NY' ]), [ 'name' = 'b', 'age' = 23, 'city' = 'NY' ], "Array.merge should return a merge of the given arrays");
+test.assert(Array.some([ 1, 2, 3, 4 ], f(e) { return e > 0; }) ^ Array.some([ 1, 2, 3, 4 ], f(e) { return e <= 0; }), "10", "Array.some should return true whether at least one element passes the test in the given closure");
+
+# Number
+
+printLine("\nStdlib Number");
+
+test.assert(Number.min(4,9,5,1,7,2,4,6,8,1,-7), -7, "Number.min should return the minimum value");
+test.assert(Number.max(4,9,5,1,7,2,4,6,8,1,-7), 9, "Number.max should return the maximum value");
+test.assert(Number.isNan(7), false, "Number.isNan should return false when the value is a number");
+test.assert(Number.isNan(0/0), true, "Number.isNan should return false when the value is not a number");
+test.assert(Number.isFinite(7), true, "Number.isFinite should return true when the number is finite");
+test.assert(Number.isFinite(1/0), false, "Number.isFinite should return false when the number is not finite");
+test.assert(Number.format(1850320.45, ".", ","), "1.850.320,45", "Number.format should return the number formatted");
+
+# Object
+
+printLine("\nStdlib Object");
+
+any foo = obj {
+    public any name = 'alex';
+    public any age = 23;
+    any password = '1234';
+    public any arr = [];
+};
+
+test.assert(Object.getKeys(foo), [ 'name', 'age', 'arr' ], "Object.getKeys should return all the public object keys");
+test.assert(Object.getValues(foo), [ 'alex', 23, [] ], "Object.getValues should return all the public object values");
+
+# Json
+
+printLine("\nStdlib Json");
+
+any json = '{"name":"alex","age":23,"arr":[]}';
+test.assert(Json.stringify(foo), json, "Json.stringify should return the json string of the given value");
+test.assert(Json.parse(json), obj {
+    public any name = 'alex';
+    public any age = 23;
+    public any arr = [];
+}, "Json.parse should return the value of the given json string");
+
+test.assert(Json.isValid(json), true, "Json.isValid should return true when the given json representation is valid");
+test.assert(Json.isValid('{ "a": "b", "b": "c", }'), false, "Json.isValid should return false when the given json representation is not valid");
+
+# Math
+
+printLine("\nStdlib Math");
+
+test.assert(Math.floor(1.234), 1, "Math.floor should round down the given value");
+test.assert(Math.ceil(1.234), 2, "Math.floor should round up the given value");
+test.assert(Math.round(1.4) ^ Math.round(1.52), "12", "Math.round should round the given value");
+test.assert(Math.abs(-43), 43, "Math.abs should return the absolute value");
+test.assert(Math.cos(1.4), 0.16996714290024104, "Math.cos should return the cosine of the given number");
+test.assert(Math.acos(0.4), 1.1592794807274085, "Math.acos should return the of the arc cosine given number");
+test.assert(Math.cosh(1.7), 2.8283154578899672, "Math.cosh should return the hyperbolic cosine of the given number");
+test.assert(Math.acosh(1.7), 1.1232309825872959, "Math.acosh should return the arc hyperbolic cosine of the given number");
+test.assert(Math.sin(1.4), 0.98544972998846014, "Math.sin should return the sine of the given number");
+test.assert(Math.asin(0.4), 0.41151684606748806, "Math.asin should return the arc sine of the given number");
+test.assert(Math.sinh(1.7), 2.6456319338372323, "Math.sinh should return the hyperbolic sine of the given number");
+test.assert(Math.asinh(1.7), 1.3008204268406467, "Math.asinh should return the arc hyperbolic sine of the given number");
+test.assert(Math.tan(1.4), 5.7978837154828868, "Math.tan should return the tangent of the given number");
+test.assert(Math.atan(2.4), 1.176005207095135, "Math.atan should return the arc tangent of the given number");
+test.assert(Math.tanh(2.4), 0.98367485769368024, "Math.tanh should return the hyperbolic tangent of the given number");
+test.assert(Math.atanh(0.45), 0.48470027859405174, "Math.atanh should return the arc hyperbolic tangent of the given number");
+test.assert(Math.sqrt(841), 29, "Math.sqrt should return the square root of the given number");
+test.assert(Math.log(4.6), 1.5260563034950492, "Math.log should return the natural logarithm of the given number");
+
+# Crypt
+
+printLine("\nStdlib Crypt");
+
+test.assert(Crypt.sha1("hello world again"), "b84a9b2362aee3556081792f3b7abd3958da8deb", "Crypt.sha1 should return the sha1 of the given value");
+test.assert(Crypt.sha256("hello world again"), "cbb2d50bd9c870e0f098b9230d66d2f74d55544f2e57f1aabe3830443a040eb6", "Crypt.sha256 should return the sha256 of the given value");
+test.assert(Crypt.md5("this is a text in md5"), "0df860a9e9196fe362d16eccab3ec765", "Crypt.md5 should return the md5 of the given value");
+
+# Date
+
+printLine("\nStdlib Date");
+
+test.assert(Date.toString("%Y-%m-%d %H:%M:%S", 1617557432), "2021-04-04 13:30:32", "Date.toString should return the date string of the given unix timestamp");
+test.assert(Date.fromString("2021-04-04 13:30:32"), 1617557432, "Date.fromString should return the unix timestamp of the given date string");
+test.assert(Date.toObject(1617557432), obj {
+    public any seconds = 32;
+    public any minutes = 30;
+    public any hours = 13;
+    public any day = 4;
+    public any month = 4;
+    public any year = 2021;
+    public any yday = 94;
+    public any wday = 1;
+}, "Date.toObject should return and object based on the given unix timestamp");
+
+# Os
+
+printLine("\nStdlib Os");
+
+test.assert(Os.isFile(_FILE), true, "isFile should return true when the given path is for an existing file");
+test.assert(Os.isDir(Os.clearPath(_FILE ^ '/../')), true, "isDir should return true when the given path is for an existing directory");
+test.assert(Os.clearPath("/home/./user/Documents/../Downloads"), "/home/user/Downloads", "clearPath should return the given path resolved");
+test.assert(Os.exists(Os.clearPath(_FILE ^ '/../')) ^ Os.exists(_FILE), "11", "exists should return true when the given path exists");
+if (Os.PLATFORM eq 'windows') {
+    test.assert(Os.isAbsolute("C:\\Program files"), true, "isAbsolute should return true when the given path is absolute");
+    test.assert(Os.isAbsolute("./Program files"), false, "isAbsolute should return false when the given path is not absolute");
+} else {
+    test.assert(Os.isAbsolute("/Program files"), true, "isAbsolute should return true when the given path is absolute");
+    test.assert(Os.isAbsolute("./Program files"), false, "isAbsolute should return false when the given path is not absolute");
+}
+
+# General
+
+printLine("\nStdlib General");
+
+test.assert(toString(obj {}), "[object]", "toString should convert the given value to string");
+test.assert(toNumber("1.46"), 1.46, "toNumber should convert the given value to number");
+test.assert(toBool("hello"), true, "toBool should convert the given value to a boolean");
+test.assert(toObject([ 'name' = 'alex', 'age' = 23 ]), obj {
+    public any name = 'alex';
+    public any age = 23;
+}, "toObject should convert the given vale to an object");
+test.assert(toArray(obj {
+    public any name = 'alex';
+    public any age = 23;
+    any another = 1;
+}), [ 'name' = 'alex', 'age' = 23, 'another' = 1 ], "toArray should convert the given vale to an object");
+
+test.assert(isEmpty(12) ^ isEmpty(0) ^
+isEmpty('hello') ^ isEmpty('') ^
+isEmpty([ 1 ]) ^ isEmpty([]) ^
+isEmpty(obj { any foo = 1; }) ^ isEmpty(obj {}) ^
+isEmpty(null), "010101011", "isEmpty should return true when the given value is blank, false otherwise");
+
+eval('any var_in_eval = true;');
+test.assert(var_in_eval, true, "eval should evaluate the code in the given string");
+test.assert(t(15 > 18, 'true', 'false'), "false", "t should work like the ternary operator with the given arguments");
+test.assert(typeof('hola') ^ typeof(42), "stringnumber", "typeof should return the type of the given value");
