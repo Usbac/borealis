@@ -53,7 +53,7 @@ printLine(foo);
 An optional argument can be given which is the condition required to run the REPL, meaning that the REPL will run only if the value evaluates to true.
 
 ```borealis
-any foo = Io.readln();
+any foo = Io.readLine();
 
 debug(foo eq 'yes'); # The REPL will run only if the user entered 'yes'
 ```

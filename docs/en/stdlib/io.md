@@ -110,7 +110,7 @@ Io.historyAdd('first command');
 
 ```borealis
 Io.historyAdd('> prev command');
-Io.readln('> '); # If the user presses the up arrow key, '> prev command' will appear
+Io.readLine('> '); # If the user presses the up arrow key, '> prev command' will appear
 ```
 
 It's pretty much what happens when you enter multiple commands in your terminal and then press the up arrow key.
