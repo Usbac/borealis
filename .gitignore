@@ -1,4 +1,7 @@
 borealis
+borealis-linux
+borealis-mac
+borealis-windows
 .idea
 cmake-build-debug
 build
