@@ -26,7 +26,7 @@ Array.getSize([ 1, 2, 3, 4 ]); # Returns 4
 
 ### Push
 
-`push(array array, any value)`
+`push(array arr, any value)`
 
 Pushes a new element at the end of the array.
 

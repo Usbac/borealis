@@ -7,7 +7,7 @@ Keep in mind that there is not a consistent style used across the examples since
 ## Even or odd
 
 ```borealis
-any num = Io.readln('Enter a number: ');
+any num = Io.readLine('Enter a number: ');
 
 if (num % 2 == 0) {
     printLine('The number is even');
@@ -84,7 +84,7 @@ any listFiles(dir) {
     }
 }
 
-any path = Io.readln('Enter a directory: ');
+any path = Io.readLine('Enter a directory: ');
 
 if (!Os.isDir(path)) {
     printLine('Path is no a valid directory!');
