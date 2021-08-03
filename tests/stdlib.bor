@@ -186,12 +186,13 @@ test.assert(Crypt.md5("this is a text in md5"), "0df860a9e9196fe362d16eccab3ec76
 
 printLine("\nStdlib Date");
 
-test.assert(Date.toString("%Y-%m-%d %H:%M:%S", 1617557432), "2021-04-04 13:30:32", "Date.toString should return the date string of the given unix timestamp");
-test.assert(Date.fromString("2021-04-04 13:30:32"), 1617557432, "Date.fromString should return the unix timestamp of the given date string");
-test.assert(Date.toObject(1617557432), obj {
+any date_time = 1617557432 - Date.getGMTOffset();
+test.assert(Date.toString("%Y-%m-%d %H:%M:%S", date_time), "2021-04-04 17:30:32", "Date.toString should return the date string of the given unix timestamp");
+test.assert(Date.fromString("2021-04-04 17:30:32"), date_time, "Date.fromString should return the unix timestamp of the given date string");
+test.assert(Date.toObject(date_time), obj {
     public any seconds = 32;
     public any minutes = 30;
-    public any hours = 13;
+    public any hours = 17;
     public any day = 4;
     public any month = 4;
     public any year = 2021;
