@@ -8,6 +8,7 @@
 <h4 align="center">The elegant and consistent programming language.</h4>
 
 <p align="center">
+<img src="https://app.travis-ci.com/Usbac/borealis.svg">
 <img src="https://img.shields.io/badge/stable-0.1.0-blue.svg">
 <img src="https://img.shields.io/badge/license-MIT-orange.svg">
 </p>
