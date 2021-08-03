@@ -56,5 +56,5 @@ a=1+2;
 any msg = 'hello
 world';
 
-# Now msg will be 'Hello\nWorld'
+# Now msg is "Hello\nWorld"
 ```
