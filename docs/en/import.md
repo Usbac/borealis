@@ -26,7 +26,7 @@ return 42;
 ```
 
 main.bor
-```
+```borealis
 any num = import "number.bor";
 
 print(num); # It will print '42'
