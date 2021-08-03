@@ -337,6 +337,10 @@ static void initFunctions(void)
     declareModuleConst(socket, "ENOTSOCK", value, T_Number);
     value.number = EOPNOTSUPP;
     declareModuleConst(socket, "EOPNOTSUPP", value, T_Number);
+    value.number = MSG_OOB;
+    declareModuleConst(socket, "MSG_OOB", value, T_Number);
+    value.number = MSG_PEEK;
+    declareModuleConst(socket, "MSG_PEEK", value, T_Number);
     /* general */
     declareModuleFunc(NULL, "toString", stdToString, "v");
     declareModuleFunc(NULL, "toNumber", stdToNumber, "v|d");

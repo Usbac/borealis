@@ -17,10 +17,8 @@ The object also has some useful constants.
 | EBADF        | Socket error   | The socket is not a valid file descriptor.                                               |
 | ENOTSOCK     | Socket error   | The socket file descriptor does not refer to a real socket.                              |
 | EOPNOTSUPP   | Socket error   | The socket is not of a type that supports the listen operation.                          |
-| MSG_OOB      |                | TODO |
-| MSG_PEEK     |                | TODO |
-| MSG_WAITALL  |                | TODO |
-| MSG_DONTWAIT |                | TODO |
+| MSG_OOB      | Socket option  | Process out-of-band data.                                                                |
+| MSG_PEEK     | Socket option  | Receive data from the beginning of the receive queue without removing it.                |
 
 ## Functions
 
