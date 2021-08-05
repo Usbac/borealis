@@ -1,7 +1,7 @@
 The import statement includes and evaluates the specified file.
 
 ```borealis
-import "file.bor";
+import 'file.bor';
 ```
 
 If the file cannot be accessed an error will be thrown.

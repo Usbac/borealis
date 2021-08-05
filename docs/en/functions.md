@@ -126,7 +126,7 @@ The arguments will be passed into the given variable as an array.
 
 ```borealis
 any foo(arg1, ...args) {
-    # here args will be an array with the arguments
+    # Here args will be an array with the arguments
 }
 ```
 

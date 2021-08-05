@@ -31,6 +31,8 @@ The following values are considered `false` or `0`:
 
 Every other value is considered `true` or `1`.
 
+_The `true` or `false` constants are only referenced in the Borealis documentation when dealing with a boolean context._
+
 ## Number
 
 Represents a double. The size is platform-dependent, although roughly 14 decimal digits is a common value (64 bit IEEE format).
@@ -68,7 +70,9 @@ Only if the string is enclosed in double-quotes ("), the following escape sequen
 
 ## Array
 
-Arrays are actually an ordered map. A map associates keys to values. A borealis array can be treated as an array, a hashmap, a dictionary and more.
+Arrays are actually an ordered map. A map associates keys to values.
+
+A borealis array can be treated as an array, a hashmap, a dictionary and more.
 
 An array can be created with the `[` and `]` tags. Any number or comma-separated `key = value` or `value` can be declared inside.
 
@@ -135,7 +139,7 @@ any user = [ 'name' = 'alex', ...new_data ]; # Will return [ 'name' = 'juan', 'a
 
 ## Object
 
-Objects work pretty much like arrays but can have common declarations and statements in its body, and its properties can be private.
+Objects work pretty much like arrays, with the difference that they can have common declarations and statements in its body, and its properties can be private.
 
 They can be created with the syntax `obj { }`.
 
@@ -171,9 +175,9 @@ The dot syntax can be used to access to an object property.
 customer.name
 ```
 
-If the object property doesn't exists or if it's private, an error will be thrown.
+If the object property is private, an error will be thrown.
 
-That can be avoided with the safe dot syntax.
+That can be avoided with the safe dot syntax. Which will return null if the property doesn't exists or if it's private.
 
 ```borealis
 customer?.name
@@ -201,7 +205,7 @@ More information about anonymous functions can be read in the `functions` page.
 
 ### Null
 
-The special type `null` represents something without a value. The only valid "value" of null is, in fact, null.
+The special type null represents something without a value. The only valid "value" of null is, in fact, null.
 
 ```borealis
 any foo = null;

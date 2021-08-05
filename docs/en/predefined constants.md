@@ -7,3 +7,23 @@ The constants listed here are defined by the Borealis core and are available in 
 | _FILE       | string | File name of the current file script.         | /home/user/Documents/imported.bor |
 | _VERSION    | string | Borealis version.                             | 1.0                               |
 | _ARGS       | array  | List of arguments given to the script.        | [ './borealis', '-f', 'main.bor' ]|
+
+## Examples
+
+```borealis
+print('The current script file is: ' ^ _START_FILE);
+```
+
+```borealis
+print('Running Borealis version ' ^ _VERSION);
+```
+
+```borealis
+any printScriptArgs() {
+    foreach (_ARGS, arg) {
+        print(arg);
+    }
+}
+
+printScriptArgs();
+```
