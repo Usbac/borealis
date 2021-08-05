@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "../../lib/utf8.h"
 #include "../../lib/linenoise.h"
 #include "../borealis.h"
 #include "../utils.h"

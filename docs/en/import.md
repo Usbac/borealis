@@ -47,5 +47,5 @@ num++;
 any another = import "number.bor";
 another++;
 
-print(num); # It will print '2'
+print(num); # It will print 2
 ```
