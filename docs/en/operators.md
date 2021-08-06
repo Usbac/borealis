@@ -39,6 +39,8 @@ The operators table is ordered from higher to lower precedence.
 | `=` `+=` `-=` `/=` `*=` `^=`, `%=` | Right         | assignation, addition/subtraction/division/concatenation/modulus assignation |
 | `...` `<<`                         | Left          | spread, bang                                                                 |
 
+_Borealis doesn't have bitwise operators, for manipulating bits use the functions of the standard object `Bit`._
+
 ## Arithmetic operators
 
 All the arithmetic operators return a value of type `number`.

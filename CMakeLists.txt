@@ -29,11 +29,11 @@ add_executable(borealis
         src/stdlib/date.c src/stdlib/date.h
         src/stdlib/crypt.c src/stdlib/crypt.h
         src/stdlib/socket.c src/stdlib/socket.h
+        src/stdlib/bit.c src/stdlib/bit.h
         lib/linenoise.c lib/linenoise.h
         lib/sha1.c lib/sha1.h
         lib/sha256.c lib/sha256.h
         lib/md5.c lib/md5.h
-        lib/base64.c lib/base64.h
-        )
+        lib/base64.c lib/base64.h)
 
 target_link_libraries(borealis m)

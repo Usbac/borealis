@@ -182,6 +182,16 @@ test.assert(Crypt.sha1("hello world again"), "b84a9b2362aee3556081792f3b7abd3958
 test.assert(Crypt.sha256("hello world again"), "cbb2d50bd9c870e0f098b9230d66d2f74d55544f2e57f1aabe3830443a040eb6", "Crypt.sha256 should return the sha256 of the given value");
 test.assert(Crypt.md5("this is a text in md5"), "0df860a9e9196fe362d16eccab3ec765", "Crypt.md5 should return the md5 of the given value");
 
+# Bit
+
+printLine("\nStdlib Bit");
+
+test.assert(Bit.and(2, 3), 2, "Bit.and should return the bitwise operation and");
+test.assert(Bit.or(3, 6), 7, "Bit.or should return the bitwise operation or");
+test.assert(Bit.leftShift(-3, 2), -12, "Bit.leftShift should return the bitwise operation left shift");
+test.assert(Bit.rightShift(8, 2), 2, "Bit.rightShift should return the bitwise operation right shift");
+test.assert(Bit.not(-1), 0, "Bit.not should return the bitwise operation not");
+
 # Date
 
 printLine("\nStdlib Date");

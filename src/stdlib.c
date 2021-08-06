@@ -23,6 +23,7 @@
 #include "stdlib/crypt.h"
 #include "stdlib/socket.h"
 #include "stdlib/io.h"
+#include "stdlib/bit.h"
 #include "stdlib.h"
 
 #if defined(_WIN32) || defined(WIN32)
@@ -148,6 +149,7 @@ static void initFunctions(void)
     struct element *crypt = declareModule("Crypt");
     struct element *date = declareModule("Date");
     struct element *socket = declareModule("Socket");
+    struct element *bit = declareModule("Bit");
     union VALUE value;
 
     /* io */
@@ -302,6 +304,12 @@ static void initFunctions(void)
     declareModuleFunc(date, "fromString", stdFromString, "s");
     declareModuleFunc(date, "toObject", stdDateToObject, "d");
     declareModuleFunc(date, "getGMTOffset", stdGetGmtOffset, "");
+    /* bit */
+    declareModuleFunc(bit, "and", stdAnd, "d,d");
+    declareModuleFunc(bit, "or", stdOr, "d,d");
+    declareModuleFunc(bit, "leftShift", stdLeftShift, "d,d");
+    declareModuleFunc(bit, "rightShift", stdRightShift, "d,d");
+    declareModuleFunc(bit, "not", stdNot, "d");
     /* socket */
     declareModuleFunc(socket, "new", stdNew, "d,d|d");
     declareModuleFunc(socket, "bind", stdBind, "o,s,d");
