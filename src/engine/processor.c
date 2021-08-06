@@ -1328,6 +1328,14 @@ void processRepl(void)
         struct list *stmts, *bytecode;
         linenoiseHistoryAdd(line);
 
+        if (!strcmp(line, REPL_HELP_KEYWORD)) {
+            printf(MSG_REPL);
+            goto next;
+        } else if (!strcmp(line, REPL_CLEAR_KEYWORD)) {
+            linenoiseClearScreen();
+            goto next;
+        }
+
         stmts = codeToList(line, DEFAULT_SEP, true, state->line_n);
         preprocess(stmts, NULL);
         bytecode = listToBytecode(stmts);
@@ -1342,11 +1350,13 @@ void processRepl(void)
 
         freeListRecursive(stmts);
         freeListRecursive(bytecode);
-        linenoiseFree(line);
 
-        if (state->exiting) {
-            break;
-        }
+        next:
+            linenoiseFree(line);
+
+            if (state->exiting) {
+                break;
+            }
     }
 
     free(state->jmp_buffer);
