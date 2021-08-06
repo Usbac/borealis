@@ -1222,7 +1222,12 @@ void evalNode(struct token **node)
     state->line_n = (*node)->line_n;
 
     if ((*node)->opcode == OP_Stmt_sep) {
-        freeResult(popResult());
+        if (!state->in_repl) {
+            freeResult(popResult());
+        } else {
+            state->last_val = popResult();
+        }
+
         return;
     }
 
@@ -1308,12 +1313,14 @@ void evalBytecode(struct list *list)
 
 void processRepl(void)
 {
+    struct element *el = newElement("_", NULL, 0, T_Null);
     char *line;
 
     linenoiseSetMultiLine(1);
     linenoiseHistorySetMaxLen(UINT8_MAX);
     linenoiseSetHintsCallback(hints);
 
+    declareElement(&el);
     state->jmp_buffer = malloc_(sizeof(jmp_buf));
     setjmp(*state->jmp_buffer);
     while ((line = linenoise("> ")) != NULL &&
@@ -1325,6 +1332,13 @@ void processRepl(void)
         preprocess(stmts, NULL);
         bytecode = listToBytecode(stmts);
         evalBytecode(bytecode);
+
+        if (state->last_val != NULL) {
+            freeElementValues(&el);
+            mapResultToElement(el, state->last_val);
+            freeResult(state->last_val);
+            state->last_val = NULL;
+        }
 
         freeListRecursive(stmts);
         freeListRecursive(bytecode);

@@ -127,6 +127,7 @@ static void runRepl(void)
     initState(NULL);
     initStdlib(args, cwd, NULL);
     printf(MSG_REPL);
+    state->in_repl = true;
     processRepl();
 }
 

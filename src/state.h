@@ -46,6 +46,8 @@ struct state {
     bool breaking_loop;
     bool continuing_loop;
     bool exiting;
+    bool in_repl;
+    struct result *last_val;
     int status_code;
     size_t line_n;
     size_t scope;
