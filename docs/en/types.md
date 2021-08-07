@@ -19,7 +19,7 @@ A variable type can be dynamic or static.
 
 ## Boolean
 
-As you may notice, a boolean type does not exists in Borealis, but the constants `true` and `false` are available, they represent the number `1` and `0` respectively.
+As you may notice, a boolean type does not exist in Borealis, but the constants `true` and `false` are available, they represent the number `1` and `0` respectively.
 
 The following values are considered `false` or `0`:
 
@@ -183,7 +183,7 @@ That can be avoided with the safe dot syntax. Which will return null if the prop
 customer?.name
 ```
 
-Object properties can be accessed with the brackets syntax too.
+Object properties can be accessed with the brackets' syntax too.
 
 ```borealis
 customer['name']

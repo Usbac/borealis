@@ -6,7 +6,7 @@ The standard object `Date` gives you multiple methods related with dates.
 
 `now(): number`
 
-Returns the current time as an unix timestamp (in seconds).
+Returns the current time as a unix timestamp (in seconds).
 
 ```borealis
 Date.now(); # Can return something like 1620149607

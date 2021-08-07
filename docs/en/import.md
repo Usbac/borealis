@@ -32,7 +32,7 @@ any num = import "number.bor";
 print(num); # It will print '42'
 ```
 
-The value returned by an import is actually a reference so you can modify its state in multiple imports across multiple files.
+The value returned by an import is actually a reference, so you can modify its state in multiple imports across multiple files.
 
 number.bor
 ```borealis

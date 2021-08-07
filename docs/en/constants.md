@@ -2,7 +2,7 @@ A constant is an identifier (name) for a value that cannot change during the exe
 
 A valid constant name starts with a letter or underscore, followed by any number of letters, numbers, or underscores.
 
-Constants are case-sensitive an have only a single scope, just like variables.
+Constants are case-sensitive and have only a single scope, just like variables.
 
 By convention, constant identifiers are always uppercase.
 

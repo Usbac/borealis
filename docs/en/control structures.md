@@ -61,7 +61,7 @@ if (a > b) {
 
 The case structure works pretty much like the common switch structure in other languages. The difference is that the case structure does not require a break to end the running piece of code.
 
-The case structure is useful when you need to compare the same expression with many different values, and execute a different piece of code depending on which value it equals to.
+The case structure is useful when you need to compare the same expression with many values, and execute a different piece of code depending on which value it equals to.
 
 ```borealis
 case (num) {

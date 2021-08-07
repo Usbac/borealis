@@ -11,4 +11,4 @@ The language strictly follows [ANSI C99](https://en.wikipedia.org/wiki/ANSI_C) a
 
 You can use a C compiler like `gcc` or `clang`.
 
-The source code includes a Makefile and a CMake file. With make, compiling it is as easy as running the `make` command.
+The source code includes a Makefile, and a CMake file. With make, compiling it is as easy as running the `make` command.

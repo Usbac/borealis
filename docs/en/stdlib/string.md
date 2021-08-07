@@ -106,7 +106,7 @@ String.leftTrim('000abc000', '0'); # Returns 'abc000'
 
 `rightTrim(string str, string substr = ' '): string`
 
-Strips a subtring from the end of a string.
+Strips a substring from the end of a string.
 
 ```borealis
 String.rightTrim(' hey there '); # Returns ' hey there'

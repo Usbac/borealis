@@ -22,7 +22,7 @@ any foo() {
 }
 ```
 
-It's posible to call recursive functions.
+It's possible to call recursive functions.
 
 ```borealis
 any recursion(n) {
@@ -63,7 +63,7 @@ print(8); # It will print 32
 
 ## Arguments
 
-Information can be passed to functions via the arguments list, which is a comma delimited list of expressions. The arguments are evaluated from left to right.
+Information can be passed to a function via the arguments list, which is a comma delimited list of expressions. The arguments are evaluated from left to right.
 
 Borealis supports passing by value, passing by reference, default argument values and variable arguments list.
 

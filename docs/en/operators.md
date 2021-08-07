@@ -8,7 +8,7 @@ Borealis has two types of operators:
 
 ## Precedence
 
-The precedence of an operator specifies how "tightly" it binds two expressions together. Since parentheses have the highest precedence they can be used to force precedence over others operators.
+The precedence of an operator specifies how "tightly" it binds two expressions together. Parentheses have the highest precedence, so they can be used to force precedence over others operators.
 
 ```borealis
 2 + 5 * 4
@@ -72,7 +72,7 @@ b ^= ' world';
 
 ### Bang operator
 
-The bang operator simplies the syntax for setting a variable value to the result of a function call using the same variable as argument.
+The bang operator simplifies the syntax for setting a variable value to the result of a function call using the same variable as argument.
 
 ```borealis
 any foo = 'hello';

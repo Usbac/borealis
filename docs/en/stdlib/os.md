@@ -200,7 +200,7 @@ Os.getTime(); # Can return something like 1620149607020
 
 Executes the given command.
 
-Returns -1 on error and the return status of the command otherwise.
+Returns -1 on error, and the return status of the command otherwise.
 
 ```borealis
 Os.exec('ls');

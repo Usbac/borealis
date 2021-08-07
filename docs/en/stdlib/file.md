@@ -36,7 +36,7 @@ File.read('./has_hello.txt', 'hex'); # Returns '68656C6C6F0A'
 
 `write(string filename, string content, number override = 1): number`
 
-Writes text to a file. If the file does not exists, it will be created.
+Writes text to a file. If the file does not exist, it will be created.
 
 Returns `true` in case of success, `false` otherwise.
 
@@ -90,7 +90,7 @@ File.copy('./original.txt', './new.txt'); # new.txt should be a copy of original
 
 Returns the time of the last modification to the file as an unix timestamp (in seconds).
 
-If the file does not exists or is not accesible, `null` will be returned.
+If the file does not exist or is not accessible, `null` will be returned.
 
 ```borealis
 File.getModTime('file.txt'); # Can return something like 1620226469
@@ -100,7 +100,7 @@ File.getModTime('file.txt'); # Can return something like 1620226469
 
 `getType(string filename): any`
 
-Returns the type of the file as a string. If the file does not exists or is not accesible `null` is returned.
+Returns the type of the file as a string. If the file does not exist or is not accessible `null` is returned.
 
 Return values are:
 
@@ -126,7 +126,7 @@ File.getType('../folder'); # Returns 'directory'
 
 `getSize(string filename): any`
 
-Returns the size of the file in bytes. If the file does not exists or is not accesible `null` is returned.
+Returns the size of the file in bytes. If the file does not exist or is not accessible `null` is returned.
 
 ```borealis
 File.getSize('file.txt'); # Returns 471056 if the file size is '471,1 kB'
