@@ -67,13 +67,9 @@ Returns true if the given value is considered empty, false otherwise.
 A value is considered empty if it's:
 
 * An empty string (`''`).
-
 * The number zero (`0`).
-
 * An empty array (`[]`).
-
 * An empty object (`obj {}`).
-
 * Null (`null`).
 
 ```borealis

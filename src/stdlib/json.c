@@ -274,7 +274,7 @@ void stdJsonParse(struct result_list *args)
             statePushResultNull();
         }
 
-    ListFreeR(list);
+    listFreeR(list);
         free(str);
 }
 

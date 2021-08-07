@@ -129,7 +129,7 @@ static void runRepl(void)
     stdlibInit(args, cwd, NULL);
     printf(MSG_REPL);
     state->in_repl = true;
-    replProcess();
+    replProcess(false);
 }
 
 
@@ -145,8 +145,8 @@ static void runCodeLine(void)
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    ListFreeR(stmts);
-    ListFreeR(bytecode);
+    listFreeR(stmts);
+    listFreeR(bytecode);
 }
 
 

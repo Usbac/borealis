@@ -3,7 +3,6 @@ An operator is something that takes one or more values and yields another value.
 Borealis has two types of operators:
 
 * Unary operators, which take only one value (such as `!` or `++`).
-
 * Binary operators, which take two values (such as the familiar arithmetical operators `+` and `-`).
 
 ## Precedence
@@ -151,7 +150,6 @@ _Keep in mind that the common comparison operators such as `==` and `!=` will tr
 There are two string operators:
 
 * The concatenation operator `^` which returns the concatenation of the left and right operands.
-
 * The concatenation assignment operator `^=` which appends the right operand to the left operand.
 
 ```borealis

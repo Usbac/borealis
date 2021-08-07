@@ -18,9 +18,7 @@ Borealis is a small, elegant and consistent scripting language. Includes a C-lik
 ## Features
 
 * **Consistent**: Borealis offers a simple syntax and a consistent standard library. Forget about things like strange results when comparing different data types, standard functions with unexpected names or operators with weird behaviour.
-
 * **Easy to use**: Borealis tries to keep things simple and minimal, from its standard library and data types to its deployment and compilation. Even its source code has been meticulously written, following the [ANSI C99](https://wikipedia.org/wiki/C99) standard.
-
 * **Comprehensive**: The language offers multiple features useful for reducing common development headaches, like a built-in REPL debugger, statically typed variables, private scope by default, different operators for strings and numbers, first-class functions and more.
 
 ## Install

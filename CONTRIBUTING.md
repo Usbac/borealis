@@ -8,7 +8,7 @@ Before making a contribution to the project, please read the following points an
 
 * Avoid being harsh and using bad language.
 * Don't be discriminatory.
-* Assume always good intentions.
+* Always assume good intentions.
 
 Any behavior that can be qualified as harassment won't be tolerated.
 
@@ -24,9 +24,9 @@ Any behavior that can be qualified as harassment won't be tolerated.
 
 ### Issue
 
-* Make sure that the same issue does not exists before making a new one.
+* Make sure that the same issue does not exist before making a new one.
 * Take advantage of the available labels, and use them correctly.
-* For writing a issue based on a bug or error, it's recommended to answer the following questions in the issue description:
+* For writing an issue based on a bug or error, it's recommended to answer the following questions in the issue description:
     * What are the steps to reproduce?
     * What is the expected behaviour?
     * What is the environment? (GCC version, OS...)

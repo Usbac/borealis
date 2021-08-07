@@ -357,11 +357,8 @@ Returns a formatted string.
 The valid formats are:
 
 * `%s` - String.
-
 * `%d` - Floating point number.
-
 * `%i` - Integer.
-
 * `%e` - Scientific notation.
 
 ```borealis

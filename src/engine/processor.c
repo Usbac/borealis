@@ -1307,7 +1307,7 @@ void processFile(const char *file, size_t line_n)
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    ListFreeR(stmts);
-    ListFreeR(bytecode);
+    listFreeR(stmts);
+    listFreeR(bytecode);
     free(code);
 }

@@ -24,9 +24,7 @@ As you may notice, a boolean type does not exist in Borealis, but the constants 
 The following values are considered `false` or `0`:
 
 * The number zero (`0`).
-
 * An empty string (`''`).
-
 * Null (`null`).
 
 Every other value is considered `true` or `1`.
@@ -214,9 +212,7 @@ any foo = null;
 A variable can be null if:
 
 * It has been assigned to null.
-
 * It has not been set to any value.
-
 * It has been a reference to another variable that has been declared in a higher scope and can not be accessed anymore.
 
 ```borealis

@@ -161,7 +161,7 @@ void stdDebug(struct result_list *args)
 {
     const size_t SIDE_LINES = 5;
     FILE *fp;
-    char line[256];
+    char line[UINT8_MAX];
     size_t current_line = 0;
     int line_chars = 1;
     size_t line_aux = state->line_n + SIDE_LINES;
@@ -191,7 +191,7 @@ void stdDebug(struct result_list *args)
     printf("\n");
     fclose(fp);
 
-    replProcess();
+    replProcess(true);
     state->exiting = false;
 }
 
@@ -206,8 +206,8 @@ void stdEval(struct result_list *args)
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    ListFreeR(stmts);
-    ListFreeR(bytecode);
+    listFreeR(stmts);
+    listFreeR(bytecode);
     free(code);
 }
 

@@ -242,7 +242,7 @@ void listFree(struct token_list *list)
 }
 
 
-void ListFreeR(struct token_list *list)
+void listFreeR(struct token_list *list)
 {
     freeList_(list, true);
 }
@@ -389,7 +389,7 @@ void tokenFree(struct token *node, bool recursive)
         tokenFree(node->rs, true);
     }
 
-    ListFreeR(node->body);
+    listFreeR(node->body);
     free(node->value);
     FREE_AND_NULL(node);
 }

@@ -204,12 +204,12 @@ struct element *elementInit(const char *key,
 void functionFree(struct function *func)
 {
     if (func->params != NULL) {
-        ListFreeR(func->params);
+        listFreeR(func->params);
         func->params = NULL;
     }
 
     if (func->stmts != NULL) {
-        ListFreeR(func->stmts);
+        listFreeR(func->stmts);
         func->stmts = NULL;
     }
 

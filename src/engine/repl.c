@@ -63,15 +63,15 @@ static bool runLine(char *line, struct element *el)
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    if (state->last_val != NULL) {
+    if (el != NULL && state->last_val != NULL) {
         elementFreeValues(&el);
         mapResultToElement(el, state->last_val);
         resultFree(state->last_val);
         state->last_val = NULL;
     }
 
-    ListFreeR(stmts);
-    ListFreeR(bytecode);
+    listFreeR(stmts);
+    listFreeR(bytecode);
 
     end:
         linenoiseFree(line);
@@ -79,16 +79,20 @@ static bool runLine(char *line, struct element *el)
 }
 
 
-void replProcess(void)
+void replProcess(bool debug)
 {
-    struct element *el = elementInit("_", NULL, 0, T_Null);
+    struct element *el = NULL;
     char *line;
 
     linenoiseSetMultiLine(1);
     linenoiseHistorySetMaxLen(UINT16_MAX);
     linenoiseSetHintsCallback(hints);
 
-    stateDeclareElement(&el);
+    if (!debug) {
+        el = elementInit("_", NULL, 0, T_Null);
+        stateDeclareElement(&el);
+    }
+
     state->jmp_buffer = malloc_(sizeof(jmp_buf));
     setjmp(*state->jmp_buffer);
     while ((line = linenoise("> ")) != NULL && runLine(line, el));

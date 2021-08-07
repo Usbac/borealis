@@ -45,7 +45,7 @@ void tokenFree(struct token *node, bool recursive);
  * Frees the given AST list.
  * @param list the AST list.
  */
-void ListFreeR(struct token_list *list);
+void listFreeR(struct token_list *list);
 
 /**
  * Returns a copy of the given node of an abstract syntax tree.

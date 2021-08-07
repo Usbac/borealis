@@ -29,7 +29,6 @@ c = foo(); # Assign to c the return value of the function foo.
 Borealis has two type of comments:
 
 * Single line comments (starts with the character `#` and ends at the end of line).
-
 * Multi line comments (starts with `/*` and ends at the first `*/`).
 
 ```borealis

@@ -18,6 +18,6 @@
 /**
  * Process the REPL.
  */
-void replProcess(void);
+void replProcess(bool debug);
 
 #endif /* REPL_H */
