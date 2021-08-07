@@ -95,4 +95,4 @@ You can read more about the contribution process [right here](CONTRIBUTING.md). 
 
 ## License
 
-Wolff is open-source software licensed under the [MIT license](LICENSE).
+Borealis is open-source software licensed under the [MIT license](LICENSE).
