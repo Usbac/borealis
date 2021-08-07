@@ -163,8 +163,10 @@ static void initFunctions(void)
     declareModuleFunc(io, "historySetSize", stdHistorySize, "d");
     declareModuleFunc(io, "clear", stdClear, "");
     /* os */
-    declareModuleFunc(os, "getcwd", stdGetCwd, "");
     declareModuleFunc(os, "clearPath", stdClearPath, "s");
+    declareModuleFunc(os, "isAbsolute", stdIsAbsolute, "s");
+#ifndef SAFE_MODE
+    declareModuleFunc(os, "getcwd", stdGetCwd, "");
     declareModuleFunc(os, "isFile", stdIsFile, "s");
     declareModuleFunc(os, "isDir", stdIsDir, "s");
     declareModuleFunc(os, "exists", stdExists, "s");
@@ -173,11 +175,11 @@ static void initFunctions(void)
     declareModuleFunc(os, "makeDir", stdMakeDir, "s|s");
     declareModuleFunc(os, "getFiles", stdGetFiles, "s");
     declareModuleFunc(os, "getPermissions", stdGetPermissions, "s");
-    declareModuleFunc(os, "isAbsolute", stdIsAbsolute, "s");
     declareModuleFunc(os, "chmod", stdChmod, "s,s");
     declareModuleFunc(os, "getEnv", stdGetEnv, "s");
     declareModuleFunc(os, "getTime", stdGetTime, "");
     declareModuleFunc(os, "exec", stdExec, "s");
+#endif
     value.string = strDup(END_OF_LINE);
     declareModuleConst(os, "EOL", value, T_String);
     value.string = strDup(getPlatform());
@@ -255,6 +257,7 @@ static void initFunctions(void)
     declareModuleFunc(obj, "getKeys", stdGetObjectKeys, "o");
     declareModuleFunc(obj, "getValues", stdGetObjectValues, "o");
     /* file */
+#ifndef SAFE_MODE
     declareModuleFunc(file, "create", stdCreateFile, "s");
     declareModuleFunc(file, "read", stdReadFile, "s|s");
     declareModuleFunc(file, "write", stdWriteFile, "s,s|d");
@@ -263,6 +266,7 @@ static void initFunctions(void)
     declareModuleFunc(file, "getModTime", stdGetModTime, "s");
     declareModuleFunc(file, "getType", stdGetType, "s");
     declareModuleFunc(file, "getSize", stdGetFileSize, "s");
+#endif
     /* json */
     declareModuleFunc(json, "stringify", stdJsonStringify, "v");
     declareModuleFunc(json, "parse", stdJsonParse, "s");
@@ -311,6 +315,9 @@ static void initFunctions(void)
     declareModuleFunc(bit, "rightShift", stdRightShift, "d,d");
     declareModuleFunc(bit, "not", stdNot, "d");
     /* socket */
+    declareModuleFunc(socket, "htons", stdHtons, "n");
+    declareModuleFunc(socket, "htonl", stdHtonl, "n");
+#ifndef SAFE_MODE
     declareModuleFunc(socket, "new", stdNew, "d,d|d");
     declareModuleFunc(socket, "bind", stdBind, "o,s,d");
     declareModuleFunc(socket, "listen", stdListen, "o,d");
@@ -319,10 +326,9 @@ static void initFunctions(void)
     declareModuleFunc(socket, "shutdown", stdShutdown, "o|d");
     declareModuleFunc(socket, "recv", stdRecv, "o,d|d");
     declareModuleFunc(socket, "send", stdSend, "o,s|d");
-    declareModuleFunc(socket, "htons", stdHtons, "n");
-    declareModuleFunc(socket, "htonl", stdHtonl, "n");
     declareModuleFunc(socket, "setTimeout", stdSetTimeout, "o,n");
     declareModuleFunc(socket, "getTimeout", stdGetTimeout, "o");
+#endif
     value.number = AF_INET;
     declareModuleConst(socket, "AF_INET", value, T_Number);
     value.number = AF_INET6;
