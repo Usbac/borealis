@@ -36,14 +36,23 @@ static char *hints(const char *buf, int *color, int *bold)
 static bool runLine(char *line, struct element *el)
 {
     struct list *stmts, *bytecode;
-    if (!strcmp(line, REPL_EXIT_KEYWORD)) {
+    if (!strcmp(line, REPL_EXIT)) {
         state->exiting = true;
         goto end;
-    } else if (!strcmp(line, REPL_HELP_KEYWORD)) {
+    } else if (!strcmp(line, REPL_HELP)) {
         printf(MSG_REPL);
         goto end;
-    } else if (!strcmp(line, REPL_CLEAR_KEYWORD)) {
+    } else if (!strcmp(line, REPL_CLEAR)) {
         linenoiseClearScreen();
+        goto end;
+    } else if (!strncmp(line, REPL_SAVE, strlen(REPL_SAVE))) {
+        char *file, *token;
+        strtok(line, " ");
+        token = strtok(NULL, " ");
+        file = token == NULL ? REPL_DEFAULT_FILE : token;
+
+        linenoiseHistorySave(file);
+        printf(REPL_SAVED, file);
         goto end;
     }
 
