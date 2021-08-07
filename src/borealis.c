@@ -6,6 +6,7 @@
 #include "engine/parser_bytecode.h"
 #include "engine/processor.h"
 #include "engine/preprocessor.h"
+#include "engine/repl.h"
 #include "borealis.h"
 
 /**

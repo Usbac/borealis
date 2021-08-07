@@ -11,6 +11,7 @@ add_executable(borealis
         src/engine/preprocessor.c src/engine/preprocessor.h
         src/engine/processor.c src/engine/processor.h
         src/engine/processor_helper.c src/engine/processor_helper.h
+        src/engine/repl.c src/engine/repl.h
         src/error.c src/error.h
         src/utils.c src/utils.h
         src/element.c src/element.h

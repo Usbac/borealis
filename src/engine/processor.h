@@ -25,11 +25,6 @@ void evalNode(struct token **node);
 void processFile(const char *file, size_t line_n);
 
 /**
- * Process the REPL.
- */
-void processRepl(void);
-
-/**
  * Process the bytecode list.
  * @param list the bytecode.
  */

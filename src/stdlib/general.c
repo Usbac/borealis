@@ -8,6 +8,7 @@
 #include "../engine/preprocessor.h"
 #include "../engine/processor_helper.h"
 #include "../engine/processor.h"
+#include "../engine/repl.h"
 #include "../state.h"
 #include "general.h"
 
