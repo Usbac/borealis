@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LEXER_H_
+#define LEXER_H_
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -66,7 +67,7 @@ struct token {
     enum TYPE type;
     enum OPCODE opcode;
     size_t line_n;
-    struct list *body;
+    struct token_list *body;
     size_t jmp;
     struct token *prev;
     struct token *next;
@@ -74,7 +75,7 @@ struct token {
     struct token *rs;
 };
 
-struct list {
+struct token_list {
     struct token *first;
     struct token *last;
 };
@@ -85,12 +86,12 @@ extern struct operator *operators_head;
 /**
  * Initializes the lexer.
  */
-void initLexer(void);
+void lexerInit(void);
 
 /**
  * Frees the lexer.
  */
-void freeLexer(void);
+void lexerFree(void);
 
 /**
  * Returns a list based on the given string with infix notation.
@@ -99,7 +100,7 @@ void freeLexer(void);
  * @param line_n the starting line number.
  * @return the list based on the given string.
  */
-struct list *tokenize(const char *code, const char *stmt_sep, size_t line_n);
+struct token_list *tokenize(const char *code, const char *stmt_sep, size_t line_n);
 
 /**
  * Returns a list based on the given json string.
@@ -107,13 +108,13 @@ struct list *tokenize(const char *code, const char *stmt_sep, size_t line_n);
  * @param error the error status to update.
  * @return the list.
  */
-struct list *tokenizeJson(const char *code, bool *error);
+struct token_list *tokenizeJson(const char *code, bool *error);
 
 /**
  * Returns a new list initialized.
  * return the new list.
  */
-struct list *newList(void);
+struct token_list *listInit(void);
 
 /**
  * Returns true if the given opcode is a keyword, false otherwise.
@@ -149,3 +150,5 @@ bool isPartial(enum TYPE type);
  * @return true if the given string represents a valid number, false otherwise.
  */
 bool isNumber(const char *str);
+
+#endif /* LEXER_H_ */

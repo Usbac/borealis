@@ -56,7 +56,7 @@ static char *mapHash(unsigned char *str, enum HASH_TYPE type)
 void stdSha1(struct result_list *args)
 {
     unsigned char *str = (unsigned char *) getValueStr(args->first);
-    pushResultStr(mapHash(str, H_SHA1));
+    statePushResultStr(mapHash(str, H_SHA1));
     free(str);
 }
 
@@ -64,7 +64,7 @@ void stdSha1(struct result_list *args)
 void stdSha256(struct result_list *args)
 {
     unsigned char *str = (unsigned char *) getValueStr(args->first);
-    pushResultStr(mapHash(str, H_SHA256));
+    statePushResultStr(mapHash(str, H_SHA256));
     free(str);
 }
 
@@ -72,6 +72,6 @@ void stdSha256(struct result_list *args)
 void stdMd5(struct result_list *args)
 {
     unsigned char *str = (unsigned char *) getValueStr(args->first);
-    pushResultStr(mapHash(str, H_MD5));
+    statePushResultStr(mapHash(str, H_MD5));
     free(str);
 }

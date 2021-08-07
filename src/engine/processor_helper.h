@@ -166,7 +166,7 @@ void jmpStmts(struct token **node);
  * @param params the parameters list.
  * @return the number of parameters.
  */
-size_t getParamsNumber(struct list *params);
+size_t getParamsNumber(struct token_list *params);
 
 /**
  * Returns true if the node is the identifier of a spread parameter,

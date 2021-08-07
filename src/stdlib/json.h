@@ -6,14 +6,14 @@
  * @param list the json tokens list.
  * @return the new array.
  */
-struct element_table *parseArrjJson(struct list *list);
+struct element_table *parseArrjJson(struct token_list *list);
 
 /**
  * Returns a new object from the given json.
  * @param list the json tokens list.
  * @return the new object.
  */
-struct element_table *parseObjJson(struct list *list);
+struct element_table *parseObjJson(struct token_list *list);
 
 /**
  * Returns the given value as a JSON string.

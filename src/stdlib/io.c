@@ -124,9 +124,9 @@ void stdReadLine(struct result_list *args)
     linenoiseMaskModeDisable();
 
     if (result == NULL) {
-        pushResultNull();
+        statePushResultNull();
     } else {
-        pushResultStr(result);
+        statePushResultStr(result);
     }
 
     free(prompt);
@@ -138,7 +138,7 @@ void stdReadChar(struct result_list *args)
     char *result = calloc_(1, 2);
     result[0] = (char) getchar();
 
-    pushResultStr(result);
+    statePushResultStr(result);
 }
 
 

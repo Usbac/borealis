@@ -6,103 +6,103 @@
 
 void stdCos(struct result_list *args)
 {
-    pushResultD(cos(getValueD(args->first)));
+    statePushResultD(cos(getValueD(args->first)));
 }
 
 
 void stdAcos(struct result_list *args)
 {
-    pushResultD(acos(getValueD(args->first)));
+    statePushResultD(acos(getValueD(args->first)));
 }
 
 
 void stdCosh(struct result_list *args)
 {
-    pushResultD(cosh(getValueD(args->first)));
+    statePushResultD(cosh(getValueD(args->first)));
 }
 
 
 void stdAcosh(struct result_list *args)
 {
-    pushResultD(acosh(getValueD(args->first)));
+    statePushResultD(acosh(getValueD(args->first)));
 }
 
 
 void stdSin(struct result_list *args)
 {
-    pushResultD(sin(getValueD(args->first)));
+    statePushResultD(sin(getValueD(args->first)));
 }
 
 
 void stdAsin(struct result_list *args)
 {
-    pushResultD(asin(getValueD(args->first)));
+    statePushResultD(asin(getValueD(args->first)));
 }
 
 
 void stdSinh(struct result_list *args)
 {
-    pushResultD(sinh(getValueD(args->first)));
+    statePushResultD(sinh(getValueD(args->first)));
 }
 
 
 void stdAsinh(struct result_list *args)
 {
-    pushResultD(asinh(getValueD(args->first)));
+    statePushResultD(asinh(getValueD(args->first)));
 }
 
 
 void stdTan(struct result_list *args)
 {
-    pushResultD(tan(getValueD(args->first)));
+    statePushResultD(tan(getValueD(args->first)));
 }
 
 
 void stdAtan(struct result_list *args)
 {
-    pushResultD(atan(getValueD(args->first)));
+    statePushResultD(atan(getValueD(args->first)));
 }
 
 
 void stdTanh(struct result_list *args)
 {
-    pushResultD(tanh(getValueD(args->first)));
+    statePushResultD(tanh(getValueD(args->first)));
 }
 
 
 void stdAtanh(struct result_list *args)
 {
-    pushResultD(atanh(getValueD(args->first)));
+    statePushResultD(atanh(getValueD(args->first)));
 }
 
 
 void stdSqrt(struct result_list *args)
 {
-    pushResultD(sqrt(getValueD(args->first)));
+    statePushResultD(sqrt(getValueD(args->first)));
 }
 
 
 void stdLog(struct result_list *args)
 {
-    pushResultD(log(getValueD(args->first)));
+    statePushResultD(log(getValueD(args->first)));
 }
 
 
 void stdAbs(struct result_list *args)
 {
-    pushResultD(fabs(getValueD(args->first)));
+    statePushResultD(fabs(getValueD(args->first)));
 }
 
 
 void stdFloor(struct result_list *args)
 {
-    pushResultD(floor(getValueD(args->first)));
+    statePushResultD(floor(getValueD(args->first)));
 }
 
 
 void stdCeil(struct result_list *args)
 {
-    pushResultD(ceil(getValueD(args->first)));
+    statePushResultD(ceil(getValueD(args->first)));
 }
 
 
@@ -114,5 +114,5 @@ void stdRound(struct result_list *args)
     n *= decimals;
     n = (n >= floor(n) + 0.5) ? ceil(n) : floor(n);
 
-    pushResultD(n / decimals);
+    statePushResultD(n / decimals);
 }

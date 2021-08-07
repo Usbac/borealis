@@ -7,13 +7,13 @@
  * @param cwd the starting current working directory.
  * @param file the starting file.
  */
-void initStdlib(struct element_table *args, const char *cwd, const char *file);
+void stdlibInit(struct element_table *args, const char *cwd, const char *file);
 
 /**
  * Calls a standard function.
  * @param func the standard function.
  * @param args the arguments list.
  */
-void callStdFunc(struct function *func, struct result_list *args);
+void stdlibFuncCall(struct function *func, struct result_list *args);
 
 #endif /* STDLIB_H */

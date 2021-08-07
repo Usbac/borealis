@@ -67,9 +67,9 @@ static size_t getStrParamsNumber(char *str)
 
 static struct element *declareModule(const char *key)
 {
-    struct element *el = newElement(key, NULL, 0, T_Object);
+    struct element *el = elementInit(key, NULL, 0, T_Object);
     el->constant = true;
-    declareElement(&el);
+    stateDeclareElement(&el);
 
     return el;
 }
@@ -80,18 +80,18 @@ static void declareModuleFunc(struct element *module,
                               std_func *func,
                               char *params)
 {
-    struct element *el = newElement(key, NULL, 0, T_Function);
+    struct element *el = elementInit(key, NULL, 0, T_Function);
     el->public = true;
     el->constant = true;
     el->value.function->func_ptr = func;
     el->value.function->func_ptr_params = params;
-    el->value.function->num_params = getStrParamsNumber(params);
+    el->value.function->params_n = getStrParamsNumber(params);
     el->value.function->native_code = true;
 
     if (module == NULL) {
-        declareElement(&el);
+        stateDeclareElement(&el);
     } else {
-        pushElementToTable(&module->value.values, el);
+        elementTablePush(&module->value.values, el);
     }
 }
 
@@ -101,16 +101,16 @@ static void declareModuleConst(struct element *module,
                                union VALUE val,
                                enum TYPE type)
 {
-    struct element *el = newElement(key, NULL, 0, T_Null);
+    struct element *el = elementInit(key, NULL, 0, T_Null);
     el->public = true;
     el->constant = true;
     el->type = type;
     el->value = val;
 
     if (module == NULL) {
-        declareElement(&el);
+        stateDeclareElement(&el);
     } else {
-        pushElementToTable(&module->value.values, el);
+        elementTablePush(&module->value.values, el);
     }
 }
 
@@ -396,7 +396,7 @@ static void validateStdArgs(struct function *func, struct result_list *args)
 
         if (arg == NULL) {
             if (!in_optionals) {
-                errorF(state->line_n, E_FUNC_PARAM_NUM, func->num_params);
+                errorF(state->line_n, E_FUNC_PARAM_NUM, func->params_n);
             }
 
             continue;
@@ -422,12 +422,12 @@ static void validateStdArgs(struct function *func, struct result_list *args)
     }
 
     if (arg != NULL && n_params == 0) {
-        errorF(arg->line_n, E_FUNC_PARAM_NUM, func->num_params);
+        errorF(arg->line_n, E_FUNC_PARAM_NUM, func->params_n);
     }
 }
 
 
-void initStdlib(struct element_table *args, const char *cwd, const char *file)
+void stdlibInit(struct element_table *args, const char *cwd, const char *file)
 {
     srand((unsigned int) time(NULL));
     initConstants(args, cwd, file);
@@ -435,12 +435,12 @@ void initStdlib(struct element_table *args, const char *cwd, const char *file)
 }
 
 
-void callStdFunc(struct function *func, struct result_list *args)
+void stdlibFuncCall(struct function *func, struct result_list *args)
 {
     struct result *aux_stack = state->stack->last;
     validateStdArgs(func, args);
     func->func_ptr(args);
     if (aux_stack == state->stack->last) {
-        pushResultNull();
+        statePushResultNull();
     }
 }

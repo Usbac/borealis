@@ -43,7 +43,7 @@ static void prevalidateFuncDefinition(struct token *node,
         (node->rs->ls != NULL && node->rs->ls->type != T_Identifier)) {
         errorF(node->line_n, E_FUNC_DEFINITION);
     } else if (node->rs->ls != NULL &&
-        getElement(node->rs->ls->value, pre_state->file) != NULL) {
+            stateGetElement(node->rs->ls->value, pre_state->file) != NULL) {
         errorF(node->line_n, E_REDECLARE, node->rs->ls->value);
     }
 }
@@ -316,7 +316,7 @@ static void prevalidateOptionalParam(struct token *node)
 }
 
 
-static void prevalidateParams(struct list *params)
+static void prevalidateParams(struct token_list *params)
 {
     struct token *node = params->first;
     while (node != NULL) {
@@ -351,19 +351,19 @@ static void declareFunc(struct token *node,
     preprocessList(node->ls->body, pre_state);
     prevalidateParams(node->rs->body);
 
-    func = newElement(node->rs->ls != NULL ? node->rs->ls->value : NULL,
-        pre_state->file,
-        0,
-        T_Function);
+    func = elementInit(node->rs->ls != NULL ? node->rs->ls->value : NULL,
+                       pre_state->file,
+                       0,
+                       T_Function);
     func->value.function->def_file = strDup(pre_state->file);
     func->value.function->params = listToBytecode(node->rs->body);
     func->value.function->stmts = listToBytecode(node->ls->body);
-    func->value.function->num_params = getParamsNumber(func->value.function->params);
+    func->value.function->params_n = getParamsNumber(func->value.function->params);
     func->value.function->return_type = getOpcodeType(node->opcode);
     func->public = public;
     func->constant = true;
 
-    declareElement(&func);
+    stateDeclareElement(&func);
 
     pre_state->current_type = aux_type;
 }
@@ -530,7 +530,7 @@ static void preprocessNode(struct token *node, struct pre_state *pre_state)
 }
 
 
-void preprocessList(const struct list *list, struct pre_state *pre_state)
+void preprocessList(const struct token_list *list, struct pre_state *pre_state)
 {
     for (struct token *node = list->first; node != NULL; node = node->next) {
         preprocessNode(node, pre_state);
@@ -538,7 +538,7 @@ void preprocessList(const struct list *list, struct pre_state *pre_state)
 }
 
 
-void preprocess(const struct list *list, const char *file)
+void preprocess(const struct token_list *list, const char *file)
 {
     struct pre_state *pre_state = malloc_(sizeof(struct pre_state));
     *pre_state = (struct pre_state) {

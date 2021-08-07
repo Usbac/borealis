@@ -20,7 +20,7 @@ void stdMin(struct result_list *args)
         node = node->next;
     }
 
-    pushResultD(min);
+    statePushResultD(min);
 }
 
 
@@ -38,19 +38,19 @@ void stdMax(struct result_list *args)
         node = node->next;
     }
 
-    pushResultD(max);
+    statePushResultD(max);
 }
 
 
 void stdIsNan(struct result_list *args)
 {
-    pushResultD(isnan(getValueD(args->first)));
+    statePushResultD(isnan(getValueD(args->first)));
 }
 
 
 void stdIsFinite(struct result_list *args)
 {
-    pushResultD(isfinite(getValueD(args->first)));
+    statePushResultD(isfinite(getValueD(args->first)));
 }
 
 
@@ -58,7 +58,7 @@ void stdRand(struct result_list *args)
 {
     double max = args->first != NULL ? getValueD(args->first) : 1;
 
-    pushResultD((double) fabs(rand() * max) / RAND_MAX);
+    statePushResultD((double) fabs(rand() * max) / RAND_MAX);
 }
 
 
@@ -112,7 +112,7 @@ void stdFormat(struct result_list *args)
         char_n++;
     }
 
-    pushResultStr(tmp);
+    statePushResultStr(tmp);
 
     free(str);
     free(thousands_sep);

@@ -9,10 +9,10 @@
 static void removeAndReturnArrEl(struct element_list *el)
 {
     if (el == NULL || el->ptr->unset) {
-        pushResultNull();
+        statePushResultNull();
     } else {
-        pushResult(state->stack, getResultFromElement(el->ptr));
-        freeElement(&el->ptr);
+        statePushResult(state->stack, getResultFromElement(el->ptr));
+        elementFree(&el->ptr);
     }
 }
 
@@ -70,9 +70,9 @@ void stdGet(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
     char *key = getValueStr(args->first->next);
-    struct element *el = getElementInTable(key, arr, NULL);
+    struct element *el = elementGet(key, arr, NULL);
 
-    pushResult(state->stack, getResultFromElement(el));
+    statePushResult(state->stack, getResultFromElement(el));
     free(key);
 }
 
@@ -90,7 +90,8 @@ void stdGetSize(struct result_list *args)
         size += !i->ptr->unset;
     }
 
-    end: pushResultD(size);
+    end:
+    statePushResultD(size);
 }
 
 
@@ -99,10 +100,10 @@ void stdPush(struct result_list *args)
     struct element_table *arr = getValueArr(args->first);
     struct result *arg = args->first->next;
     char *key = strFromSizet(arr->next_index);
-    struct element *prop = newElement(key, NULL, 0, T_Null);
+    struct element *prop = elementInit(key, NULL, 0, T_Null);
     prop->public = true;
     mapResultToElement(prop, arg);
-    pushElementToTable(&arr, prop);
+    elementTablePush(&arr, prop);
 
     free(key);
 }
@@ -113,10 +114,10 @@ void stdPrepend(struct result_list *args)
     struct element_table *arr = getValueArr(args->first);
     struct result *arg = args->first->next;
     char *key = strFromSizet(arr->next_index);
-    struct element *prop = newElement(key, NULL, 0, T_Null);
+    struct element *prop = elementInit(key, NULL, 0, T_Null);
     prop->public = true;
     mapResultToElement(prop, arg);
-    prependElementToTable(&arr, prop);
+    ElementTablePrepend(&arr, prop);
 
     free(key);
 }
@@ -139,7 +140,7 @@ void stdShift(struct result_list *args)
 void stdGetKeys(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
-    struct element_table *keys = newElementTable();
+    struct element_table *keys = elementTableInit();
     size_t index = 0;
 
     for (struct element_list *i = arr != NULL ? arr->first : NULL;
@@ -147,15 +148,15 @@ void stdGetKeys(struct result_list *args)
         i = i->next) {
         if (!i->ptr->unset) {
             char *key = strFromSizet(index++);
-            struct element *prop = newElement(key, NULL, 0, T_String);
+            struct element *prop = elementInit(key, NULL, 0, T_String);
             prop->public = true;
             prop->value.string = strDup(i->ptr->key);
-            pushElementToTable(&keys, prop);
+            elementTablePush(&keys, prop);
             free(key);
         }
     }
 
-    pushResultArr(keys);
+    StatePushResultArr(keys);
 }
 
 
@@ -163,9 +164,9 @@ void stdHasKey(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
     char *key = getValueStr(args->first->next);
-    struct element *el = getElementInTable(key, arr, NULL);
+    struct element *el = elementGet(key, arr, NULL);
 
-    pushResultD(el != NULL && !el->unset);
+    statePushResultD(el != NULL && !el->unset);
     free(key);
 }
 
@@ -196,7 +197,7 @@ void stdJoin(struct result_list *args)
         }
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(glue);
 }
 
@@ -215,14 +216,14 @@ void stdHas(struct result_list *args)
         if (!el->unset) {
             struct result *comp = getResultFromElement(el);
             has = compareResults(val, comp);
-            freeResult(comp);
+            resultFree(comp);
             if (has) {
                 break;
             }
         }
     }
 
-    pushResultD(has);
+    statePushResultD(has);
 }
 
 
@@ -250,7 +251,7 @@ void stdReverse(struct result_list *args)
 
 void stdRange(struct result_list *args)
 {
-    struct element_table *arr = newElementTable();
+    struct element_table *arr = elementTableInit();
     int start = (int) getValueD(args->first);
     int end = (int) getValueD(args->first->next);
     int steps = args->first->next->next != NULL ?
@@ -267,15 +268,15 @@ void stdRange(struct result_list *args)
         start > end ? i > end : i < end;
         i+= steps, key++) {
         char *key_str = strFromInt(key);
-        struct element *prop = newElement(key_str, NULL, 0, T_Number);
+        struct element *prop = elementInit(key_str, NULL, 0, T_Number);
         prop->value.number = (double) i;
         prop->public = true;
-        pushElementToTable(&arr, prop);
+        elementTablePush(&arr, prop);
 
         free(key_str);
     }
 
-    pushResultArr(arr);
+    StatePushResultArr(arr);
 }
 
 
@@ -319,7 +320,7 @@ void stdColumn(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
     char *column_name = getValueStr(args->first->next);
-    struct element_table *result = newElementTable();
+    struct element_table *result = elementTableInit();
 
     for (struct element_list *ite = arr != NULL ? arr->first : NULL;
         ite != NULL;
@@ -331,17 +332,17 @@ void stdColumn(struct result_list *args)
             continue;
         }
 
-        column = getElementInTable(column_name, src->value.values, NULL);
+        column = elementGet(column_name, src->value.values, NULL);
 
         if (column != NULL) {
-            struct element *el = newElement(NULL, NULL, 0, T_Null);
+            struct element *el = elementInit(NULL, NULL, 0, T_Null);
             el->key = strFromSizet(result->next_index);
-            copyElementValues(&el, column);
-            pushElementToTable(&result, el);
+            elementDupValues(&el, column);
+            elementTablePush(&result, el);
         }
     }
 
-    pushResultArr(result);
+    StatePushResultArr(result);
     free(column_name);
 }
 
@@ -353,7 +354,7 @@ static void mapIteratorArg(struct function *func,
 {
     struct result *index;
 
-    if (func->num_params < arg_index) {
+    if (func->params_n < arg_index) {
         return;
     }
 
@@ -364,14 +365,14 @@ static void mapIteratorArg(struct function *func,
         .line_n = state->line_n,
     };
 
-    pushResult(func_args, index);
+    statePushResult(func_args, index);
 }
 
 
 void stdMap(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
-    struct element_table *result = newElementTable();
+    struct element_table *result = elementTableInit();
     struct function *func = getValueFunc(args->first->next);
     size_t index = 0;
 
@@ -384,29 +385,29 @@ void stdMap(struct result_list *args)
             continue;
         }
 
-        func_args = newResultList();
-        el = newElement(i->ptr->key, NULL, 0, T_Null);
+        func_args = resultListInit();
+        el = elementInit(i->ptr->key, NULL, 0, T_Null);
 
-        pushResult(func_args, getResultFromElement(i->ptr));
+        statePushResult(func_args, getResultFromElement(i->ptr));
         mapIteratorArg(func, func_args, &index, 2);
 
-        execFunc(func, func_args, state->current_obj);
-        func_result = popResult();
+        funcExec(func, func_args, state->current_obj);
+        func_result = statePopResult();
         mapResultToElement(el, func_result);
-        pushElementToTable(&result, el);
+        elementTablePush(&result, el);
 
-        freeResult(func_result);
-        freeResultList(func_args);
+        resultFree(func_result);
+        resultListFree(func_args);
     }
 
-    pushResultArr(result);
+    StatePushResultArr(result);
 }
 
 
 void stdFilter(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
-    struct element_table *result = newElementTable();
+    struct element_table *result = elementTableInit();
     struct function *func = getValueFunc(args->first->next);
     size_t index = 0;
 
@@ -418,24 +419,24 @@ void stdFilter(struct result_list *args)
             continue;
         }
 
-        func_args = newResultList();
-        pushResult(func_args, getResultFromElement(i->ptr));
+        func_args = resultListInit();
+        statePushResult(func_args, getResultFromElement(i->ptr));
         mapIteratorArg(func, func_args, &index, 2);
 
-        execFunc(func, func_args, state->current_obj);
-        func_result = popResult();
+        funcExec(func, func_args, state->current_obj);
+        func_result = statePopResult();
 
         if (isTrue(func_result)) {
-            struct element *el = newElement(i->ptr->key, NULL, 0, T_Null);
-            copyElementValues(&el, i->ptr);
-            pushElementToTable(&result, el);
+            struct element *el = elementInit(i->ptr->key, NULL, 0, T_Null);
+            elementDupValues(&el, i->ptr);
+            elementTablePush(&result, el);
         }
 
-        freeResult(func_result);
-        freeResultList(func_args);
+        resultFree(func_result);
+        resultListFree(func_args);
     }
 
-    pushResultArr(result);
+    StatePushResultArr(result);
 }
 
 
@@ -468,24 +469,24 @@ void stdReduce(struct result_list *args)
             continue;
         }
 
-        func_args = newResultList();
-        pushResult(func_args, accumulator);
-        pushResult(func_args, getResultFromElement(i->ptr));
+        func_args = resultListInit();
+        statePushResult(func_args, accumulator);
+        statePushResult(func_args, getResultFromElement(i->ptr));
         mapIteratorArg(func, func_args, &index, 3);
 
-        execFunc(func, func_args, state->current_obj);
-        accumulator = popResult();
+        funcExec(func, func_args, state->current_obj);
+        accumulator = statePopResult();
 
-        freeResultList(func_args);
+        resultListFree(func_args);
     }
 
-    pushResult(state->stack, accumulator);
+    statePushResult(state->stack, accumulator);
 }
 
 
 void stdMerge(struct result_list *args)
 {
-    struct element_table *result = newElementTable();
+    struct element_table *result = elementTableInit();
 
     for (struct result *i = args->first; i != NULL; i = i->next) {
         struct element_table *arr = getValueArr(i);
@@ -499,18 +500,18 @@ void stdMerge(struct result_list *args)
                 continue;
             }
 
-            if ((el = getElementInTable(index->ptr->key, result, NULL)) != NULL) {
-                freeElementValues(&el);
-                copyElementValues(&el, index->ptr);
+            if ((el = elementGet(index->ptr->key, result, NULL)) != NULL) {
+                elementFreeValues(&el);
+                elementDupValues(&el, index->ptr);
             } else {
-                el = newElement(index->ptr->key, NULL, 0, T_Null);
-                copyElementValues(&el, index->ptr);
-                pushElementToTable(&result, el);
+                el = elementInit(index->ptr->key, NULL, 0, T_Null);
+                elementDupValues(&el, index->ptr);
+                elementTablePush(&result, el);
             }
         }
     }
 
-    pushResultArr(result);
+    StatePushResultArr(result);
 }
 
 
@@ -528,22 +529,22 @@ void stdSome(struct result_list *args)
             continue;
         }
 
-        func_args = newResultList();
-        pushResult(func_args, getResultFromElement(i->ptr));
+        func_args = resultListInit();
+        statePushResult(func_args, getResultFromElement(i->ptr));
         mapIteratorArg(func, func_args, &index, 2);
 
-        execFunc(func, func_args, state->current_obj);
-        func_result = popResult();
-        freeResultList(func_args);
+        funcExec(func, func_args, state->current_obj);
+        func_result = statePopResult();
+        resultListFree(func_args);
 
         if (isTrue(func_result)) {
-            pushResultD(true);
-            freeResult(func_result);
+            statePushResultD(true);
+            resultFree(func_result);
             return;
         }
 
-        freeResult(func_result);
+        resultFree(func_result);
     }
 
-    pushResultD(false);
+    statePushResultD(false);
 }

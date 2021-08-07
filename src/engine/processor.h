@@ -9,7 +9,7 @@
  * @param args the arguments.
  * @param obj the function's object.
  */
-void execFunc(struct function *func, struct result_list *args, struct element_table *obj);
+void funcExec(struct function *func, struct result_list *args, struct element_table *obj);
 
 /**
  * Evaluates the given node.
@@ -28,6 +28,6 @@ void processFile(const char *file, size_t line_n);
  * Process the bytecode list.
  * @param list the bytecode.
  */
-void evalBytecode(struct list *list);
+void evalBytecode(struct token_list *list);
 
 #endif /* PROCESSOR_H_ */

@@ -7,7 +7,7 @@
 #include "parser.h"
 
 
-struct token *copyToken(const struct token *src)
+struct token *tokenDup(const struct token *src)
 {
     struct token *new = malloc_(sizeof(struct token));
     *new = (struct token) {
@@ -19,7 +19,7 @@ struct token *copyToken(const struct token *src)
         .opcode = src->opcode,
         .jmp = src->jmp,
         .line_n = src->line_n,
-        .body = copyList(src->body),
+        .body = listDup(src->body),
         .value = strDup(src->value),
     };
 
@@ -27,7 +27,7 @@ struct token *copyToken(const struct token *src)
 }
 
 
-static struct token *pop(struct list *list)
+static struct token *pop(struct token_list *list)
 {
     struct token *new;
 
@@ -49,7 +49,7 @@ static struct token *pop(struct list *list)
 }
 
 
-static void moveToken(struct list *dest, struct list *src)
+static void moveToken(struct token_list *dest, struct token_list *src)
 {
     if (src->last->opcode == OP_Open_parenthesis) {
         struct token *tmp = pop(src);
@@ -63,7 +63,7 @@ static void moveToken(struct list *dest, struct list *src)
 }
 
 
-static void migrateUntilParenthesis(struct list *dest, struct list *src)
+static void migrateUntilParenthesis(struct token_list *dest, struct token_list *src)
 {
     struct token *tmp;
 
@@ -122,8 +122,8 @@ static bool hasRightAssociativity(struct token *node)
 
 
 static void handleMigration(struct token *node,
-                            struct list *operators,
-                            struct list *output)
+                            struct token_list *operators,
+                            struct token_list *output)
 {
     size_t prec = getPrec(node);
 
@@ -133,7 +133,7 @@ static void handleMigration(struct token *node,
         push(output, pop(operators));
     }
 
-    push(operators, copyToken(node));
+    push(operators, tokenDup(node));
 }
 
 
@@ -175,7 +175,7 @@ static bool isUnexpectedEnd(struct token *node)
  * Returns true only if a function name node remains in the given tree and
  * must be put into the given node
  */
-static bool remainsFunctionNameNode(struct list *tree, struct token *node)
+static bool remainsFunctionNameNode(struct token_list *tree, struct token *node)
 {
     return node->rs != NULL && node->rs->type == T_Parameters &&
         (node->next == NULL || node->next->opcode == OP_Public) &&
@@ -184,21 +184,21 @@ static bool remainsFunctionNameNode(struct list *tree, struct token *node)
 }
 
 
-static struct list *infixToPostfix(const struct list *tokens)
+static struct token_list *infixToPostfix(const struct token_list *tokens)
 {
-    struct list *output = newList();
-    struct list *operators = newList();
+    struct token_list *output = listInit();
+    struct token_list *operators = listInit();
     struct token *node = tokens->first;
 
     while (node != NULL) {
         if (node->opcode == OP_Open_parenthesis) {
-            push(operators, copyToken(node));
+            push(operators, tokenDup(node));
         } else if (node->opcode == OP_Closed_parenthesis) {
             migrateUntilParenthesis(output, operators);
         } else if (isExpr(node) || isUnaryExpr(node)) {
             handleMigration(node, operators, output);
         } else {
-            push(output, copyToken(node));
+            push(output, tokenDup(node));
         }
 
         node = node->next;
@@ -219,7 +219,7 @@ static struct list *infixToPostfix(const struct list *tokens)
 
 
 /* Used by proxy functions */
-static void freeList_(struct list *list, bool recursive)
+static void freeList_(struct token_list *list, bool recursive)
 {
     struct token *node;
 
@@ -229,20 +229,20 @@ static void freeList_(struct list *list, bool recursive)
 
     while ((node = list->first) != NULL) {
         list->first = list->first->next;
-        freeToken(node, recursive);
+        tokenFree(node, recursive);
     }
 
     FREE_AND_NULL(list);
 }
 
 
-void freeList(struct list *list)
+void listFree(struct token_list *list)
 {
     freeList_(list, false);
 }
 
 
-void freeListRecursive(struct list *list)
+void ListFreeR(struct token_list *list)
 {
     freeList_(list, true);
 }
@@ -273,10 +273,10 @@ static void processNodeCode(struct token *node)
 }
 
 
-static struct list *infixToAST(const struct list *infix)
+static struct token_list *infixToAST(const struct token_list *infix)
 {
-    struct list *tree = newList();
-    struct list *postfix = infixToPostfix(infix);
+    struct token_list *tree = listInit();
+    struct token_list *postfix = infixToPostfix(infix);
     struct token *node;
 
     node = postfix->first;
@@ -296,11 +296,11 @@ static struct list *infixToAST(const struct list *infix)
             }
         }
 
-        push(tree, copyToken(node));
+        push(tree, tokenDup(node));
         node = node->next;
     }
 
-    freeList(postfix);
+    listFree(postfix);
     return tree;
 }
 
@@ -311,19 +311,19 @@ static bool inStmtEnd(bool in_sep, bool strict_end, struct token *node)
 }
 
 
-static struct list *tokensToList(const struct list *tokens, bool strict_end)
+static struct token_list *tokensToList(const struct token_list *tokens, bool strict_end)
 {
-    struct list *list = newList();
-    struct list *stmts = newList();
+    struct token_list *list = listInit();
+    struct token_list *stmts = listInit();
 
     for (struct token *i = tokens->first; i != NULL; i = i->next) {
         bool in_sep = i->opcode == OP_Stmt_sep;
         if (!in_sep) {
-            push(stmts, copyToken(i));
+            push(stmts, tokenDup(i));
         }
 
         if (inStmtEnd(in_sep, strict_end, i)) {
-            struct list *ast = infixToAST(stmts);
+            struct token_list *ast = infixToAST(stmts);
 
             if (ast->last != NULL && ast->last->prev != NULL) {
                 struct token *prev = ast->last->prev;
@@ -331,9 +331,9 @@ static struct list *tokensToList(const struct list *tokens, bool strict_end)
             }
 
             push(list, ast->last);
-            freeList(stmts);
+            listFree(stmts);
             free(ast);
-            stmts = newList();
+            stmts = listInit();
         }
 
         if (strict_end && isUnexpectedEnd(i)) {
@@ -341,12 +341,12 @@ static struct list *tokensToList(const struct list *tokens, bool strict_end)
         }
     }
 
-    freeList(stmts);
+    listFree(stmts);
     return list;
 }
 
 
-void push(struct list *list, struct token *node)
+void push(struct token_list *list, struct token *node)
 {
     if (node == NULL) {
         return;
@@ -365,60 +365,60 @@ void push(struct list *list, struct token *node)
 }
 
 
-struct list *codeToList(const char *code,
-                        const char *stmt_sep,
-                        bool strict_end,
-                        size_t line_n)
+struct token_list *codeToList(const char *code,
+                              const char *stmt_sep,
+                              bool strict_end,
+                              size_t line_n)
 {
-    struct list *tokens = tokenize(code, stmt_sep, line_n);
-    struct list *list = tokensToList(tokens, strict_end);
-    freeList(tokens);
+    struct token_list *tokens = tokenize(code, stmt_sep, line_n);
+    struct token_list *list = tokensToList(tokens, strict_end);
+    listFree(tokens);
 
     return list;
 }
 
 
-void freeToken(struct token *node, bool recursive)
+void tokenFree(struct token *node, bool recursive)
 {
     if (node == NULL) {
         return;
     }
 
     if (recursive) {
-        freeToken(node->ls, true);
-        freeToken(node->rs, true);
+        tokenFree(node->ls, true);
+        tokenFree(node->rs, true);
     }
 
-    freeListRecursive(node->body);
+    ListFreeR(node->body);
     free(node->value);
     FREE_AND_NULL(node);
 }
 
 
-struct token *copyTokenRecursive(const struct token *node)
+struct token *tokenDupR(const struct token *node)
 {
     struct token *new = NULL;
 
     if (node != NULL) {
-        new = copyToken(node);
-        new->ls = copyTokenRecursive(node->ls);
-        new->rs = copyTokenRecursive(node->rs);
+        new = tokenDup(node);
+        new->ls = tokenDupR(node->ls);
+        new->rs = tokenDupR(node->rs);
     }
 
     return new;
 }
 
 
-struct list *copyList(struct list *list)
+struct token_list *listDup(struct token_list *list)
 {
-    struct list *new = NULL;
+    struct token_list *new = NULL;
 
     if (list != NULL) {
         struct token *node = list->first;
-        new = newList();
+        new = listInit();
 
         while (node != NULL) {
-            push(new, copyTokenRecursive(node));
+            push(new, tokenDupR(node));
             node = node->next;
         }
     }

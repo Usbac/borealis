@@ -26,7 +26,7 @@ void stdCreateFile(struct result_list *args)
         result = 0;
     }
 
-    pushResultD(result);
+    statePushResultD(result);
     free(path);
 }
 
@@ -42,7 +42,7 @@ void stdReadFile(struct result_list *args)
     long len;
 
     if (!fp) {
-        pushResultNull();
+        statePushResultNull();
         goto end;
     }
 
@@ -72,9 +72,9 @@ void stdReadFile(struct result_list *args)
     fclose(fp);
 
     if (content != NULL) {
-        pushResultStr(content);
+        statePushResultStr(content);
     } else {
-        pushResultNull();
+        statePushResultNull();
     }
 
     end:
@@ -102,7 +102,7 @@ void stdWriteFile(struct result_list *args)
         result = false;
     }
 
-    pushResultD(result);
+    statePushResultD(result);
     free(path);
     free(content);
 }
@@ -119,7 +119,7 @@ void stdAppendFile(struct result_list *args)
         result = false;
     }
 
-    pushResultD(result);
+    statePushResultD(result);
     free(path);
     free(content);
 }
@@ -150,7 +150,7 @@ void stdCopy(struct result_list *args)
     }
 
     end:
-        pushResultD(result);
+    statePushResultD(result);
         free(ori);
         free(dest);
 }
@@ -162,9 +162,9 @@ void stdGetModTime(struct result_list *args)
     struct stat info;
 
     if (stat(path, &info) < 0) {
-        pushResultNull();
+        statePushResultNull();
     } else {
-        pushResultD((double) info.st_mtime);
+        statePushResultD((double) info.st_mtime);
     }
 
     free(path);
@@ -178,7 +178,7 @@ void stdGetType(struct result_list *args)
 
     struct stat info;
     if (stat(path, &info) < 0) {
-        pushResultNull();
+        statePushResultNull();
         goto end;
     }
 
@@ -198,7 +198,7 @@ void stdGetType(struct result_list *args)
         result = "unknown";
     }
 
-    pushResultStr(strDup(result));
+    statePushResultStr(strDup(result));
 
     end: free(path);
 }
@@ -211,9 +211,9 @@ void stdGetFileSize(struct result_list *args)
     long size;
 
     if (!fp || (size = getFileSize(fp)) == 0) {
-        pushResultNull();
+        statePushResultNull();
     } else {
-        pushResultD((double) size);
+        statePushResultD((double) size);
     }
 
     fclose(fp);

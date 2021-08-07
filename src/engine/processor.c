@@ -26,7 +26,7 @@ static void processJmpSection(struct token **node)
     *node = (*node)->next;
     while (*node != NULL) {
         evalNode(node);
-        if (*node == end || !canContinue()) {
+        if (*node == end || !stateCanContinue()) {
             break;
         }
 
@@ -37,18 +37,18 @@ static void processJmpSection(struct token **node)
 
 static void evalOperator(struct token *node)
 {
-    struct result *a = popResult();
-    struct result *b = popResult();
-    pushResultD(getOpResult(node->opcode, getValueD(b), getValueD(a)));
+    struct result *a = statePopResult();
+    struct result *b = statePopResult();
+    statePushResultD(getOpResult(node->opcode, getValueD(b), getValueD(a)));
 
-    freeResult(a);
-    freeResult(b);
+    resultFree(a);
+    resultFree(b);
 }
 
 
 static void evalIdentifier(struct token *node)
 {
-    pushResultEl(getElement(node->value, state->file));
+    statePushResultEl(stateGetElement(node->value, state->file));
     state->stack->last->value.string = node->value;
 }
 
@@ -66,14 +66,14 @@ static void evalAnonFunc(struct token **node)
         return;
     }
 
-    func = initFunc();
+    func = funcInit();
     func->def_file = strDup(state->file);
-    func->params = copyList((*node)->next->body);
-    func->stmts = copyList((*node)->next->next->body);
-    func->num_params = getParamsNumber(func->params);
+    func->params = listDup((*node)->next->body);
+    func->stmts = listDup((*node)->next->next->body);
+    func->params_n = getParamsNumber(func->params);
     func->return_type = T_Null;
 
-    pushResultFunc(func);
+    statePushResultFunc(func);
 
     *node = (*node)->next->next;
 }
@@ -92,48 +92,48 @@ static void evalDefinition(struct token **node)
     }
 
     evalNode(&(*node)->next);
-    identifier = popResultSafe();
+    identifier = statePopResultSafe();
     key = identifier->value.string;
 
-    redeclared_out = getElement(key, state->file) != NULL;
-    redeclared_obj = getElementInTable(key, state->current_obj, NULL) != NULL;
+    redeclared_out = stateGetElement(key, state->file) != NULL;
+    redeclared_obj = elementGet(key, state->current_obj, NULL) != NULL;
     if (redeclared_obj || (state->current_obj == NULL && redeclared_out)) {
         errorF(identifier->line_n, E_REDECLARE, key);
     }
 
-    el = newElement(key, state->file, state->scope, T_Null);
+    el = elementInit(key, state->file, state->scope, T_Null);
     el->static_type = getOpcodeType((*node)->opcode);
-    declareElement(&el);
+    stateDeclareElement(&el);
 
-    freeResult(identifier);
+    resultFree(identifier);
 }
 
 
 static void evalAssignation(struct token **node)
 {
-    struct result *identifier = popResult();
+    struct result *identifier = statePopResult();
     struct result *val;
     struct element *el = getValueEl(identifier);
 
     processJmpSection(node);
-    val = popResult();
+    val = statePopResult();
 
     validateElementMod(identifier, getResultType(val));
 
     if (el != getValueEl(val)) {
         mapResultToElement(el, val);
-        pushResultEl(el);
+        statePushResultEl(el);
     }
 
-    freeResult(val);
-    freeResult(identifier);
+    resultFree(val);
+    resultFree(identifier);
 }
 
 
 static void evalOpEqual(struct token *node)
 {
-    struct result *val = popResult();
-    struct result *identifier = popResult();
+    struct result *val = statePopResult();
+    struct result *identifier = statePopResult();
     struct element *el = getValueEl(identifier);
     double value;
 
@@ -141,21 +141,21 @@ static void evalOpEqual(struct token *node)
 
     value = getOpResult(node->opcode, getValueD(identifier), getValueD(val));
 
-    freeElementValues(&el);
+    elementFreeValues(&el);
     el->value.number = value;
     el->type = T_Number;
 
-    pushResultD(value);
+    statePushResultD(value);
 
-    freeResult(val);
-    freeResult(identifier);
+    resultFree(val);
+    resultFree(identifier);
 }
 
 
 static void evalOpConcat(void)
 {
-    struct result *val = popResult();
-    struct result *identifier = popResult();
+    struct result *val = statePopResult();
+    struct result *identifier = statePopResult();
     struct element *el = getValueEl(identifier);
     char *el_val, *new_str;
 
@@ -163,91 +163,91 @@ static void evalOpConcat(void)
 
     el_val = getUnionStr(el->type, el->value);
     new_str = getValueStr(val);
-    freeElementValues(&el);
+    elementFreeValues(&el);
     el->value.string = strJoin(el_val, new_str);
     el->type = T_String;
 
-    pushResultStr(strDup(el->value.string));
+    statePushResultStr(strDup(el->value.string));
 
     free(new_str);
     free(el_val);
-    freeResult(val);
-    freeResult(identifier);
+    resultFree(val);
+    resultFree(identifier);
 }
 
 
 static void evalSign(struct token *node)
 {
-    struct result *val = popResult();
+    struct result *val = statePopResult();
     double result = getValueD(val);
-    pushResultD(node->opcode == OP_Positive ? +result : -result);
-    freeResult(val);
+    statePushResultD(node->opcode == OP_Positive ? +result : -result);
+    resultFree(val);
 }
 
 
 static void evalCompString(struct token *node)
 {
-    struct result *a = popResult();
-    struct result *b = popResult();
+    struct result *a = statePopResult();
+    struct result *b = statePopResult();
     char *a_str = getValueStr(a);
     char *b_str = getValueStr(b);
 
-    pushResultD((node->opcode == OP_Compare_string) == !strcmp(a_str, b_str));
+    statePushResultD((node->opcode == OP_Compare_string) == !strcmp(a_str, b_str));
 
     free(a_str);
     free(b_str);
-    freeResult(a);
-    freeResult(b);
+    resultFree(a);
+    resultFree(b);
 }
 
 
 static void evalCompStrict(struct token *node)
 {
-    struct result *a = popResult();
-    struct result *b = popResult();
+    struct result *a = statePopResult();
+    struct result *b = statePopResult();
 
-    pushResultD((node->opcode == OP_Compare_strict) == compareResults(a, b));
+    statePushResultD((node->opcode == OP_Compare_strict) == compareResults(a, b));
 
-    freeResult(a);
-    freeResult(b);
+    resultFree(a);
+    resultFree(b);
 }
 
 
 static void evalAnd(struct token **node)
 {
-    struct result *a = popResult(), *b;
+    struct result *a = statePopResult(), *b;
 
     if (!isTrue(a)) {
-        pushResultD(false);
+        statePushResultD(false);
         jmpStmts(node);
     } else {
         processJmpSection(node);
 
-        b = popResult();
-        pushResultD(isTrue(a) && isTrue(b));
-        freeResult(b);
+        b = statePopResult();
+        statePushResultD(isTrue(a) && isTrue(b));
+        resultFree(b);
     }
 
-    freeResult(a);
+    resultFree(a);
 }
 
 
 static void evalOr(struct token **node)
 {
-    struct result *a = popResult(), *b;
+    struct result *a = statePopResult(), *b;
 
     if (isTrue(a)) {
-        pushResultD(true);
+        statePushResultD(true);
         jmpStmts(node);
     } else {
         processJmpSection(node);
 
-        b = popResult();
-        pushResultD(isTrue(b));
-        freeResult(b);
+        b = statePopResult();
+        statePushResultD(isTrue(b));
+        resultFree(b);
     }
 
-    freeResult(a);
+    resultFree(a);
 }
 
 
@@ -261,14 +261,14 @@ static void evalBodylessIf(struct token **node)
         struct result *cond = NULL;
         if ((*node)->opcode == OP_Continue || (*node)->opcode == OP_Break ||
             (*node)->opcode == OP_Return) {
-            cond = popResult();
+            cond = statePopResult();
         }
 
         if (cond == NULL || isTrue(cond)) {
             evalNode(node);
         }
 
-        freeResult(cond);
+        resultFree(cond);
         *node = (*node)->next;
     }
 }
@@ -276,7 +276,7 @@ static void evalBodylessIf(struct token **node)
 
 static void evalIf(struct token **node)
 {
-    struct result *cond = popResult();
+    struct result *cond = statePopResult();
     bool evaluated = false;
 
     if (cond == NULL) {
@@ -291,7 +291,7 @@ static void evalIf(struct token **node)
 
         if ((*node)->opcode == OP_If) {
             if (cond == NULL) {
-                cond = popResult();
+                cond = statePopResult();
             }
 
             *node = (*node)->next;
@@ -301,7 +301,7 @@ static void evalIf(struct token **node)
                 evaluated = true;
             }
 
-            freeResult(cond);
+            resultFree(cond);
             cond = NULL;
         } else {
             evalNode(node);
@@ -314,20 +314,20 @@ static void evalIf(struct token **node)
 
 static void evalWhile(struct token **node)
 {
-    struct result *cond = popResult();
+    struct result *cond = statePopResult();
     struct token *start = *node;
 
     /* Empty body while */
     if (cond == NULL) {
         do {
-            freeResult(cond);
+            resultFree(cond);
             *node = (*node)->next;
             while (*node != NULL && (*node)->opcode != OP_Stmt_sep) {
                 evalNode(node);
                 *node = (*node)->next;
             }
 
-            cond = popResult();
+            cond = statePopResult();
             *node = start;
         } while (cond != NULL && isTrue(cond));
         goto end;
@@ -341,11 +341,11 @@ static void evalWhile(struct token **node)
     }
 
     state->scope++;
-    pushContext(C_Loop);
+    statePushContext(C_Loop);
     *node = (*node)->next;
     evalBytecode((*node)->body);
-    freeElementsByScope(state->scope--);
-    popContext();
+    stateElementsFree(state->scope--);
+    statePopContext();
 
     if (!state->breaking_loop) {
         *node = start;
@@ -355,15 +355,16 @@ static void evalWhile(struct token **node)
     state->breaking_loop = false;
     state->continuing_loop = false;
 
-    end: freeResult(cond);
+    end:
+    resultFree(cond);
 }
 
 
 static bool evalCaseCond(struct token **ite, struct result *val)
 {
-    struct result *ite_val = popResult();
+    struct result *ite_val = statePopResult();
     bool equals = compareResults(val, ite_val);
-    freeResult(ite_val);
+    resultFree(ite_val);
 
     if (!equals) {
         jmpStmts(ite);
@@ -376,14 +377,14 @@ static bool evalCaseCond(struct token **ite, struct result *val)
         *ite = (*ite)->next;
     }
 
-    freeElementsByScope(state->scope--);
+    stateElementsFree(state->scope--);
     return true;
 }
 
 
 static void evalCase(struct token **node)
 {
-    struct result *val = popResult();
+    struct result *val = statePopResult();
 
     for (struct token *i = (*node)->next->body->first; i != NULL; i = i->next) {
         if (i->opcode == OP_Colon) {
@@ -394,7 +395,7 @@ static void evalCase(struct token **node)
     }
 
     *node = (*node)->next;
-    freeResult(val);
+    resultFree(val);
 }
 
 
@@ -418,25 +419,25 @@ static void evalForeachIterations(struct token **node,
         if (key != NULL) {
             struct element *key_el;
 
-            if (getElement(i->ptr->key, state->file) != NULL) {
+            if (stateGetElement(i->ptr->key, state->file) != NULL) {
                 errorF((*node)->line_n, E_REDECLARE, i->ptr->key);
             }
 
-            key_el = newElement(key->value.string, state->file, state->scope, T_String);
+            key_el = elementInit(key->value.string, state->file, state->scope, T_String);
             key_el->value.string = strDup(i->ptr->key);
-            declareElement(&key_el);
+            stateDeclareElement(&key_el);
         }
 
-        if (getElement(val->value.string, state->file) != NULL) {
+        if (stateGetElement(val->value.string, state->file) != NULL) {
             errorF((*node)->line_n, E_REDECLARE, val->value.string);
         }
 
-        val_el = newElement(val->value.string, state->file, state->scope, T_Null);
-        copyElementValues(&val_el, i->ptr);
-        declareElement(&val_el);
+        val_el = elementInit(val->value.string, state->file, state->scope, T_Null);
+        elementDupValues(&val_el, i->ptr);
+        stateDeclareElement(&val_el);
 
         evalBytecode(code->body);
-        freeElementsByScope(state->scope);
+        stateElementsFree(state->scope);
     }
 }
 
@@ -452,12 +453,12 @@ static void evalForeach(struct token **node)
         *node = (*node)->next;
     }
 
-    ite_val = popResultSafe();
+    ite_val = statePopResultSafe();
     if ((*node)->prev->prev->opcode == OP_Colon) {
-        ite_key = popResultSafe();
+        ite_key = statePopResultSafe();
     }
 
-    val = popResult();
+    val = statePopResult();
     arr = getValueArr(val);
 
     if (arr == NULL) {
@@ -465,21 +466,21 @@ static void evalForeach(struct token **node)
     }
 
     state->scope++;
-    pushContext(C_Loop);
+    statePushContext(C_Loop);
     evalForeachIterations(node, arr, ite_key, ite_val);
     state->breaking_loop = false;
     state->scope--;
-    popContext();
+    statePopContext();
 
-    freeResult(val);
-    freeResult(ite_key);
-    freeResult(ite_val);
+    resultFree(val);
+    resultFree(ite_key);
+    resultFree(ite_val);
 }
 
 
 static void evalBreak(struct token **node)
 {
-    if (!insideContext(C_Loop)) {
+    if (!stateIsInsideContext(C_Loop)) {
         errorF((*node)->line_n, E_LOOP, "break");
     }
 
@@ -489,7 +490,7 @@ static void evalBreak(struct token **node)
 
 static void evalContinue(struct token **node)
 {
-    if (!insideContext(C_Loop)) {
+    if (!stateIsInsideContext(C_Loop)) {
         errorF((*node)->line_n, E_LOOP, "continue");
     }
 
@@ -500,7 +501,7 @@ static void evalContinue(struct token **node)
 static void evalReturn(struct token *node)
 {
     if (isEmptyReturn(node)) {
-        pushResultNull();
+        statePushResultNull();
     }
 
     state->returning = true;
@@ -510,27 +511,27 @@ static void evalReturn(struct token *node)
 static void evalObject(struct token **node)
 {
     struct element_table *aux_current_obj = state->current_obj;
-    struct result_list *aux_stack = copyResultList(state->stack);
-    struct element_table *obj = newElementTable();
+    struct result_list *aux_stack = stateResultListDup(state->stack);
+    struct element_table *obj = elementTableInit();
 
-    freeResultList(state->stack);
-    state->stack = newResultList();
+    resultListFree(state->stack);
+    state->stack = resultListInit();
     state->current_obj = obj;
 
     evalBytecode((*node)->next->body);
 
-    freeResultList(state->stack);
+    resultListFree(state->stack);
     state->stack = aux_stack;
     state->current_obj = aux_current_obj;
 
-    pushResultObj(obj);
+    statePushResultObj(obj);
     *node = (*node)->next;
 }
 
 
 static void evalImport(void)
 {
-    struct result *returned = NULL, *val = popResult();
+    struct result *returned = NULL, *val = statePopResult();
     char *folder = strDup(state->file);
     char *slash = strrchr(folder, '/');
     char *module = getValueStr(val);
@@ -553,52 +554,52 @@ static void evalImport(void)
         errorF(val->line_n, E_READ_FILE, file);
     }
 
-    pushContext(C_Import);
+    statePushContext(C_Import);
     aux_state = saveState(NULL, file);
 
-    if (!(imported_file = isFileImported(file))) {
+    if (!(imported_file = stateIsFileImported(file))) {
         processFile(file, val->line_n);
 
         if (state->returning) {
-            returned = popResult();
+            returned = statePopResult();
         }
     } else {
-        el = getElement(file, NULL);
+        el = stateGetElement(file, NULL);
     }
 
     restoreState(aux_state);
-    popContext();
+    statePopContext();
 
     if (returned != NULL) {
-        el = newElement(file, NULL, 0, T_Null);
+        el = elementInit(file, NULL, 0, T_Null);
         mapResultToElement(el, returned);
-        pushElementToTable(&elements, el);
-        pushResultRef(el);
-        freeResult(returned);
+        elementTablePush(&elements, el);
+        statePushResultRef(el);
+        resultFree(returned);
     } else if (!imported_file) {
-        pushResultNull();
+        statePushResultNull();
     } else {
-        pushResultRef(el);
+        statePushResultRef(el);
     }
 
     free(file);
     free(folder);
     free(module);
-    freeResult(val);
+    resultFree(val);
 }
 
 
 static struct element *getVariadicArg(const char *key, struct result *arg)
 {
-    struct element *el = newElement(key, state->file, state->scope, T_Array);
+    struct element *el = elementInit(key, state->file, state->scope, T_Array);
     size_t i = 0;
 
     while (arg != NULL) {
         char *index = strFromSizet(i++);
-        struct element *prop = newElement(index, NULL, 0, T_Null);
+        struct element *prop = elementInit(index, NULL, 0, T_Null);
         prop->public = true;
         mapResultToElement(prop, arg);
-        pushElementToTable(&el->value.values, prop);
+        elementTablePush(&el->value.values, prop);
 
         free(index);
 
@@ -619,11 +620,11 @@ static void mapDefaultArgs(struct element_table **table, struct token **param)
                 break;
             }
 
-            arg = newElement((*param)->value, state->file, state->scope, T_Null);
-            pushResultEl(arg);
+            arg = elementInit((*param)->value, state->file, state->scope, T_Null);
+            statePushResultEl(arg);
             *param = (*param)->next;
             evalAssignation(param);
-            pushElementToTable(table, arg);
+            elementTablePush(table, arg);
         }
 
         *param = (*param)->next;
@@ -651,10 +652,10 @@ static void mapArg(struct element_table **table,
         key = (*ite_params)->value;
     }
 
-    arg = newElement(key, state->file, state->scope, T_Null);
+    arg = elementInit(key, state->file, state->scope, T_Null);
     arg->static_type = type;
     mapResultToElement(arg, value);
-    pushElementToTable(table, arg);
+    elementTablePush(table, arg);
 
     while (*ite_params != NULL) {
         *ite_params = (*ite_params)->next;
@@ -670,17 +671,17 @@ static void mapArg(struct element_table **table,
 static struct result *getFuncResult(struct function *func,
                                     const char *calling_file)
 {
-    struct result *returned = popResult();
+    struct result *returned = statePopResult();
     enum TYPE returned_type = getResultType(returned);
     struct result *result = malloc_(sizeof(struct result));
-    struct element *el = newElement(NULL,
-        calling_file,
-        state->scope,
-        T_Null);
+    struct element *el = elementInit(NULL,
+                                     calling_file,
+                                     state->scope,
+                                     T_Null);
 
     if (returned != NULL) {
         mapResultToElement(el, returned);
-        freeResult(returned);
+        resultFree(returned);
     }
 
     if (func->return_type != T_Null && func->return_type != returned_type) {
@@ -690,10 +691,10 @@ static struct result *getFuncResult(struct function *func,
             getElementTypeAsStr(returned_type));
     }
 
-    pushElementToTable(state->callstack->prev != NULL ?
-        &state->callstack->prev->elements :
-        &elements,
-        el);
+    elementTablePush(state->callstack->prev != NULL ?
+                     &state->callstack->prev->elements :
+                     &elements,
+                     el);
 
     *result = (struct result) {
         .type = T_Identifier,
@@ -707,20 +708,20 @@ static struct result *getFuncResult(struct function *func,
 
 static void evalReference(void)
 {
-    struct result *val = popResult();
+    struct result *val = statePopResult();
 
     if (val->p_el == NULL) {
         errorF(val->line_n, E_NULL_REFERENCE);
     }
 
-    pushResultRef(val->p_el);
-    freeResult(val);
+    statePushResultRef(val->p_el);
+    resultFree(val);
 }
 
 
 static void evalUnaryOp(struct token *node)
 {
-    struct result *identifier = popResult();
+    struct result *identifier = statePopResult();
     struct element *el = getValueEl(identifier);
     double value, result;
 
@@ -735,18 +736,18 @@ static void evalUnaryOp(struct token *node)
         default: result = value; break;
     }
 
-    pushResultD(result);
-    freeElementValues(&el);
+    statePushResultD(result);
+    elementFreeValues(&el);
     el->value.number = value;
     el->type = T_Number;
 
-    freeResult(identifier);
+    resultFree(identifier);
 }
 
 
 static void evalElementModifier(struct token *node)
 {
-    struct result *val = popResult();
+    struct result *val = statePopResult();
 
     switch (node->opcode) {
         case OP_Public: val->p_el->public = true; break;
@@ -754,116 +755,116 @@ static void evalElementModifier(struct token *node)
         default: break;
     }
 
-    pushResultEl(val->p_el);
-    freeResult(val);
+    statePushResultEl(val->p_el);
+    resultFree(val);
 }
 
 
 static void evalConcat(void)
 {
-    struct result *a = popResult();
-    struct result *b = popResult();
+    struct result *a = statePopResult();
+    struct result *b = statePopResult();
     char *a_str = getValueStr(a);
     char *b_str = getValueStr(b);
-    pushResultStr(strJoin(b_str, a_str));
+    statePushResultStr(strJoin(b_str, a_str));
 
     free(a_str);
     free(b_str);
-    freeResult(b);
-    freeResult(a);
+    resultFree(b);
+    resultFree(a);
 }
 
 
 static void evalNegation(void)
 {
-    struct result *val = popResult();
-    pushResultD(!isTrue(val));
-    freeResult(val);
+    struct result *val = statePopResult();
+    statePushResultD(!isTrue(val));
+    resultFree(val);
 }
 
 
 static void evalArrayProp(struct element_table *arr)
 {
-    struct result *val = popResult();
+    struct result *val = statePopResult();
     char *key = strFromSizet(arr->next_index);
-    struct element *prop = newElement(key, NULL, 0, T_Null);
+    struct element *prop = elementInit(key, NULL, 0, T_Null);
     prop->public = true;
     mapResultToElement(prop, val);
-    pushElementToTable(&arr, prop);
+    elementTablePush(&arr, prop);
 
     if (val->p_el != NULL && val->p_el->unset) {
-        freeElement(&val->p_el);
+        elementFree(&val->p_el);
         free(val->p_el);
     }
 
-    freeResult(val);
+    resultFree(val);
     free(key);
 }
 
 
 static void evalArrayAssocProp(struct element_table *arr, struct token **node)
 {
-    struct result *val, *key = popResult();
+    struct result *val, *key = statePopResult();
     struct element *existing = NULL;
     char *key_str = getValueStr(key);
 
     processJmpSection(node);
-    val = popResult();
+    val = statePopResult();
 
-    existing = getElementInTable(key_str, arr, NULL);
+    existing = elementGet(key_str, arr, NULL);
     if (existing != NULL) {
         mapResultToElement(existing, val);
     } else {
-        struct element *prop = newElement(key_str, NULL, 0, T_Null);
+        struct element *prop = elementInit(key_str, NULL, 0, T_Null);
         mapResultToElement(prop, val);
         prop->public = true;
-        pushElementToTable(&arr, prop);
+        elementTablePush(&arr, prop);
     }
 
     if (val->p_el != NULL && val->p_el->unset) {
-        freeElement(&val->p_el);
+        elementFree(&val->p_el);
         free(val->p_el);
     }
 
     *node = (*node)->next;
 
-    freeResult(key);
-    freeResult(val);
+    resultFree(key);
+    resultFree(val);
     free(key_str);
 }
 
 
 static void evalArraySpread(struct element_table *arr, struct token **node)
 {
-    struct result *sub_arr_val = popResult();
+    struct result *sub_arr_val = statePopResult();
     struct element_table *sub_arr = getValueArr(sub_arr_val);
 
     for (struct element_list *i = sub_arr->first; i != NULL; i = i->next) {
         if (!i->ptr->unset) {
-            struct element *el = getElementInTable(i->ptr->key, arr, NULL);
+            struct element *el = elementGet(i->ptr->key, arr, NULL);
             if (el != NULL) {
-                freeElementValues(&el);
-                copyElementValues(&el, i->ptr);
+                elementFreeValues(&el);
+                elementDupValues(&el, i->ptr);
             } else {
-                el = newElement(i->ptr->key, NULL, 0, T_Null);
-                copyElementValues(&el, i->ptr);
-                pushElementToTable(&arr, el);
+                el = elementInit(i->ptr->key, NULL, 0, T_Null);
+                elementDupValues(&el, i->ptr);
+                elementTablePush(&arr, el);
             }
         }
     }
 
-    freeResult(sub_arr_val);
+    resultFree(sub_arr_val);
     *node = (*node)->next;
 }
 
 
 static void evalArray(struct token **node)
 {
-    struct result_list *aux_stack = copyResultList(state->stack);
-    struct element_table *arr = newElementTable();
+    struct result_list *aux_stack = stateResultListDup(state->stack);
+    struct element_table *arr = elementTableInit();
 
-    freeResultList(state->stack);
-    state->stack = newResultList();
+    resultListFree(state->stack);
+    state->stack = resultListInit();
 
     for (struct token *i = (*node)->body->first; i != NULL; i = i->next) {
         if (i->opcode == OP_Stmt_sep) {
@@ -877,9 +878,9 @@ static void evalArray(struct token **node)
         }
     }
 
-    freeResultList(state->stack);
+    resultListFree(state->stack);
     state->stack = aux_stack;
-    pushResultArr(arr);
+    StatePushResultArr(arr);
 }
 
 
@@ -890,12 +891,12 @@ static void evalNullcoalesce(struct token **node)
 
     processJmpSection(node);
 
-    a = popResultSafe();
-    b = popResult();
+    a = statePopResultSafe();
+    b = statePopResult();
     result = getResultType(a) != T_Null ? a : b;
-    pushResult(state->stack, result);
+    statePushResult(state->stack, result);
 
-    freeResult(a == result ? b : a);
+    resultFree(a == result ? b : a);
 }
 
 
@@ -905,11 +906,11 @@ static void evalThis(struct token *node)
         errorF(node->line_n, E_THIS);
     }
 
-    pushResultObj(state->current_obj);
+    statePushResultObj(state->current_obj);
 }
 
 
-static void evalIndexChunk(struct list *list)
+static void evalIndexChunk(struct token_list *list)
 {
     for (struct token *i = list->first; i != NULL; i = i->next) {
         if (i->opcode != OP_Stmt_sep) {
@@ -934,11 +935,11 @@ static void evalIndex(struct token *node)
     evalIndexChunk(node->body);
 
     if (node->body->first == NULL) {
-        pushResultD(0);
+        statePushResultD(0);
     }
 
-    index = popResult();
-    val = popResult();
+    index = statePopResult();
+    val = statePopResult();
     type = getResultType(val);
     el = type == T_Array ?
         getValueArr(val) :
@@ -955,44 +956,44 @@ static void evalIndex(struct token *node)
     }
 
     if (type == T_String) {
-        struct result_list *args = newResultList();
-        pushResult(args, val);
-        pushResult(args, index);
+        struct result_list *args = resultListInit();
+        statePushResult(args, val);
+        statePushResult(args, index);
         stdGetChar(args);
         free(args);
         goto end;
     }
 
     if (el == NULL && state->null_coalescing) {
-        pushResultNull();
+        statePushResultNull();
         goto end;
     } else if (el == NULL || (type != T_Array && type != T_Object)) {
         errorF(node->line_n, E_INDEX, getElementTypeAsStr(type));
     }
 
     key = getValueStr(index);
-    prop = getElementInTable(key, el, NULL);
+    prop = elementGet(key, el, NULL);
 
     if (prop == NULL && node->next->opcode == OP_Assignation) {
-        prop = newElement(key, NULL, 0, T_Null);
+        prop = elementInit(key, NULL, 0, T_Null);
         prop->public = type == T_Array || state->current_obj != el;
-        pushElementToTable(&el, prop);
-        pushResultEl(prop);
+        elementTablePush(&el, prop);
+        statePushResultEl(prop);
     } else if (prop == NULL) {
-        pushResultNull();
+        statePushResultNull();
     } else {
         if ((val->type == T_Array || val->type == T_Object) &&
             val->value.values != state->current_obj) {
-            pushResult(state->stack, getResultFromElement(prop));
+            statePushResult(state->stack, getResultFromElement(prop));
         } else {
-            pushResultEl(prop);
+            statePushResultEl(prop);
         }
     }
 
     free(key);
     end:
-        freeResult(index);
-        freeResult(val);
+    resultFree(index);
+    resultFree(val);
 }
 
 
@@ -1000,14 +1001,14 @@ static void evalChunk(struct token *node)
 {
     state->scope++;
     evalBytecode(node->body);
-    freeElementsByScope(state->scope--);
+    stateElementsFree(state->scope--);
 }
 
 
 static struct element_table *getArgsTable(struct function *func,
                                           struct result_list *args)
 {
-    struct element_table *table = newElementTable();
+    struct element_table *table = elementTableInit();
     struct result *arg = args != NULL ? args->first : NULL;
     struct token *param = func->params != NULL ? func->params->first : NULL;
 
@@ -1024,23 +1025,23 @@ static struct element_table *getArgsTable(struct function *func,
 
         if (arg == NULL && param != NULL && param->type == T_Identifier &&
             param->next != NULL && param->next->opcode != OP_Assignation) {
-            errorF(state->line_n, E_FUNC_PARAM_NUM, func->num_params);
+            errorF(state->line_n, E_FUNC_PARAM_NUM, func->params_n);
         }
 
         mapDefaultArgs(&table, &param);
 
         if ((arg == NULL && param != NULL) || (arg != NULL && param == NULL)) {
-            errorF(state->line_n, E_FUNC_PARAM_NUM, func->num_params);
+            errorF(state->line_n, E_FUNC_PARAM_NUM, func->params_n);
         }
     } else {
-        pushElementToTable(&table, getVariadicArg(param->value, arg));
+        elementTablePush(&table, getVariadicArg(param->value, arg));
     }
 
     return table;
 }
 
 
-void execFunc(struct function *func,
+void funcExec(struct function *func,
               struct result_list *args,
               struct element_table *obj)
 {
@@ -1050,31 +1051,31 @@ void execFunc(struct function *func,
     if (func == NULL) {
         errorF(state->line_n, E_NON_CALLABLE);
     } else if (func->native_code) {
-        callStdFunc(func, args);
+        stdlibFuncCall(func, args);
         return;
     }
 
     aux_state = saveState(obj, func->def_file);
 
-    pushContext(C_Function);
-    pushCallstack(getArgsTable(func, args), obj);
+    statePushContext(C_Function);
+    statePushCallstack(getArgsTable(func, args), obj);
     evalBytecode(func->stmts);
     result = getFuncResult(func, aux_state->file);
-    popContext();
-    popCallstack();
+    statePopContext();
+    statePopCallstack();
     restoreState(aux_state);
 
-    pushResult(state->stack, result);
+    statePushResult(state->stack, result);
 }
 
 
-static struct result_list *getArgsResultList(struct list *tokens)
+static struct result_list *getArgsResultList(struct token_list *tokens)
 {
-    struct result_list *args = newResultList();
+    struct result_list *args = resultListInit();
 
     for (struct token *i = tokens->first; i != NULL; i = i->next) {
         if (i->opcode == OP_Spread) {
-            struct result *arr_value = popResult();
+            struct result *arr_value = statePopResult();
             struct element_table *arr = getValueArr(arr_value);
             enum TYPE type = getResultType(arr_value);
             struct element_list *arr_ite;
@@ -1086,18 +1087,18 @@ static struct result_list *getArgsResultList(struct list *tokens)
             arr_ite = arr->first;
             while (arr_ite != NULL) {
                 if (!arr_ite->ptr->unset) {
-                    pushResult(args, getResultFromElement(arr_ite->ptr));
+                    statePushResult(args, getResultFromElement(arr_ite->ptr));
                 }
 
                 arr_ite = arr_ite->next;
             }
 
             i = i->next;
-            freeResult(arr_value);
+            resultFree(arr_value);
         } else if (i->opcode != OP_Stmt_sep) {
             evalNode(&i);
         } else {
-            pushResult(args, popResult());
+            statePushResult(args, statePopResult());
         }
     }
 
@@ -1107,20 +1108,20 @@ static struct result_list *getArgsResultList(struct list *tokens)
 
 static void evalFuncCall(struct token *node, struct element_table *obj)
 {
-    struct result *result = popResult();
+    struct result *result = statePopResult();
     struct function *func = getValueFunc(result);
     struct result_list *args = getArgsResultList(node->body);
-    execFunc(func, args, obj);
+    funcExec(func, args, obj);
 
-    freeResult(result);
-    freeResultList(args);
+    resultFree(result);
+    resultListFree(args);
 }
 
 
 static void evalProp(struct token **node)
 {
-    struct result *prop = popResultSafe();
-    struct result *obj_val = popResultSafe();
+    struct result *prop = statePopResultSafe();
+    struct result *obj_val = statePopResultSafe();
     enum TYPE obj_type = getResultType(obj_val);
     char *prop_key = strDup(prop->value.string);
     struct element_table *obj = getValueObj(obj_val);
@@ -1129,33 +1130,33 @@ static void evalProp(struct token **node)
 
     if (obj_type != T_Object) {
         if (obj_type == T_Null && (state->null_coalescing || safe)) {
-            pushResultNull();
+            statePushResultNull();
             goto end;
         }
 
         errorF(obj_val->line_n, E_NON_OBJECT, getElementTypeAsStr(obj_type));
     }
 
-    el = getElementInTable(prop_key, obj, NULL);
+    el = elementGet(prop_key, obj, NULL);
 
     if (el == NULL && (*node)->next->opcode == OP_Assignation) {
-        el = newElement(prop_key, NULL, 0, T_Null);
+        el = elementInit(prop_key, NULL, 0, T_Null);
         el->public = state->current_obj != obj;
-        pushElementToTable(&obj, el);
-        pushResultEl(el);
+        elementTablePush(&obj, el);
+        statePushResultEl(el);
     } else if (el == NULL) {
-        pushResultNull();
+        statePushResultNull();
     } else if (!el->public && state->current_obj != obj) {
         if (safe) {
-            pushResultNull();
+            statePushResultNull();
         } else {
             errorF((*node)->line_n, E_PUBLIC, prop->value);
         }
     } else {
         if (obj_val->type == T_Object && obj_val->value.values != state->current_obj) {
-            pushResult(state->stack, getResultFromElement(el));
+            statePushResult(state->stack, getResultFromElement(el));
         } else {
-            pushResultEl(el);
+            statePushResultEl(el);
         }
     }
 
@@ -1165,32 +1166,32 @@ static void evalProp(struct token **node)
     }
 
     end:
-        freeResult(obj_val);
+    resultFree(obj_val);
         free(prop_key);
-        freeResult(prop);
+    resultFree(prop);
 }
 
 
 static void evalBang(void)
 {
-    struct result *func_value = popResult();
-    struct result *element_value = popResult();
+    struct result *func_value = statePopResult();
+    struct result *element_value = statePopResult();
     struct function *func = getValueFunc(func_value);
-    struct result_list *args = newResultList();
+    struct result_list *args = resultListInit();
     struct element *element = getValueEl(element_value);
     struct result *result;
 
-    pushResult(args, element_value);
+    statePushResult(args, element_value);
 
-    execFunc(func, args, state->current_obj);
-    result = popResult();
+    funcExec(func, args, state->current_obj);
+    result = statePopResult();
     validateElementMod(element_value, getResultType(result));
     mapResultToElement(element, result);
-    pushResultEl(element);
+    statePushResultEl(element);
 
-    freeResultList(args);
-    freeResult(func_value);
-    freeResult(result);
+    resultListFree(args);
+    resultFree(func_value);
+    resultFree(result);
 }
 
 
@@ -1200,9 +1201,9 @@ void evalNode(struct token **node)
 
     if ((*node)->opcode == OP_Stmt_sep) {
         if (!state->in_repl) {
-            freeResult(popResult());
+            resultFree(statePopResult());
         } else {
-            state->last_val = popResult();
+            state->last_val = statePopResult();
         }
 
         return;
@@ -1214,9 +1215,12 @@ void evalNode(struct token **node)
         case T_Array: evalArray(node); break;
         case T_Identifier: evalIdentifier(*node); break;
         case T_Chunk: evalChunk(*node); break;
-        case T_Number: pushResultD(strToD((*node)->value)); break;
-        case T_Null: pushResultNull(); break;
-        case T_String: pushResultStr(strDup((*node)->value)); break;
+        case T_Number:
+            statePushResultD(strToD((*node)->value)); break;
+        case T_Null:
+            statePushResultNull(); break;
+        case T_String:
+            statePushResultStr(strDup((*node)->value)); break;
         case T_Keyword:
             if (isDefKeyword((*node)->opcode)) {
                 evalDefinition(node);
@@ -1278,10 +1282,10 @@ void evalNode(struct token **node)
 }
 
 
-void evalBytecode(struct list *list)
+void evalBytecode(struct token_list *list)
 {
     for (struct token *node = list != NULL ? list->first : NULL;
-        node != NULL && canContinue();
+        node != NULL && stateCanContinue();
         node = node->next) {
         evalNode(&node);
     }
@@ -1290,20 +1294,20 @@ void evalBytecode(struct list *list)
 
 void processFile(const char *file, size_t line_n)
 {
-    struct list *stmts, *bytecode;
+    struct token_list *stmts, *bytecode;
     char *code = readF(file, false);
 
     if (code == NULL) {
         errorF(line_n, E_READ_FILE, file);
     }
 
-    addFileImport(file);
+    stateAddFileImport(file);
     stmts = codeToList(code, DEFAULT_SEP, true, 1);
     preprocess(stmts, file);
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    freeListRecursive(stmts);
-    freeListRecursive(bytecode);
+    ListFreeR(stmts);
+    ListFreeR(bytecode);
     free(code);
 }

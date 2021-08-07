@@ -330,7 +330,7 @@ void mapResultToElement(struct element *el, struct result *node)
 {
     struct element *ref = getElementRef(node);
 
-    freeElementValues(&el);
+    elementFreeValues(&el);
 
     if (ref != NULL) {
         if (el->static_type != ref->static_type) {
@@ -340,7 +340,7 @@ void mapResultToElement(struct element *el, struct result *node)
         el->type = T_Reference;
         el->value.reference = ref;
     } else if (node->p_el != NULL) {
-        copyElementValues(&el, node->p_el);
+        elementDupValues(&el, node->p_el);
     } else {
         el->type = node->type;
         el->value = node->value;
@@ -355,19 +355,19 @@ struct state *saveState(struct element_table *obj, char *file)
     struct state *aux = malloc_(sizeof(struct state));
     *aux = (struct state) {
         .null_coalescing = state->null_coalescing,
-        .stack = copyResultList(state->stack),
+        .stack = stateResultListDup(state->stack),
         .file = strDup(state->file),
         .current_obj = state->current_obj,
     };
 
-    freeResultList(state->stack);
+    resultListFree(state->stack);
 
     if (file != state->file) {
-        setStateFile(strDup(file));
+        stateSetFile(strDup(file));
     }
 
     state->null_coalescing = false;
-    state->stack = newResultList();
+    state->stack = resultListInit();
     state->current_obj = obj;
 
     return aux;
@@ -376,9 +376,9 @@ struct state *saveState(struct element_table *obj, char *file)
 
 void restoreState(struct state *aux)
 {
-    freeResultList(state->stack);
+    resultListFree(state->stack);
 
-    setStateFile(aux->file);
+    stateSetFile(aux->file);
     state->null_coalescing = aux->null_coalescing;
     state->stack = aux->stack;
     state->current_obj = aux->current_obj;
@@ -399,7 +399,7 @@ void jmpStmts(struct token **node)
 }
 
 
-size_t getParamsNumber(struct list *params)
+size_t getParamsNumber(struct token_list *params)
 {
     size_t n = 0;
 

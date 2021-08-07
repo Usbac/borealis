@@ -12,7 +12,7 @@ const char *DATE_FORMAT_SHORT = "%d-%d-%d";
 
 static struct element *getTimePropEl(char *key, double val)
 {
-    struct element *el = newElement(key, NULL, 0, T_Number);
+    struct element *el = elementInit(key, NULL, 0, T_Number);
     el->value.number = val;
     el->public = true;
     return el;
@@ -21,7 +21,7 @@ static struct element *getTimePropEl(char *key, double val)
 
 void stdDateNow(struct result_list *args)
 {
-    pushResultD(time(NULL));
+    statePushResultD(time(NULL));
 }
 
 
@@ -35,7 +35,7 @@ void stdDateToString(struct result_list *args)
 
     strftime(result, SIZE - 1, format, time);
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(format);
 }
 
@@ -50,7 +50,7 @@ void stdFromString(struct result_list *args)
         sscanf(str, DATE_FORMAT_SHORT, &yy, &mm, &dd) == 3) {
         goto ok;
     } else {
-        pushResultD(-1);
+        statePushResultD(-1);
         goto end;
     }
 
@@ -61,7 +61,7 @@ void stdFromString(struct result_list *args)
     tm.tm_mday = dd;
     tm.tm_mon = mm - 1;
     tm.tm_year = yy - 1900;
-    pushResultD(mktime(&tm));
+    statePushResultD(mktime(&tm));
     end: free(str);
 }
 
@@ -70,22 +70,22 @@ void stdDateToObject(struct result_list *args)
 {
     time_t secs = getValueD(args->first);
     struct tm *time = localtime(&secs);
-    struct element_table *obj = newElementTable();
+    struct element_table *obj = elementTableInit();
 
-    pushElementToTable(&obj, getTimePropEl("seconds", time->tm_sec));
-    pushElementToTable(&obj, getTimePropEl("minutes", time->tm_min));
-    pushElementToTable(&obj, getTimePropEl("hours", time->tm_hour));
-    pushElementToTable(&obj, getTimePropEl("day", time->tm_mday));
-    pushElementToTable(&obj, getTimePropEl("month", time->tm_mon + 1));
-    pushElementToTable(&obj, getTimePropEl("year", time->tm_year + 1900));
-    pushElementToTable(&obj, getTimePropEl("yday", time->tm_yday + 1));
-    pushElementToTable(&obj, getTimePropEl("wday", time->tm_wday + 1));
-    pushResultObj(obj);
+    elementTablePush(&obj, getTimePropEl("seconds", time->tm_sec));
+    elementTablePush(&obj, getTimePropEl("minutes", time->tm_min));
+    elementTablePush(&obj, getTimePropEl("hours", time->tm_hour));
+    elementTablePush(&obj, getTimePropEl("day", time->tm_mday));
+    elementTablePush(&obj, getTimePropEl("month", time->tm_mon + 1));
+    elementTablePush(&obj, getTimePropEl("year", time->tm_year + 1900));
+    elementTablePush(&obj, getTimePropEl("yday", time->tm_yday + 1));
+    elementTablePush(&obj, getTimePropEl("wday", time->tm_wday + 1));
+    statePushResultObj(obj);
 }
 
 
 void stdGetGmtOffset(struct result_list *args)
 {
     time_t now = time(NULL);
-    pushResultD((double) now - mktime(gmtime(&now)));
+    statePushResultD((double) now - mktime(gmtime(&now)));
 }

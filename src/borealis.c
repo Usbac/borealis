@@ -45,12 +45,12 @@ static void runExit(void)
     int status_code = 0;
 
     if (state != NULL) {
-        status_code = state->status_code;
-        freeState();
+        status_code = state->code;
+        stateFree();
     }
 
-    freeLexer();
-    freeElements();
+    lexerFree();
+    elementsFree();
     free(cwd);
     exit(status_code);
 }
@@ -66,13 +66,13 @@ static bool mapArgs(int argc, char *argv[])
         return true;
     }
 
-    args = newElementTable();
+    args = elementTableInit();
     for (int i = 0; i < argc; i++) {
-        struct element *arg = newElement(NULL, NULL, 0, T_Null);
+        struct element *arg = elementInit(NULL, NULL, 0, T_Null);
         arg->key = strFromInt(i);
         arg->type = T_String;
         arg->value.string = strDup(argv[i]);
-        pushElementToTable(&args, arg);
+        elementTablePush(&args, arg);
     }
 
     for (int i = 0; i < argc; i++) {
@@ -117,36 +117,36 @@ static bool mapArgs(int argc, char *argv[])
 
 static void runFile(void)
 {
-    initState(arg_file);
-    initStdlib(args, cwd, arg_file);
+    stateInit(arg_file);
+    stdlibInit(args, cwd, arg_file);
     processFile(arg_file, 0);
 }
 
 
 static void runRepl(void)
 {
-    initState(NULL);
-    initStdlib(args, cwd, NULL);
+    stateInit(NULL);
+    stdlibInit(args, cwd, NULL);
     printf(MSG_REPL);
     state->in_repl = true;
-    processRepl();
+    replProcess();
 }
 
 
 static void runCodeLine(void)
 {
-    struct list *stmts, *bytecode;
+    struct token_list *stmts, *bytecode;
 
-    initState(NULL);
-    initStdlib(args, cwd, NULL);
+    stateInit(NULL);
+    stdlibInit(args, cwd, NULL);
 
     stmts = codeToList(arg_code, DEFAULT_SEP, true, 0);
     preprocess(stmts, NULL);
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    freeListRecursive(stmts);
-    freeListRecursive(bytecode);
+    ListFreeR(stmts);
+    ListFreeR(bytecode);
 }
 
 
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
     }
 
     cwd = getcwd_();
-    initLexer();
+    lexerInit();
 
     if (arg_file != NULL) {
         runFile();

@@ -22,12 +22,12 @@ static struct element_table **getDefinitionTable(void)
 }
 
 
-void initState(const char *file)
+void stateInit(const char *file)
 {
     state = malloc_(sizeof(struct state));
     *state = (struct state) {
         .file = strDup(file),
-        .stack = newResultList(),
+        .stack = resultListInit(),
     };
 
     for (size_t i = 0; i < HASHMAP_SIZE; i++) {
@@ -36,14 +36,14 @@ void initState(const char *file)
 }
 
 
-void freeState(void)
+void stateFree(void)
 {
     while (state->callstack != NULL) {
-        popCallstack();
+        statePopCallstack();
     }
 
     while (state->context_head != NULL) {
-        popContext();
+        statePopContext();
     }
 
     for (size_t i = 0; i < HASHMAP_SIZE; i++) {
@@ -55,17 +55,17 @@ void freeState(void)
         }
     }
 
-    freeResultList(state->stack);
+    resultListFree(state->stack);
     FREE_AND_NULL(state->file);
     FREE_AND_NULL(state);
 }
 
 
-void setStateFile(char *file)
+void stateSetFile(char *file)
 {
     FREE_AND_NULL(state->file);
     state->file = file;
-    struct element *el = getElement(STATE_FILE_KEY, NULL);
+    struct element *el = stateGetElement(STATE_FILE_KEY, NULL);
     if (el != NULL) {
         free(el->value.string);
         el->value.string = strDup(file);
@@ -74,7 +74,7 @@ void setStateFile(char *file)
 }
 
 
-void addFileImport(const char *file)
+void stateAddFileImport(const char *file)
 {
     struct import *new = malloc_(sizeof(struct import));
     const size_t hash = getHash(file, HASHMAP_SIZE);
@@ -85,7 +85,7 @@ void addFileImport(const char *file)
 }
 
 
-bool isFileImported(const char *file)
+bool stateIsFileImported(const char *file)
 {
     const size_t hash = getHash(file, HASHMAP_SIZE);
 
@@ -99,7 +99,7 @@ bool isFileImported(const char *file)
 }
 
 
-void pushContext(enum CONTEXT context)
+void statePushContext(enum CONTEXT context)
 {
     struct context *node = malloc_(sizeof(struct context));
     node->value = context;
@@ -113,7 +113,7 @@ void pushContext(enum CONTEXT context)
 }
 
 
-bool insideContext(enum CONTEXT context)
+bool stateIsInsideContext(enum CONTEXT context)
 {
     for (struct context *i = state->context_head; i != NULL; i = i->prev) {
         if (i->value == context) {
@@ -127,7 +127,7 @@ bool insideContext(enum CONTEXT context)
 }
 
 
-void popContext(void)
+void statePopContext(void)
 {
     if (state->context_head == NULL) {
         return;
@@ -142,14 +142,14 @@ void popContext(void)
 }
 
 
-bool canContinue(void)
+bool stateCanContinue(void)
 {
     return !state->continuing_loop && !state->breaking_loop &&
         !state->returning && !state->exiting;
 }
 
 
-struct result_list *newResultList(void)
+struct result_list *resultListInit(void)
 {
     struct result_list *list = malloc_(sizeof(struct result_list));
     *list = (struct result_list) {0};
@@ -158,7 +158,7 @@ struct result_list *newResultList(void)
 }
 
 
-void pushResult(struct result_list *list, struct result *node)
+void statePushResult(struct result_list *list, struct result *node)
 {
     if (list->last == NULL) {
         list->first = node;
@@ -173,7 +173,7 @@ void pushResult(struct result_list *list, struct result *node)
 }
 
 
-void pushResultD(double n)
+void statePushResultD(double n)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -182,11 +182,11 @@ void pushResultD(double n)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultStr(char *str)
+void statePushResultStr(char *str)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -195,11 +195,11 @@ void pushResultStr(char *str)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultRef(struct element *el)
+void statePushResultRef(struct element *el)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -208,11 +208,11 @@ void pushResultRef(struct element *el)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultArr(struct element_table *values)
+void StatePushResultArr(struct element_table *values)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -221,11 +221,11 @@ void pushResultArr(struct element_table *values)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultObj(struct element_table *values)
+void statePushResultObj(struct element_table *values)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -234,11 +234,11 @@ void pushResultObj(struct element_table *values)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultFunc(struct function *func)
+void statePushResultFunc(struct function *func)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -247,11 +247,11 @@ void pushResultFunc(struct function *func)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultEl(struct element *el)
+void statePushResultEl(struct element *el)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -261,11 +261,11 @@ void pushResultEl(struct element *el)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-void pushResultNull(void)
+void statePushResultNull(void)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
@@ -274,13 +274,13 @@ void pushResultNull(void)
         .line_n = state->line_n,
     };
 
-    pushResult(state->stack, node);
+    statePushResult(state->stack, node);
 }
 
 
-struct result *popResult(void)
+struct result *statePopResult(void)
 {
-    struct result *node = popResultSafe();
+    struct result *node = statePopResultSafe();
     if (node != NULL && node->type == T_Identifier && node->p_el == NULL) {
         errorF(node->line_n, E_UNDEFINED, node->value);
     }
@@ -289,7 +289,7 @@ struct result *popResult(void)
 }
 
 
-struct result *popResultSafe(void)
+struct result *statePopResultSafe(void)
 {
     struct result *new;
 
@@ -311,7 +311,7 @@ struct result *popResultSafe(void)
 }
 
 
-struct result_list *copyResultList(struct result_list *list)
+struct result_list *stateResultListDup(struct result_list *list)
 {
     struct result_list *new_list;
 
@@ -319,7 +319,7 @@ struct result_list *copyResultList(struct result_list *list)
         return NULL;
     }
 
-    new_list = newResultList();
+    new_list = resultListInit();
 
     for (struct result *node = list->first; node != NULL; node = node->next) {
         struct result *cpy = malloc_(sizeof(struct result));
@@ -328,14 +328,14 @@ struct result_list *copyResultList(struct result_list *list)
         cpy->p_el = node->p_el;
         cpy->value = valueDup(node->value, node->type);
 
-        pushResult(new_list, cpy);
+        statePushResult(new_list, cpy);
     }
 
     return new_list;
 }
 
 
-void freeResultList(struct result_list *list)
+void resultListFree(struct result_list *list)
 {
     while (list->last != NULL) {
         struct result *node = list->last;
@@ -348,14 +348,14 @@ void freeResultList(struct result_list *list)
             list->first = NULL;
         }
 
-        freeResult(node);
+        resultFree(node);
     }
 
     free(list);
 }
 
 
-void freeResult(struct result *node)
+void resultFree(struct result *node)
 {
     if (node == NULL) {
         return;
@@ -366,12 +366,12 @@ void freeResult(struct result *node)
         case T_Array:
         case T_Object:
             if (state->current_obj != node->value.values) {
-                freeElementsTable(node->value.values, 0);
+                elementsTableFree(node->value.values, 0);
                 free(node->value.values);
             }
             break;
         case T_Function:
-            freeFunction(node->value.function);
+            functionFree(node->value.function);
             free(node->value.function);
             break;
         default: break;
@@ -381,43 +381,43 @@ void freeResult(struct result *node)
 }
 
 
-void declareElement(struct element **el)
+void stateDeclareElement(struct element **el)
 {
-    pushElementToTable(getDefinitionTable(), *el);
+    elementTablePush(getDefinitionTable(), *el);
 }
 
 
-struct element *getElement(const char *key, const char *file)
+struct element *stateGetElement(const char *key, const char *file)
 {
     struct element *el = NULL;
 
     if (state->current_obj != NULL) {
-        el = getElementInTable(key, state->current_obj, NULL);
+        el = elementGet(key, state->current_obj, NULL);
     }
 
     if (el == NULL && state->callstack != NULL) {
-        el = getElementInTable(key, state->callstack->elements, NULL);
+        el = elementGet(key, state->callstack->elements, NULL);
     }
 
     if (el == NULL) {
-        el = getElementInTable(key, elements, file);
+        el = elementGet(key, elements, file);
     }
 
     return el;
 }
 
 
-void freeElementsByScope(size_t scope)
+void stateElementsFree(size_t scope)
 {
     if (state->callstack != NULL) {
-        freeElementsTable(state->callstack->elements, scope);
+        elementsTableFree(state->callstack->elements, scope);
     }
 
-    freeElementsTable(elements, scope);
+    elementsTableFree(elements, scope);
 }
 
 
-void pushCallstack(struct element_table *args, struct element_table *obj)
+void statePushCallstack(struct element_table *args, struct element_table *obj)
 {
     struct call *node;
 
@@ -435,7 +435,7 @@ void pushCallstack(struct element_table *args, struct element_table *obj)
 }
 
 
-void popCallstack(void)
+void statePopCallstack(void)
 {
     struct call *tmp;
 
@@ -444,7 +444,7 @@ void popCallstack(void)
     }
 
     tmp = state->callstack->prev;
-    freeElementsTable(state->callstack->elements, 0);
+    elementsTableFree(state->callstack->elements, 0);
     free(state->callstack->elements);
     FREE_AND_NULL(state->callstack);
     state->callstack = tmp;

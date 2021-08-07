@@ -6,7 +6,7 @@
 #include "parser_bytecode.h"
 
 
-static void pushTokenToBytecode(struct list *list, struct token *node)
+static void pushTokenToBytecode(struct token_list *list, struct token *node)
 {
     push(list, node);
     list->last->ls = NULL;
@@ -14,7 +14,7 @@ static void pushTokenToBytecode(struct list *list, struct token *node)
 }
 
 
-static void pushBytecodeCode(struct list *list, struct token *node)
+static void pushBytecodeCode(struct token_list *list, struct token *node)
 {
     struct token *code = malloc_(sizeof(struct token));
     *code = (struct token) {
@@ -40,7 +40,7 @@ static size_t getJmpLength(struct token *start, struct token *end)
 }
 
 
-void pushBytecode(struct list *list, struct token *node)
+void pushBytecode(struct token_list *list, struct token *node)
 {
     bool added = false;
     struct token *start = NULL;
@@ -51,13 +51,13 @@ void pushBytecode(struct list *list, struct token *node)
 
     if (node->opcode == OP_Closure || node->opcode == OP_Object ||
         node->opcode == OP_Foreach || isDefKeyword(node->opcode)) {
-        pushTokenToBytecode(list, copyToken(node));
+        pushTokenToBytecode(list, tokenDup(node));
         added = true;
     }
 
     if (node->opcode == OP_Null_coalesce) {
         pushBytecode(list, node->ls);
-        pushTokenToBytecode(list, copyToken(node));
+        pushTokenToBytecode(list, tokenDup(node));
         start = list->last;
         pushBytecode(list, node->rs);
         start->jmp = getJmpLength(start, list->last);
@@ -68,11 +68,11 @@ void pushBytecode(struct list *list, struct token *node)
 
     if (node->opcode == OP_If || node->opcode == OP_While ||
         node->opcode == OP_Else || node->opcode == OP_Case) {
-        pushTokenToBytecode(list, copyToken(node));
+        pushTokenToBytecode(list, tokenDup(node));
         added = true;
     } else if (node->opcode == OP_And || node->opcode == OP_Or ||
         node->opcode == OP_Colon || node->opcode == OP_Assignation) {
-        pushTokenToBytecode(list, copyToken(node));
+        pushTokenToBytecode(list, tokenDup(node));
         start = list->last;
         added = true;
     } else if (node->type == T_Chunk) {
@@ -90,14 +90,14 @@ void pushBytecode(struct list *list, struct token *node)
         node->type == T_Index || node->type == T_Arguments) {
         pushBytecodeCode(list, node);
     } else if (!added) {
-        pushTokenToBytecode(list, copyToken(node));
+        pushTokenToBytecode(list, tokenDup(node));
     }
 }
 
 
-struct list *listToBytecode(struct list *ast)
+struct token_list *listToBytecode(struct token_list *ast)
 {
-    struct list *list = newList();
+    struct token_list *list = listInit();
     struct token *node = ast != NULL ? ast->first : NULL;
     struct token *stmt_sep = malloc_(sizeof(struct token));
     *stmt_sep = (struct token) {
@@ -114,7 +114,7 @@ struct list *listToBytecode(struct list *ast)
         node = node->next;
     }
 
-    freeToken(stmt_sep, true);
+    tokenFree(stmt_sep, true);
 
     return list;
 }

@@ -17,7 +17,7 @@ struct element_table *elements = NULL;
 struct element *garbage_head = NULL;
 
 
-struct element_table *newElementTable(void)
+struct element_table *elementTableInit(void)
 {
     struct element_table *table = malloc_(sizeof(struct element_table));
     *table = (struct element_table) {0};
@@ -26,7 +26,7 @@ struct element_table *newElementTable(void)
 }
 
 
-static bool matchesElement(const struct element *el,
+static bool elementMatches(const struct element *el,
                            const char *key,
                            const char *file)
 {
@@ -46,7 +46,7 @@ static void updateArrayNextIndex(struct element_table *el)
 {
     char *key = strFromSizet(el->next_index);
 
-    while (getElementInTable(key, el, NULL) != NULL) {
+    while (elementGet(key, el, NULL) != NULL) {
         SNPRINTF_SIZE_T(key, ++el->next_index);
     }
 
@@ -54,7 +54,7 @@ static void updateArrayNextIndex(struct element_table *el)
 }
 
 
-static struct element *copyElement(struct element *src)
+static struct element *elementDup(struct element *src)
 {
     struct element *dest;
 
@@ -62,16 +62,16 @@ static struct element *copyElement(struct element *src)
         return NULL;
     }
 
-    dest = newElement(src->key, src->file, src->scope, T_Null);
+    dest = elementInit(src->key, src->file, src->scope, T_Null);
     dest->public = src->public;
     dest->constant = src->constant;
-    copyElementValues(&dest, src);
+    elementDupValues(&dest, src);
 
     return dest;
 }
 
 
-struct element_table *copyElementTable(const struct element_table *src)
+struct element_table *elementTableDup(const struct element_table *src)
 {
     struct element_table *table;
 
@@ -79,10 +79,10 @@ struct element_table *copyElementTable(const struct element_table *src)
         return NULL;
     }
 
-    table = newElementTable();
+    table = elementTableInit();
     for (struct element_list *i = src->first; i != NULL; i = i->next) {
         if (!i->ptr->unset) {
-            pushElementToTable(&table, copyElement(i->ptr));
+            elementTablePush(&table, elementDup(i->ptr));
         }
     }
 
@@ -96,7 +96,7 @@ static void insertElementInHashmap(struct element_table **table,
     const size_t hash = getHash(el->key, HASHMAP_SIZE);
 
     if (*table == NULL) {
-        *table = newElementTable();
+        *table = elementTableInit();
     }
 
     el->next = (*table)->map[hash];
@@ -105,7 +105,7 @@ static void insertElementInHashmap(struct element_table **table,
 }
 
 
-void prependElementToTable(struct element_table **table, struct element *el)
+void ElementTablePrepend(struct element_table **table, struct element *el)
 {
     struct element_list *new = malloc_(sizeof(struct element_list));
     insertElementInHashmap(table, el);
@@ -125,7 +125,7 @@ void prependElementToTable(struct element_table **table, struct element *el)
 }
 
 
-void pushElementToTable(struct element_table **table, struct element *el)
+void elementTablePush(struct element_table **table, struct element *el)
 {
     struct element_list *new = malloc_(sizeof(struct element_list));
     insertElementInHashmap(table, el);
@@ -145,7 +145,7 @@ void pushElementToTable(struct element_table **table, struct element *el)
 }
 
 
-struct function *initFunc(void)
+struct function *funcInit(void)
 {
     struct function *func = malloc_(sizeof(struct function));
     *func = (struct function) {0};
@@ -154,7 +154,7 @@ struct function *initFunc(void)
 }
 
 
-struct function *copyFunction(struct function *func)
+struct function *functionDup(struct function *func)
 {
     struct function *new;
 
@@ -162,11 +162,11 @@ struct function *copyFunction(struct function *func)
         return NULL;
     }
 
-    new = initFunc();
+    new = funcInit();
     new->def_file = strDup(func->def_file);
-    new->params = copyList(func->params);
-    new->stmts = copyList(func->stmts);
-    new->num_params = func->num_params;
+    new->params = listDup(func->params);
+    new->stmts = listDup(func->stmts);
+    new->params_n = func->params_n;
     new->func_ptr = func->func_ptr;
     new->func_ptr_params = func->func_ptr_params;
     new->return_type = func->return_type;
@@ -176,10 +176,10 @@ struct function *copyFunction(struct function *func)
 }
 
 
-struct element *newElement(const char *key,
-                           const char *file,
-                           size_t scope,
-                           enum TYPE type)
+struct element *elementInit(const char *key,
+                            const char *file,
+                            size_t scope,
+                            enum TYPE type)
 {
     struct element *el = malloc_(sizeof(struct element));
     *el = (struct element) {
@@ -191,9 +191,9 @@ struct element *newElement(const char *key,
 
     switch (type) {
         case T_Object:
-        case T_Array: el->value.values = newElementTable(); break;
+        case T_Array: el->value.values = elementTableInit(); break;
         case T_Number: el->value.number = 0; break;
-        case T_Function: el->value.function = initFunc(); break;
+        case T_Function: el->value.function = funcInit(); break;
         default: el->value.string = NULL;
     }
 
@@ -201,15 +201,15 @@ struct element *newElement(const char *key,
 }
 
 
-void freeFunction(struct function *func)
+void functionFree(struct function *func)
 {
     if (func->params != NULL) {
-        freeListRecursive(func->params);
+        ListFreeR(func->params);
         func->params = NULL;
     }
 
     if (func->stmts != NULL) {
-        freeListRecursive(func->stmts);
+        ListFreeR(func->stmts);
         func->stmts = NULL;
     }
 
@@ -219,19 +219,18 @@ void freeFunction(struct function *func)
 }
 
 
-void freeElementValues(struct element **el)
+void elementFreeValues(struct element **el)
 {
-
     switch ((*el)->type) {
         case T_Reference: (*el)->value.reference = NULL; break;
         case T_Number: (*el)->value.number = 0; break;
         case T_Object:
         case T_Array:
-            freeElementsTable((*el)->value.values, 0);
+            elementsTableFree((*el)->value.values, 0);
             FREE_AND_NULL((*el)->value.values);
             break;
         case T_Function:
-            freeFunction((*el)->value.function);
+            functionFree((*el)->value.function);
             FREE_AND_NULL((*el)->value.function);
             break;
         case T_String: FREE_AND_NULL((*el)->value.string);
@@ -248,8 +247,8 @@ union VALUE valueDup(union VALUE val, enum TYPE type)
         case T_Reference: new.reference = val.reference; break;
         case T_Number: new.number = val.number; break;
         case T_Object:
-        case T_Array: new.values = copyElementTable(val.values); break;
-        case T_Function: new.function = copyFunction(val.function); break;
+        case T_Array: new.values = elementTableDup(val.values); break;
+        case T_Function: new.function = functionDup(val.function); break;
         case T_String: new.string = strDup(val.string); break;
         default: new.string = NULL; break;
     }
@@ -258,7 +257,7 @@ union VALUE valueDup(union VALUE val, enum TYPE type)
 }
 
 
-void copyElementValues(struct element **dest, struct element *src)
+void elementDupValues(struct element **dest, struct element *src)
 {
     if (src == NULL || src == *dest) {
         return;
@@ -269,9 +268,9 @@ void copyElementValues(struct element **dest, struct element *src)
 }
 
 
-struct element *getElementInTable(const char *key,
-                                  struct element_table *list,
-                                  const char *file)
+struct element *elementGet(const char *key,
+                           struct element_table *list,
+                           const char *file)
 {
     if (key == NULL || list == NULL) {
         return NULL;
@@ -280,7 +279,7 @@ struct element *getElementInTable(const char *key,
     for (struct element *node = list->map[getHash(key, HASHMAP_SIZE)];
         node != NULL;
         node = node->next) {
-        if (matchesElement(node, key, file)) {
+        if (elementMatches(node, key, file)) {
             return node;
         }
     }
@@ -289,7 +288,7 @@ struct element *getElementInTable(const char *key,
 }
 
 
-static void freeElementsList(struct element_table *table)
+static void elementsListFree(struct element_table *table)
 {
     struct element_list *tmp = table->first;
 
@@ -324,7 +323,7 @@ static void freeElementsList(struct element_table *table)
 }
 
 
-void freeElementsTable(struct element_table *table, size_t scope)
+void elementsTableFree(struct element_table *table, size_t scope)
 {
     if (table == NULL) {
         return;
@@ -335,7 +334,7 @@ void freeElementsTable(struct element_table *table, size_t scope)
 
         while (node != NULL && node->scope >= scope) {
             table->map[i] = node->next;
-            freeElement(&node);
+            elementFree(&node);
             node = table->map[i];
         }
 
@@ -344,33 +343,33 @@ void freeElementsTable(struct element_table *table, size_t scope)
                 tmp = node->next;
                 node->next = tmp->next;
 
-                freeElement(&tmp);
+                elementFree(&tmp);
             }
         }
     }
 
-    freeElementsList(table);
+    elementsListFree(table);
 }
 
 
-void freeElement(struct element **node)
+void elementFree(struct element **node)
 {
     if (*node == NULL) {
         return;
     }
 
     (*node)->unset = true;
-    freeElementValues(node);
+    elementFreeValues(node);
     FREE_AND_NULL((*node)->key);
     FREE_AND_NULL((*node)->file);
 }
 
 
-void freeElements(void)
+void elementsFree(void)
 {
     struct element *node;
 
-    freeElementsTable(elements, 0);
+    elementsTableFree(elements, 0);
     free(elements);
 
     while ((node = garbage_head) != NULL) {

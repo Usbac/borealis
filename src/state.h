@@ -9,8 +9,7 @@
 #define STATE_FILE_KEY "_FILE"
 
 enum CONTEXT {
-    C_Loop, C_Function,
-    C_Import,
+    C_Loop, C_Function, C_Import,
 };
 
 struct context {
@@ -48,7 +47,7 @@ struct state {
     bool exiting;
     bool in_repl;
     struct result *last_val;
-    int status_code;
+    int code;
     size_t line_n;
     size_t scope;
     uint8_t callstack_size;
@@ -60,49 +59,49 @@ extern struct state *state;
  * Initializes the current state.
  * @param file the source file.
  */
-void initState(const char *file);
+void stateInit(const char *file);
 
 /**
  * Frees the current state.
  */
-void freeState(void);
+void stateFree(void);
 
 /**
  * Sets the current state file.
  * @param file the file.
  */
-void setStateFile(char *file);
+void stateSetFile(char *file);
 
 /**
  * Adds a file import.
  * @param file the file.
  */
-void addFileImport(const char *file);
+void stateAddFileImport(const char *file);
 
 /**
  * Returns true if the given file has been imported, false otherwise.
  * @param file the file.
  * @return true if the given file has been imported, false otherwise.
  */
-bool isFileImported(const char *file);
+bool stateIsFileImported(const char *file);
 
 /**
  * Pushes a new context into the list.
  * @param context the context to push.
  */
-void pushContext(enum CONTEXT context);
+void statePushContext(enum CONTEXT context);
 
 /**
  * Returns true if the context exists false otherwise.
  * @param context the context to search.
  * @return true if the context exists false otherwise.
  */
-bool insideContext(enum CONTEXT context);
+bool stateIsInsideContext(enum CONTEXT context);
 
 /**
  * Pops one context from the top of the list.
  */
-void popContext(void);
+void statePopContext(void);
 
 /**
  * Returns true if the interpreter can continue to the next statement,
@@ -110,99 +109,99 @@ void popContext(void);
  * @return true if the interpreter can continue to the next statement,
  * false otherwise.
  */
-bool canContinue(void);
+bool stateCanContinue(void);
 
 /**
  * Returns a new result list.
  * @return the result list.
  */
-struct result_list *newResultList(void);
+struct result_list *resultListInit(void);
 
 /**
  * Pushes a new result into the given result list.
  * @param list the result list.
  * @param node the result.
  */
-void pushResult(struct result_list *list, struct result *node);
+void statePushResult(struct result_list *list, struct result *node);
 
 /**
  * Pushes a new result of type number into the result list.
  * @param n the number value.
  */
-void pushResultD(double n);
+void statePushResultD(double n);
 
 /**
  * Pushes a new result of type string into the result list.
  * @param str the string value.
  */
-void pushResultStr(char *str);
+void statePushResultStr(char *str);
 
 /**
  * Pushes a new result of type reference into the result list.
  * @param el the element reference.
  */
-void pushResultRef(struct element *el);
+void statePushResultRef(struct element *el);
 
 /**
  * Pushes a new result of type element into the result list.
  * @param el the element.
  */
-void pushResultEl(struct element *el);
+void statePushResultEl(struct element *el);
 
 /**
  * Pushes a new result of type array into the result list.
  * @param values the array values.
  */
-void pushResultArr(struct element_table *values);
+void StatePushResultArr(struct element_table *values);
 
 /**
  * Pushes a new result of type object into the result list.
  * @param values the object values.
  */
-void pushResultObj(struct element_table *values);
+void statePushResultObj(struct element_table *values);
 
 /**
  * Pushes a new result of type function into the result list.
  * @param func the function.
  */
-void pushResultFunc(struct function *func);
+void statePushResultFunc(struct function *func);
 
 /**
  * Pushes a new result of type null into the result list.
  */
-void pushResultNull(void);
+void statePushResultNull(void);
 
 /**
  * Pops one result from the result stack and returns it.
  * @return the result.
  */
-struct result *popResult(void);
+struct result *statePopResult(void);
 
 /**
  * Pops one result from the result stack without throwing errors
  * and returns it.
  * @return the result.
  */
-struct result *popResultSafe(void);
+struct result *statePopResultSafe(void);
 
 /**
  * Returns a copy of the given result list.
  * @param list the result list to copy.
  * @return the copy of the result list.
  */
-struct result_list *copyResultList(struct result_list *list);
+struct result_list *stateResultListDup(struct result_list *list);
 
 /**
  * Frees the given result.
  * @param node the result.
  */
-void freeResult(struct result *node);
+void resultFree(struct result *node);
 
 /**
  * Frees the given result list.
  * @param node the  result list.
  */
-void freeResultList(struct result_list *list);
+void resultListFree(struct result_list *list);
 
 /**
  * Declares the given element.
@@ -210,7 +209,7 @@ void freeResultList(struct result_list *list);
  * current object -> callstack -> global.
  * @param el the element.
  */
-void declareElement(struct element **el);
+void stateDeclareElement(struct element **el);
 
 /**
  * Returns the element with the given key.
@@ -220,25 +219,25 @@ void declareElement(struct element **el);
  * @param file the file where the element is being called.
  * @return the element.
  */
-struct element *getElement(const char *key, const char *file);
+struct element *stateGetElement(const char *key, const char *file);
 
 /**
  * Frees the elements in the global list and callstack
  * with an equal or higher scope than the specified one.
  * @param scope the scope.
  */
-void freeElementsByScope(size_t scope);
+void stateElementsFree(size_t scope);
 
 /**
  * Pushes a new call into the callstack.
  * @param args the calling arguments.
  * @param obj the function's object
  */
-void pushCallstack(struct element_table *args, struct element_table *obj);
+void statePushCallstack(struct element_table *args, struct element_table *obj);
 
 /**
  * Pops a call from the callstack.
  */
-void popCallstack(void);
+void statePopCallstack(void);
 
 #endif /* STATE_H */

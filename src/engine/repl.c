@@ -35,7 +35,7 @@ static char *hints(const char *buf, int *color, int *bold)
 
 static bool runLine(char *line, struct element *el)
 {
-    struct list *stmts, *bytecode;
+    struct token_list *stmts, *bytecode;
     if (!strcmp(line, REPL_EXIT)) {
         state->exiting = true;
         goto end;
@@ -64,14 +64,14 @@ static bool runLine(char *line, struct element *el)
     evalBytecode(bytecode);
 
     if (state->last_val != NULL) {
-        freeElementValues(&el);
+        elementFreeValues(&el);
         mapResultToElement(el, state->last_val);
-        freeResult(state->last_val);
+        resultFree(state->last_val);
         state->last_val = NULL;
     }
 
-    freeListRecursive(stmts);
-    freeListRecursive(bytecode);
+    ListFreeR(stmts);
+    ListFreeR(bytecode);
 
     end:
         linenoiseFree(line);
@@ -79,16 +79,16 @@ static bool runLine(char *line, struct element *el)
 }
 
 
-void processRepl(void)
+void replProcess(void)
 {
-    struct element *el = newElement("_", NULL, 0, T_Null);
+    struct element *el = elementInit("_", NULL, 0, T_Null);
     char *line;
 
     linenoiseSetMultiLine(1);
     linenoiseHistorySetMaxLen(UINT16_MAX);
     linenoiseSetHintsCallback(hints);
 
-    declareElement(&el);
+    stateDeclareElement(&el);
     state->jmp_buffer = malloc_(sizeof(jmp_buf));
     setjmp(*state->jmp_buffer);
     while ((line = linenoise("> ")) != NULL && runLine(line, el));

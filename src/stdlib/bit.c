@@ -11,29 +11,29 @@ static int getBits(struct result *result)
 
 void stdAnd(struct result_list *args)
 {
-    pushResultD((double) (getBits(args->first) & getBits(args->first->next)));
+    statePushResultD((double) (getBits(args->first) & getBits(args->first->next)));
 }
 
 
 void stdOr(struct result_list *args)
 {
-    pushResultD((double) (getBits(args->first) | getBits(args->first->next)));
+    statePushResultD((double) (getBits(args->first) | getBits(args->first->next)));
 }
 
 
 void stdLeftShift(struct result_list *args)
 {
-    pushResultD((double) (getBits(args->first) << getBits(args->first->next)));
+    statePushResultD((double) (getBits(args->first) << getBits(args->first->next)));
 }
 
 
 void stdRightShift(struct result_list *args)
 {
-    pushResultD((double) (getBits(args->first) >> getBits(args->first->next)));
+    statePushResultD((double) (getBits(args->first) >> getBits(args->first->next)));
 }
 
 
 void stdNot(struct result_list *args)
 {
-    pushResultD((double) ~getBits(args->first));
+    statePushResultD((double) ~getBits(args->first));
 }

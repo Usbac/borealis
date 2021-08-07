@@ -138,7 +138,7 @@ void stdSlice(struct result_list *args)
     }
 
     end:
-        pushResultStr(value);
+    statePushResultStr(value);
         free(start_str);
         free(end_str);
 }
@@ -156,7 +156,7 @@ void stdTrim(struct result_list *args)
         strRightTrim(&result, needle);
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
 
     free(needle);
 }
@@ -170,7 +170,7 @@ void stdLeftTrim(struct result_list *args)
         strDup(" ");
 
     strLeftTrim(&result, needle);
-    pushResultStr(result);
+    statePushResultStr(result);
 
     free(needle);
 }
@@ -184,7 +184,7 @@ void stdRightTrim(struct result_list *args)
         strDup(" ");
 
     strRightTrim(&result, needle);
-    pushResultStr(result);
+    statePushResultStr(result);
 
     free(needle);
 }
@@ -193,7 +193,7 @@ void stdRightTrim(struct result_list *args)
 void stdGetLength(struct result_list *args)
 {
     char *value = getValueStr(args->first);
-    pushResultD((double)utf8len(value));
+    statePushResultD((double) utf8len(value));
     free(value);
 }
 
@@ -201,7 +201,7 @@ void stdGetLength(struct result_list *args)
 void stdGetByteLength(struct result_list *args)
 {
     char *value = getValueStr(args->first);
-    pushResultD(strlen(value));
+    statePushResultD(strlen(value));
     free(value);
 }
 
@@ -211,7 +211,7 @@ void stdIncludes(struct result_list *args)
     char *haystack = getValueStr(args->first);
     char *needle = getValueStr(args->first->next);
 
-    pushResultD(utf8str(haystack, needle) != NULL);
+    statePushResultD(utf8str(haystack, needle) != NULL);
 
     free(needle);
     free(haystack);
@@ -225,10 +225,10 @@ void stdIndexOf(struct result_list *args)
     char *p = utf8str(haystack, needle);
 
     if (p == NULL) {
-        pushResultD(-1);
+        statePushResultD(-1);
     } else {
         haystack[p - haystack] = '\0';
-        pushResultD(utf8len(haystack));
+        statePushResultD(utf8len(haystack));
     }
 
     free(needle);
@@ -247,14 +247,14 @@ void stdLastIndexOf(struct result_list *args)
         char *aux = utf8str(p + needle_len, needle);
         if (!aux) {
             haystack[p - haystack] = '\0';
-            pushResultD(utf8len(haystack));
+            statePushResultD(utf8len(haystack));
             goto end;
         }
 
         p = aux;
     }
 
-    pushResultD(-1);
+    statePushResultD(-1);
 
     end:
         free(needle);
@@ -264,7 +264,7 @@ void stdLastIndexOf(struct result_list *args)
 
 void stdSplit(struct result_list *args)
 {
-    struct element_table *arr = newElementTable();
+    struct element_table *arr = elementTableInit();
     char *haystack = getValueStr(args->first);
     char *needle = getValueStr(args->first->next);
     size_t needle_len = strlen(needle);
@@ -272,7 +272,7 @@ void stdSplit(struct result_list *args)
     size_t i = 0;
 
     while (true) {
-        struct element *el = newElement(NULL, NULL, 0, T_Null);
+        struct element *el = elementInit(NULL, NULL, 0, T_Null);
         el->key = strFromSizet(arr->next_index);
         el->public = true;
         el->type = T_String;
@@ -280,16 +280,16 @@ void stdSplit(struct result_list *args)
         p = utf8str(&haystack[i], needle);
         if (p == NULL || needle_len == 0) {
             el->value.string = utf8dup(&haystack[i]);
-            pushElementToTable(&arr, el);
+            elementTablePush(&arr, el);
             break;
         }
 
         el->value.string = utf8ndup(&haystack[i], p - &haystack[i]);
-        pushElementToTable(&arr, el);
+        elementTablePush(&arr, el);
         i += strlen(el->value.string) + needle_len;
     }
 
-    pushResultArr(arr);
+    StatePushResultArr(arr);
 
     free(haystack);
     free(needle);
@@ -302,7 +302,7 @@ void stdEndsWith(struct result_list *args)
     char *needle = getValueStr(args->first->next);
     size_t needle_pos = strlen(haystack) - strlen(needle);
 
-    pushResultD(!utf8cmp(haystack + needle_pos, needle));
+    statePushResultD(!utf8cmp(haystack + needle_pos, needle));
 
     free(needle);
     free(haystack);
@@ -313,7 +313,7 @@ void stdStartsWith(struct result_list *args)
 {
     char *haystack = getValueStr(args->first);
     char *needle = getValueStr(args->first->next);
-    pushResultD(!utf8ncmp(haystack, needle, strlen(needle)));
+    statePushResultD(!utf8ncmp(haystack, needle, strlen(needle)));
 
     free(needle);
     free(haystack);
@@ -324,7 +324,7 @@ void stdToUpper(struct result_list *args)
 {
     char *str = getValueStr(args->first);
     utf8upr(str);
-    pushResultStr(str);
+    statePushResultStr(str);
 }
 
 
@@ -332,7 +332,7 @@ void stdToLower(struct result_list *args)
 {
     char *str = getValueStr(args->first);
     utf8lwr(str);
-    pushResultStr(str);
+    statePushResultStr(str);
 }
 
 
@@ -346,7 +346,7 @@ void stdGetChar(struct result_list *args)
     utf8_int32_t codepoint;
 
     if (!strIsInt(arg) || arg_i < 0 || (size_t) arg_i >= utf8len(value)) {
-        pushResultNull();
+        statePushResultNull();
         free(value);
         goto end;
     }
@@ -360,7 +360,7 @@ void stdGetChar(struct result_list *args)
     memmove(value, &value[length_at_index], strlen(value) - length_at_index);
     value[utf8codepointsize(codepoint)] = '\0';
 
-    pushResultStr(value);
+    statePushResultStr(value);
 
     end: free(arg);
 }
@@ -375,7 +375,7 @@ void stdRepeat(struct result_list *args)
     size_t len, final_len, i = 0;
 
     if (repeat <= 0) {
-        pushResultStr(strDup(""));
+        statePushResultStr(strDup(""));
         goto end;
     }
 
@@ -388,7 +388,7 @@ void stdRepeat(struct result_list *args)
         i += len;
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
 
     end:
         free(str);
@@ -408,7 +408,7 @@ void stdIsWhitespace(struct result_list *args)
         }
     }
 
-    pushResultD(result);
+    statePushResultD(result);
     free(str);
 }
 
@@ -419,7 +419,7 @@ void stdReplace(struct result_list *args)
     char *ori = getValueStr(args->first->next);
     char *rep = getValueStr(args->first->next->next);
 
-    pushResultStr(strReplace(str, ori, rep));
+    statePushResultStr(strReplace(str, ori, rep));
 
     free(str);
     free(ori);
@@ -431,7 +431,7 @@ void stdRemove(struct result_list *args)
 {
     char *str = getValueStr(args->first);
     char *needle = getValueStr(args->first->next);
-    pushResultStr(strReplace(str, needle, ""));
+    statePushResultStr(strReplace(str, needle, ""));
     free(str);
     free(needle);
 }
@@ -441,7 +441,7 @@ void stdCompare(struct result_list *args)
 {
     char *str = getValueStr(args->first);
     char *arg = getValueStr(args->first->next);
-    pushResultD(!utf8cmp(str, arg));
+    statePushResultD(!utf8cmp(str, arg));
     free(str);
     free(arg);
 }
@@ -451,7 +451,7 @@ void stdCompareI(struct result_list *args)
 {
     char *str = getValueStr(args->first);
     char *arg = getValueStr(args->first->next);
-    pushResultD(!utf8casecmp(str, arg));
+    statePushResultD(!utf8casecmp(str, arg));
     free(str);
     free(arg);
 }
@@ -483,7 +483,7 @@ void stdContainsChars(struct result_list *args)
         }
     }
 
-    pushResultD(result);
+    statePushResultD(result);
     free(str);
     free(arg);
 }
@@ -516,7 +516,7 @@ void stdInterpolate(struct result_list *args)
         result = aux;
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(str);
 }
 
@@ -560,7 +560,7 @@ void stdSprintf(struct result_list *args)
         i++;
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(str);
 }
 
@@ -577,7 +577,7 @@ void stdPadStart(struct result_list *args)
     str_len = utf8len(str);
     filled_len = utf8len(filled_str);
     if (str_len >= filled_len) {
-        pushResultStr(str);
+        statePushResultStr(str);
     } else {
         size_t codepoint_count = 0;
         size_t end = filled_len - str_len;
@@ -595,7 +595,7 @@ void stdPadStart(struct result_list *args)
         result = calloc_(1, codepoint_count + 1);
         memmove(result, filled_str, codepoint_count);
         strAppend(&result, str);
-        pushResultStr(result);
+        statePushResultStr(result);
         free(str);
     }
 
@@ -616,7 +616,7 @@ void stdPadEnd(struct result_list *args)
     str_len = utf8len(str);
     filled_len = utf8len(filled_str);
     if (str_len >= filled_len) {
-        pushResultStr(str);
+        statePushResultStr(str);
     } else {
         size_t codepoint_count = 0;
         size_t end = filled_len - str_len;
@@ -634,7 +634,7 @@ void stdPadEnd(struct result_list *args)
         result = calloc_(1, str_len + codepoint_count + 1);
         memmove(result, str, str_len);
         memmove(&result[str_len], filled_str, codepoint_count);
-        pushResultStr(result);
+        statePushResultStr(result);
         free(str);
     }
 
@@ -653,7 +653,7 @@ void stdStringReverse(struct result_list *args)
     size_t i = 0;
 
     if (len == 0) {
-        pushResultStr(str);
+        statePushResultStr(str);
         return;
     }
 
@@ -673,7 +673,7 @@ void stdStringReverse(struct result_list *args)
         free(sub);
     } while (i-- != 0);
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(str);
 }
 
@@ -699,7 +699,7 @@ void stdEncode(struct result_list *args)
         result = strDup(str);
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(str);
     free(encoding);
 }
@@ -731,7 +731,7 @@ void stdDecode(struct result_list *args)
         result = strDup(str);
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(str);
     free(encoding);
 }
@@ -756,7 +756,7 @@ void stdCount(struct result_list *args)
         }
     }
 
-    pushResultD(matches);
+    statePushResultD(matches);
     free(str);
     free(needle);
 }
@@ -765,7 +765,7 @@ void stdCount(struct result_list *args)
 void stdIsUpper(struct result_list *args)
 {
     char *str = getValueStr(args->first);
-    pushResultD(checkCase(str, false));
+    statePushResultD(checkCase(str, false));
     free(str);
 }
 
@@ -773,7 +773,7 @@ void stdIsUpper(struct result_list *args)
 void stdIsLower(struct result_list *args)
 {
     char *str = getValueStr(args->first);
-    pushResultD(checkCase(str, true));
+    statePushResultD(checkCase(str, true));
     free(str);
 }
 
@@ -791,7 +791,7 @@ void stdCapitalize(struct result_list *args)
     utf8catcodepoint(result, codepoint_upper, codepoint_upper_size);
     memmove(&result[codepoint_upper_size], next, next_len + 1);
 
-    pushResultStr(result);
+    statePushResultStr(result);
     free(str);
 }
 
@@ -812,5 +812,5 @@ void stdFromCharCodes(struct result_list *args)
         arg = arg->next;
     }
 
-    pushResultStr(result);
+    statePushResultStr(result);
 }

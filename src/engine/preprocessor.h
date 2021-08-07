@@ -11,7 +11,7 @@ struct pre_state {
  * @param list the list.
  * @param pre_state the current preprocessor state.
  */
-void preprocessList(const struct list *list, struct pre_state *pre_state);
+void preprocessList(const struct token_list *list, struct pre_state *pre_state);
 
 /**
  * Pre-processes the given list an initializes the preprocessor state,
@@ -19,6 +19,6 @@ void preprocessList(const struct list *list, struct pre_state *pre_state);
  * @param list the list.
  * @param file the current file.
  */
-void preprocess(const struct list *list, const char *file);
+void preprocess(const struct token_list *list, const char *file);
 
 #endif /* PREPROCESSOR_H */

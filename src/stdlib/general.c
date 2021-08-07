@@ -23,7 +23,7 @@
 
 void stdToString(struct result_list *args)
 {
-    pushResultStr(getValueStr(args->first));
+    statePushResultStr(getValueStr(args->first));
 }
 
 
@@ -34,7 +34,7 @@ void stdToNumber(struct result_list *args)
         10;
 
     if (base == 10) {
-        pushResultD(getValueD(args->first));
+        statePushResultD(getValueD(args->first));
     } else {
         int64_t i = 1;
         int64_t result = 0;
@@ -46,14 +46,14 @@ void stdToNumber(struct result_list *args)
             i *= 10;
         }
 
-        pushResultD((double) result);
+        statePushResultD((double) result);
     }
 }
 
 
 void stdToBool(struct result_list *args)
 {
-    pushResultD(isTrue(args->first));
+    statePushResultD(isTrue(args->first));
 }
 
 
@@ -63,12 +63,12 @@ void stdToObject(struct result_list *args)
     struct element_table *obj;
 
     switch (type) {
-        case T_Array: obj = copyElementTable(getValueArr(args->first)); break;
-        case T_Object: obj = copyElementTable(getValueObj(args->first)); break;
-        default: obj = newElementTable();
+        case T_Array: obj = elementTableDup(getValueArr(args->first)); break;
+        case T_Object: obj = elementTableDup(getValueObj(args->first)); break;
+        default: obj = elementTableInit();
     }
 
-    pushResultObj(obj);
+    statePushResultObj(obj);
 }
 
 
@@ -78,12 +78,12 @@ void stdToArray(struct result_list *args)
     struct element_table *arr;
 
     switch (type) {
-        case T_Array: arr = copyElementTable(getValueArr(args->first)); break;
-        case T_Object: arr = copyElementTable(getValueObj(args->first)); break;
-        default: arr = newElementTable();
+        case T_Array: arr = elementTableDup(getValueArr(args->first)); break;
+        case T_Object: arr = elementTableDup(getValueObj(args->first)); break;
+        default: arr = elementTableInit();
     }
 
-    pushResultArr(arr);
+    StatePushResultArr(arr);
 }
 
 
@@ -106,7 +106,7 @@ void stdAssert(struct result_list *args)
     }
 
     state->exiting = true;
-    state->status_code = EXIT_FAILURE;
+    state->code = EXIT_FAILURE;
 }
 
 
@@ -114,7 +114,7 @@ void stdExit(struct result_list *args)
 {
     state->exiting = true;
     if (args->first != NULL) {
-        state->status_code = (int) getValueD(args->first);
+        state->code = (int) getValueD(args->first);
     }
 }
 
@@ -153,7 +153,7 @@ void stdIsEmpty(struct result_list *args)
         default: result = type == T_Null;
     }
 
-    pushResultD(result);
+    statePushResultD(result);
 }
 
 
@@ -191,7 +191,7 @@ void stdDebug(struct result_list *args)
     printf("\n");
     fclose(fp);
 
-    processRepl();
+    replProcess();
     state->exiting = false;
 }
 
@@ -199,15 +199,15 @@ void stdDebug(struct result_list *args)
 void stdEval(struct result_list *args)
 {
     char *code = getValueStr(args->first);
-    struct list *stmts = codeToList(code, DEFAULT_SEP, true, state->line_n);
-    struct list *bytecode;
+    struct token_list *stmts = codeToList(code, DEFAULT_SEP, true, state->line_n);
+    struct token_list *bytecode;
 
     preprocess(stmts, state->file);
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
 
-    freeListRecursive(stmts);
-    freeListRecursive(bytecode);
+    ListFreeR(stmts);
+    ListFreeR(bytecode);
     free(code);
 }
 
@@ -221,11 +221,11 @@ void stdTernary(struct result_list *args)
     result->p_el = val->p_el;
     result->value = valueDup(val->value, val->type);
 
-    pushResult(state->stack, result);
+    statePushResult(state->stack, result);
 }
 
 
 void stdTypeof(struct result_list *args)
 {
-    pushResultStr(strDup(getElementTypeAsStr(getResultType(args->first))));
+    statePushResultStr(strDup(getElementTypeAsStr(getResultType(args->first))));
 }

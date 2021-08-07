@@ -85,7 +85,7 @@ static bool isNumberSign(const struct token *last, const struct token *node)
 }
 
 
-static void addToken(struct list *list,
+static void addToken(struct token_list *list,
                      const char *token,
                      enum TYPE type,
                      enum OPCODE opcode,
@@ -123,7 +123,7 @@ static void addToken(struct list *list,
 }
 
 
-void initLexer(void)
+void lexerInit(void)
 {
     addOperator("!", OP_Negation, 12, true);
     addOperator("-", OP_Negative, 12, true);
@@ -193,7 +193,7 @@ void initLexer(void)
 }
 
 
-void freeLexer(void)
+void lexerFree(void)
 {
     struct operator *node;
 
@@ -378,7 +378,7 @@ bool isPartial(enum TYPE type)
 }
 
 
-static bool isIndex(const struct list *list)
+static bool isIndex(const struct token_list *list)
 {
     return list->last != NULL &&
         (list->last->type == T_Array || list->last->type == T_Identifier ||
@@ -545,7 +545,7 @@ static void addRawStringChars(char **token,
 
 
 static void processString(char **token,
-                          struct list *list,
+                          struct token_list *list,
                           const char *str,
                           bool raw,
                           size_t len,
@@ -623,7 +623,7 @@ static void processComment(const char *str,
 
 
 static void processChunk(char **token,
-                         struct list *list,
+                         struct token_list *list,
                          const char *str,
                          size_t len,
                          size_t *i,
@@ -638,7 +638,7 @@ static void processChunk(char **token,
 
 
 static void processIndexArray(char **token,
-                              struct list *list,
+                              struct token_list *list,
                               const char *str,
                               size_t len,
                               size_t *i,
@@ -655,7 +655,7 @@ static void processIndexArray(char **token,
 }
 
 
-static bool inParametersList(struct list *list)
+static bool inParametersList(struct token_list *list)
 {
     return list->last != NULL && (list->last->opcode == OP_Closure ||
         (list->last->type == T_Identifier && list->last->prev != NULL &&
@@ -664,7 +664,7 @@ static bool inParametersList(struct list *list)
 
 
 static void processParameters(char **token,
-                              struct list *list,
+                              struct token_list *list,
                               const char *str,
                               size_t len,
                               size_t *i,
@@ -681,7 +681,7 @@ static void processParameters(char **token,
 
 
 static void validateToken(char *token,
-                          struct list *list,
+                          struct token_list *list,
                           enum OPCODE opcode,
                           enum TYPE type,
                           size_t line_n)
@@ -699,7 +699,7 @@ static void validateToken(char *token,
 
 
 static void processToken(char **token,
-                         struct list *list,
+                         struct token_list *list,
                          const char *stmt_sep,
                          size_t line_n)
 {
@@ -712,7 +712,7 @@ static void processToken(char **token,
 }
 
 
-static bool inParameterList(char ch, struct list *list)
+static bool inParameterList(char ch, struct token_list *list)
 {
     return ch == '(' && list != NULL && list->last != NULL &&
         (list->last->type == T_Identifier || list->last->type == T_Arguments ||
@@ -722,7 +722,7 @@ static bool inParameterList(char ch, struct list *list)
 
 
 static void processChars(char **token,
-                         struct list *list,
+                         struct token_list *list,
                          const char *str,
                          size_t len,
                          size_t *i,
@@ -757,9 +757,9 @@ static void processChars(char **token,
 }
 
 
-struct list *tokenize(const char *code, const char *stmt_sep, size_t line_n)
+struct token_list *tokenize(const char *code, const char *stmt_sep, size_t line_n)
 {
-    struct list *list = newList();
+    struct token_list *list = listInit();
     const size_t len = strlen(code) + 1;
     char *token = strInit();
 
@@ -804,9 +804,9 @@ static bool processJsonScope(char **token,
 }
 
 
-struct list *tokenizeJson(const char *code, bool *error)
+struct token_list *tokenizeJson(const char *code, bool *error)
 {
-    struct list *list = newList();
+    struct token_list *list = listInit();
     const size_t len = strlen(code) + 1;
     char *token = strInit();
     size_t line_n = 0;
@@ -849,9 +849,9 @@ struct list *tokenizeJson(const char *code, bool *error)
 }
 
 
-struct list *newList(void)
+struct token_list *listInit(void)
 {
-    struct list *list = malloc_(sizeof(struct list));
-    *list = (struct list) {0};
+    struct token_list *list = malloc_(sizeof(struct token_list));
+    *list = (struct token_list) {0};
     return list;
 }
