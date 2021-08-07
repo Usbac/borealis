@@ -31,7 +31,7 @@ any findMax(arr) {
     return max;
 }
 
-findMax([ 1, 42, 70, 3000, 200, -120, 98, ]);
+findMax([ 1, 42, 70, 3000, 200, -120, 98 ]);
 ```
 
 ## Fibonacci
@@ -67,7 +67,7 @@ any sort(array arr) {
     return arr;
 }
 
-sort([ 12, 234, 8765, 0, -123, 23,2 ]);
+sort([ 12, 234, 8765, 0, -123, 23, 2 ]);
 ```
 
 ## List files in directory (recursive)

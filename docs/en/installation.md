@@ -1,13 +1,7 @@
 
 ## Install
 
-The easiest way to install Borealis in your system is by downloading the binaries.
-
-* Windows
-
-* Mac
-
-* Linux
+The easiest way to install Borealis in your system is by downloading the binaries for your operating system (Windows, MacOs or Linux) [here](https://borealislang.com/download).
 
 ## Compile
 
