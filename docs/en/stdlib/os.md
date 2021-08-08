@@ -23,12 +23,12 @@ Os.EOL; # In Windows it will return "\r\n"
 
 ### Get current working directory
 
-`getcwd(): string`
+`getCWD(): string`
 
 Returns the current working directory.
 
 ```borealis
-Os.getcwd();
+Os.getCWD();
 # If the script is running at /home/user/Documents it will return '/home/user/Documents'
 ```
 

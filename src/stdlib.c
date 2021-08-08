@@ -166,7 +166,7 @@ static void initFunctions(void)
     declareModuleFunc(os, "clearPath", stdClearPath, "s");
     declareModuleFunc(os, "isAbsolute", stdIsAbsolute, "s");
 #ifndef SAFE_MODE
-    declareModuleFunc(os, "getcwd", stdGetCwd, "");
+    declareModuleFunc(os, "getCWD", stdGetCwd, "");
     declareModuleFunc(os, "isFile", stdIsFile, "s");
     declareModuleFunc(os, "isDir", stdIsDir, "s");
     declareModuleFunc(os, "exists", stdExists, "s");
