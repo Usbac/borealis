@@ -68,9 +68,8 @@ static bool mapArgs(int argc, char *argv[])
 
     args = elementTableInit();
     for (int i = 0; i < argc; i++) {
-        struct element *arg = elementInit(NULL, NULL, 0, T_Null);
+        struct element *arg = elementInit(NULL, NULL, 0, T_String);
         arg->key = strFromInt(i);
-        arg->type = T_String;
         arg->value.string = strDup(argv[i]);
         elementTablePush(&args, arg);
     }

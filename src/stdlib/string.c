@@ -272,10 +272,9 @@ void stdSplit(struct result_list *args)
     size_t i = 0;
 
     while (true) {
-        struct element *el = elementInit(NULL, NULL, 0, T_Null);
+        struct element *el = elementInit(NULL, NULL, 0, T_String);
         el->key = strFromSizet(arr->next_index);
         el->public = true;
-        el->type = T_String;
 
         p = utf8str(&haystack[i], needle);
         if (p == NULL || needle_len == 0) {

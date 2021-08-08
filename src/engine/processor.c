@@ -674,10 +674,7 @@ static struct result *getFuncResult(struct function *func,
     struct result *returned = statePopResult();
     enum TYPE returned_type = getResultType(returned);
     struct result *result = malloc_(sizeof(struct result));
-    struct element *el = elementInit(NULL,
-                                     calling_file,
-                                     state->scope,
-                                     T_Null);
+    struct element *el = elementInit(NULL, calling_file, state->scope, T_Null);
 
     if (returned != NULL) {
         mapResultToElement(el, returned);
