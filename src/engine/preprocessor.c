@@ -348,7 +348,7 @@ static void declareFunc(struct token *node,
 
     prevalidateFuncDefinition(node, pre_state);
     pre_state->current_type = T_Chunk;
-    preprocessList(node->ls->body, pre_state);
+    preprocessTokenList(node->ls->body, pre_state);
     prevalidateParams(node->rs->body);
 
     func = elementInit(node->rs->ls != NULL ? node->rs->ls->value : NULL,
@@ -522,7 +522,7 @@ static void preprocessNode(struct token *node, struct pre_state *pre_state)
         enum TYPE aux_type = pre_state->current_type;
 
         pre_state->current_type = node->type;
-        preprocessList(node->body, pre_state);
+        preprocessTokenList(node->body, pre_state);
         pre_state->current_type = aux_type;
     }
 
@@ -530,7 +530,7 @@ static void preprocessNode(struct token *node, struct pre_state *pre_state)
 }
 
 
-void preprocessList(const struct token_list *list, struct pre_state *pre_state)
+void preprocessTokenList(const struct token_list *list, struct pre_state *pre_state)
 {
     for (struct token *node = list->first; node != NULL; node = node->next) {
         preprocessNode(node, pre_state);
@@ -546,6 +546,6 @@ void preprocess(const struct token_list *list, const char *file)
         .current_type = T_Chunk,
     };
 
-    preprocessList(list, pre_state);
+    preprocessTokenList(list, pre_state);
     free(pre_state);
 }

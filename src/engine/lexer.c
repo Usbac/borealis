@@ -85,11 +85,11 @@ static bool isNumberSign(const struct token *last, const struct token *node)
 }
 
 
-static void addToken(struct token_list *list,
-                     const char *token,
-                     enum TYPE type,
-                     enum OPCODE opcode,
-                     size_t line_n)
+static void tokenListPush(struct token_list *list,
+                          const char *token,
+                          enum TYPE type,
+                          enum OPCODE opcode,
+                          size_t line_n)
 {
     struct token *new = malloc_(sizeof(struct token));
     *new = (struct token) {
@@ -558,7 +558,7 @@ static void processString(char **token,
         addStringChars(token, str, len, i, line_n, false);
     }
 
-    addToken(list, *token, T_String, OP_None, *line_n);
+    tokenListPush(list, *token, T_String, OP_None, *line_n);
     strEmpty(token);
 }
 
@@ -631,7 +631,7 @@ static void processChunk(char **token,
 {
     size_t ori_line_n = *line_n;
     processScope(token, str, len, i, line_n, '{', '}');
-    addToken(list, *token, T_Chunk, OP_None, ori_line_n);
+    tokenListPush(list, *token, T_Chunk, OP_None, ori_line_n);
     strEmpty(token);
     (*i)--;
 }
@@ -648,7 +648,7 @@ static void processIndexArray(char **token,
     enum TYPE type = isIndex(list) ? T_Index : T_Array;
 
     processScope(token, str, len, i, line_n, '[', ']');
-    addToken(list, *token, type, OP_None, ori_line_n);
+    tokenListPush(list, *token, type, OP_None, ori_line_n);
 
     strEmpty(token);
     (*i)--;
@@ -674,7 +674,7 @@ static void processParameters(char **token,
     enum TYPE type = inParametersList(list) ? T_Parameters : T_Arguments;
 
     processScope(token, str, len, i, line_n, '(', ')');
-    addToken(list, *token, type, OP_None, ori_line_n);
+    tokenListPush(list, *token, type, OP_None, ori_line_n);
     strEmpty(token);
     (*i)--;
 }
@@ -707,7 +707,7 @@ static void processToken(char **token,
     const enum TYPE type = getTokenType(*token, opcode);
 
     validateToken(*token, list, opcode, type, line_n);
-    addToken(list, *token, type, opcode, line_n);
+    tokenListPush(list, *token, type, opcode, line_n);
     strEmpty(token);
 }
 
@@ -821,7 +821,7 @@ struct token_list *tokenizeJson(const char *code, bool *error)
                 *error = true;
             }
 
-            addToken(list, token, T_Chunk, OP_None, line_n);
+            tokenListPush(list, token, T_Chunk, OP_None, line_n);
             strEmpty(&token);
             i--;
         } else if (code[i] == '[') {
@@ -829,7 +829,7 @@ struct token_list *tokenizeJson(const char *code, bool *error)
                 *error = true;
             }
 
-            addToken(list, token, T_Array, OP_None, line_n);
+            tokenListPush(list, token, T_Array, OP_None, line_n);
             strEmpty(&token);
             i--;
         } else {
@@ -838,7 +838,7 @@ struct token_list *tokenizeJson(const char *code, bool *error)
             if (!isReserved(code, i, len)) {
                 const enum OPCODE opcode = getTokenOpcode(token, ",");
                 const enum TYPE type = getTokenType(token, opcode);
-                addToken(list, token, type, opcode, line_n);
+                tokenListPush(list, token, type, opcode, line_n);
                 strEmpty(&token);
             }
         }

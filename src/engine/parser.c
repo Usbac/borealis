@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "../utils.h"
 #include "lexer.h"
+#include "../utils.h"
 #include "../error.h"
 #include "parser.h"
 
@@ -49,7 +49,7 @@ static struct token *pop(struct token_list *list)
 }
 
 
-static void moveToken(struct token_list *dest, struct token_list *src)
+static void tokenListMove(struct token_list *dest, struct token_list *src)
 {
     if (src->last->opcode == OP_Open_parenthesis) {
         struct token *tmp = pop(src);
@@ -68,7 +68,7 @@ static void migrateUntilParenthesis(struct token_list *dest, struct token_list *
     struct token *tmp;
 
     while (src->last != NULL && src->last->opcode != OP_Open_parenthesis) {
-        moveToken(dest, src);
+        tokenListMove(dest, src);
     }
 
     if (src->last != NULL && src->last->opcode == OP_Open_parenthesis) {
@@ -210,7 +210,7 @@ static struct token_list *infixToPostfix(const struct token_list *tokens)
     }
 
     while (operators->last != NULL) {
-        moveToken(output, operators);
+        tokenListMove(output, operators);
     }
 
     free(operators);
