@@ -19,5 +19,5 @@ Modifying a constant during runtime will result in an error being thrown.
 ```borealis
 const any PI = 3.14159;
 
-PI = 1; # Error.
+PI = 1; # Error
 ```

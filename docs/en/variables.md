@@ -21,7 +21,7 @@ any bar = &foo;
 
 foo++;
 
-print(bar); # It will print 11.
+print(bar); # It will print 11
 ```
 
 References work with elements, object properties and array indices.

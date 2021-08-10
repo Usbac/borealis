@@ -19,9 +19,9 @@ In Borealis, almost anything is an expression, from a function call (`foo()`) to
 any a = 0;
 any b = a = 8; # Assign the value 8 to a and b
 
-any c = a++; # Assign original value of a to c and then increment it.
+any c = a++; # Assign original value of a to c and then increment it
 
-c = foo(); # Assign to c the return value of the function foo.
+c = foo(); # Assign to c the return value of the function foo
 ```
 
 ## Comments
@@ -32,7 +32,7 @@ Borealis has two type of comments:
 * Multi line comments (starts with `/*` and ends at the first `*/`).
 
 ```borealis
-print('Hello world'); # This is commented.
+print('Hello world'); # This is commented
 
 /*
  * Comment that goes
