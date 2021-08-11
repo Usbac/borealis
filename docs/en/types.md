@@ -223,5 +223,5 @@ if (true) {
     ref = &foo;
 }
 
-ref === null; # true since the value of ref is now null.
+ref === null; # true since the value of ref is now null
 ```

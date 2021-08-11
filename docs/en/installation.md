@@ -12,3 +12,9 @@ The language strictly follows [ANSI C99](https://en.wikipedia.org/wiki/ANSI_C) a
 You can use a C compiler like `gcc` or `clang`.
 
 The source code includes a Makefile, and a CMake file. With make, compiling it is as easy as running the `make` command.
+
+### Safe version
+
+The `make safe` command can be used to compile a safe version of Borealis.
+
+This version does not have any definition of functions that use disk, system or network access. It can be used to mount an online code tester.

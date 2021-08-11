@@ -6,8 +6,7 @@ The evaluator will assign the result of the most recently evaluated expression t
 
 ## Commands
 
-The following commands are supported by the REPL.
-
+The following commands are supported by the REPL:
 * `.clear` - Clear the terminal.
 * `.exit` - Exit the REPL.
 * `.help` - Show help.
@@ -15,14 +14,15 @@ The following commands are supported by the REPL.
 
 ## Examples
 
-```
+Running with the `borealis -i` command:
+```shell
 > any foo = 12;
 > printLine(_);
 12
 > .exit
 ```
 
-```
+```shell
 > any bar;
 > bar = &foo;
 > .save ./awesome_file.bor
