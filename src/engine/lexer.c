@@ -204,11 +204,17 @@ void lexerFree(void)
 }
 
 
+static inline bool isSign(const char ch)
+{
+    return ch == '+' || ch == '-';
+}
+
+
 bool isNumber(const char *str)
 {
     const size_t len = strlen(str);
     bool has_dot = false;
-    size_t i = str[0] == '-' || str[0] == '+';
+    size_t i = isSign(str[0]);
 
     for (; i < len; i++) {
         /* Exponent number */
@@ -222,6 +228,10 @@ bool isNumber(const char *str)
             }
 
             has_dot = true;
+            continue;
+        }
+
+        if (isSign(str[i]) && i != 0 && str[i-1] == 'e') {
             continue;
         }
 
@@ -241,7 +251,11 @@ static bool isReserved(const char *str, size_t i, size_t len)
         str[i+1] :
         '\0';
 
-    if (ch == 'e' && isdigit(next)) {
+    if (ch == 'e' && (isdigit(next) || isSign(next))) {
+        return true;
+    }
+
+    if (isSign(ch) && i != 0 && str[i-1] == 'e') {
         return true;
     }
 
