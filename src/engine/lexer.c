@@ -2,10 +2,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include "../../lib/utf8.h"
 #include "../utils.h"
 #include "../error.h"
 #include "lexer.h"
-#include "../../lib/utf8.h"
 
 struct operator *operators_head = NULL;
 
