@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <ctype.h>
 #include "../utils.h"
 #include "../error.h"
@@ -439,14 +438,13 @@ static void processCharEsc(char **token,
             strAppendC(&unicode, ch);
         } else {
             utf8_int32_t codepoint = (int) strtol(unicode, NULL, 16);
-            size_t codepoint_size = getIntBytes(codepoint);
-            char *sub = calloc_(1, codepoint_size + 1);
-            utf8catcodepoint(sub, codepoint, codepoint_size);
+            size_t bytes_n = getIntBytes(codepoint);
+            char *sub = calloc_(1, bytes_n + 1);
+            utf8catcodepoint(sub, codepoint, bytes_n);
             strAppend(token, sub);
             free(unicode);
             free(sub);
             *i += aux_i - 1;
-
             break;
         }
 
@@ -455,7 +453,7 @@ static void processCharEsc(char **token,
 }
 
 
-static int processEscSeq(char **token, const char *str, size_t len, size_t *i)
+static bool processEscSeq(char **token, const char *str, size_t len, size_t *i)
 {
     if (*i+1 >= len || str[*i] != '\\') {
         return false;
@@ -851,8 +849,7 @@ struct token_list *tokenizeJson(const char *code, bool *error)
 
             if (!isReserved(code, i, len)) {
                 const enum OPCODE opcode = getTokenOpcode(token, ",");
-                const enum TYPE type = getTokenType(token, opcode);
-                tokenListPush(list, token, type, opcode, line_n);
+                tokenListPush(list, token, getTokenType(token, opcode), opcode, line_n);
                 strEmpty(&token);
             }
         }

@@ -27,7 +27,7 @@ void stdDateNow(struct result_list *args)
 
 void stdDateToString(struct result_list *args)
 {
-    const int SIZE = 2048;
+    const size_t SIZE = 2048;
     char *result = calloc_(1, SIZE);
     char *format = getValueStr(args->first);
     time_t secs = getValueD(args->first->next);

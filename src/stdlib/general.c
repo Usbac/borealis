@@ -29,8 +29,8 @@ void stdToString(struct result_list *args)
 
 void stdToNumber(struct result_list *args)
 {
-    int base = args->first->next != NULL ?
-        (int) floor(getValueD(args->first->next)) :
+    int64_t base = args->first->next != NULL ?
+        (int64_t) floor(getValueD(args->first->next)) :
         10;
 
     if (base == 10) {
