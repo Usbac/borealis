@@ -199,7 +199,7 @@ void stdDebug(struct result_list *args)
 void stdEval(struct result_list *args)
 {
     char *code = getValueStr(args->first);
-    struct token_list *stmts = codeToList(code, DEFAULT_SEP, true, state->line_n);
+    struct token_list *stmts = codeToList(code, SEPARATOR_DEFAULT, true, state->line_n);
     struct token_list *bytecode;
 
     preprocess(stmts, state->file);

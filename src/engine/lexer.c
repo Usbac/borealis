@@ -57,7 +57,7 @@ static enum TYPE getTokenType(const char *str, enum OPCODE opcode)
     } else if (isNumber(str)) {
         return T_Number;
     } else if ((opcode == OP_None && !strcmp(str, NULL_KEYWORD)) ||
-        !strcmp(str, DEFAULT_SEP)) {
+        !strcmp(str, SEPARATOR_DEFAULT)) {
         return T_Null;
     }
 
@@ -411,7 +411,7 @@ static void processOctalEsc(char **token, const char *str, size_t *i, size_t len
         if (ch >= '0' && ch < '8' && aux_i < 3) {
             strAppendC(&octal, ch);
         } else {
-            strAppendC(token, strtol(octal, NULL, 8));
+            strAppendC(token, (char) strtol(octal, NULL, 8));
             free(octal);
             *i += aux_i - 1;
 

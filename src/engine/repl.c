@@ -58,7 +58,7 @@ static bool runLine(char *line, struct element *el)
 
     linenoiseHistoryAdd(line);
 
-    stmts = codeToList(line, DEFAULT_SEP, true, state->line_n);
+    stmts = codeToList(line, SEPARATOR_DEFAULT, true, state->line_n);
     preprocess(stmts, NULL);
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);
