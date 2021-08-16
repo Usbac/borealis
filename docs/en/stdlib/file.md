@@ -34,13 +34,13 @@ File.read('./has_hello.txt', 'hex'); # Returns '68656C6C6F0A'
 
 ### Write
 
-`write(string filename, string content, number override = 1): number`
+`write(string filename, string content, number override = true): number`
 
 Writes text to a file. If the file does not exist, it will be created.
 
 Returns `true` in case of success, `false` otherwise.
 
-If the override parameter is true, the function will override.
+If the override parameter is `true`, the function will override the existing file.
 
 ```borealis
 File.write('./hello.txt', 'hello world'); # Returns true if 'hello world' has been written successfully
@@ -81,7 +81,7 @@ Returns `true` in case of success, `false` otherwise.
 _The destination path needs to contain the actual file name, not just the path to the folder you wish to copy._
 
 ```borealis
-File.copy('./original.txt', './new.txt'); # new.txt should be a copy of original.txt
+File.copy('./original.txt', './new.txt'); # A copy of the file original.txt with the name new.txt will be created
 ```
 
 ### Get modification time

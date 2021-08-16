@@ -121,7 +121,7 @@ It's pretty much what happens when you enter multiple commands in your terminal 
 
 Sets the maximum size of the history.
 
-If the history is full, and you add a new element with the `historyAdd` function, the last function in the history will be shifted and then the new element will be pushed.
+If the history is full, and you add a new element with the this function, the last element in the history will be shifted and then the new element will be pushed.
 
 ```borealis
 Io.historySetSize(5);
@@ -134,5 +134,5 @@ Io.historySetSize(5);
 Clears the console if the environment allows it.
 
 ```borealis
-clear();
+Io.clear();
 ```

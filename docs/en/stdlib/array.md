@@ -157,7 +157,7 @@ Array.reverse([ 1, 2, 3 ]); # Returns [ 3, 2, 1 ]
 
 ### Range
 
-`range(number start, number end, number steps = 1): array`
+`range(number start, number end, number steps = true): array`
 
 Returns an array containing a range of elements.
 
@@ -165,6 +165,7 @@ Returns an array containing a range of elements.
 Array.range(0, 3); # Returns [ 1, 2, 3 ]
 ```
 
+With steps:
 ```borealis
 Array.range(0, 5, 2); # Returns [ 0, 2, 4 ]
 ```
