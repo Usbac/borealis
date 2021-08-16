@@ -3,6 +3,8 @@ project(borealis)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
 add_executable(borealis
         src/borealis.c
         src/engine/lexer.c src/engine/lexer.h

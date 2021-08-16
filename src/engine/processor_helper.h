@@ -89,9 +89,9 @@ struct element *getTrueElement(struct element *node);
 bool isTrue(const struct result *node);
 
 /**
- * Returns true if the node represents a return without value, false otherwise.
+ * Returns true if the node represents a return statement without value, false otherwise.
  * @param node the node.
- * @return true if the node represents a return without value, false otherwise.
+ * @return true if the node represents a return statement without value, false otherwise.
  */
 bool isEmptyReturn(const struct token *node);
 

@@ -109,7 +109,7 @@ static bool isUnaryExpr(struct token *node)
 }
 
 
-static bool hasRightAssociativity(struct token *node)
+static bool isRightAssoc(struct token *node)
 {
     for (struct operator *i = operators_head; i != NULL; i = i->next) {
         if (node->opcode == i->opcode && i->right_associated) {
@@ -129,7 +129,7 @@ static void handleMigration(struct token *node,
 
     while (operators->last != NULL && operators->last->opcode != OP_Open_parenthesis &&
         (prec < getPrec(operators->last) ||
-        (prec == getPrec(operators->last) && !hasRightAssociativity(node)))) {
+        (prec == getPrec(operators->last) && !isRightAssoc(node)))) {
         push(output, pop(operators));
     }
 
@@ -219,7 +219,7 @@ static struct token_list *infixToPostfix(const struct token_list *tokens)
 
 
 /* Used by proxy functions */
-static void freeList_(struct token_list *list, bool recursive)
+static void listFree_(struct token_list *list, bool recursive)
 {
     struct token *node;
 
@@ -238,13 +238,13 @@ static void freeList_(struct token_list *list, bool recursive)
 
 void listFree(struct token_list *list)
 {
-    freeList_(list, false);
+    listFree_(list, false);
 }
 
 
 void listFreeR(struct token_list *list)
 {
-    freeList_(list, true);
+    listFree_(list, true);
 }
 
 
@@ -264,7 +264,7 @@ static void processNodeCode(struct token *node)
 {
     bool is_chunk = node->type == T_Chunk;
     node->body = codeToList(node->value,
-        is_chunk ? DEFAULT_SEP : ",",
+        is_chunk ? SEPARATOR_DEFAULT : SEPARATOR_LIST,
         is_chunk,
         node->line_n);
 

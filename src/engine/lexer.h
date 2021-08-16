@@ -5,7 +5,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define DEFAULT_SEP ";"
+#define SEPARATOR_DEFAULT ";"
+#define SEPARATOR_LIST ","
 #define NULL_KEYWORD "null"
 
 enum TYPE {

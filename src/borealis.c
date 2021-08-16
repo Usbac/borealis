@@ -139,7 +139,7 @@ static void runCodeLine(void)
     stateInit(NULL);
     stdlibInit(args, cwd, NULL);
 
-    stmts = codeToList(arg_code, DEFAULT_SEP, true, 0);
+    stmts = codeToList(arg_code, SEPARATOR_DEFAULT, true, 0);
     preprocess(stmts, NULL);
     bytecode = listToBytecode(stmts);
     evalBytecode(bytecode);

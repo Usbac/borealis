@@ -152,11 +152,11 @@ static bool compareElementTables(struct element_table *a,
         struct element *a_el = getTrueElement(a_ite->ptr);
         struct element *b_el = getTrueElement(b_ite->ptr);
 
-        while (a_ite->ptr->unset && a_ite != NULL) {
+        while (a_ite != NULL && a_ite->ptr->unset) {
             a_ite = a_ite->next;
         }
 
-        while (b_ite->ptr->unset && b_ite != NULL) {
+        while (b_ite != NULL && b_ite->ptr->unset) {
             b_ite = b_ite->next;
         }
 
@@ -188,8 +188,8 @@ static bool compareElementTables(struct element_table *a,
             default: break;
         }
 
-        a_ite = a_ite->next;
-        b_ite = b_ite->next;
+        a_ite = a_ite == NULL ? NULL : a_ite->next;
+        b_ite = b_ite == NULL ? NULL : b_ite->next;
     }
 
     return a_ite == b_ite;
