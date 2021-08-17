@@ -591,6 +591,9 @@ static void processScope(char **token,
         if (str[*i] == '"') {
             strAppendC(token, str[*i]);
             addStringChars(token, str, len, i, line_n, true);
+        } else if (str[*i] == '\'') {
+            strAppendC(token, str[*i]);
+            addRawStringChars(token, str, len, i, line_n);
         }
 
         if (str[*i] == start) {
