@@ -7,8 +7,6 @@
 #include "../state.h"
 #include "json.h"
 
-bool json_error = false;
-
 
 static char *strAddQuotes(char *str)
 {
@@ -108,26 +106,26 @@ void stdJsonStringify(struct result_list *args)
 
 static struct token_list *preprocessJson(char *code)
 {
-    struct token_list *tokens = tokenizeJson(code, &json_error);
+    bool error = false;
+    struct token_list *tokens = tokenizeJson(code, &error);
 
-    if (json_error) {
-        goto error;
+    if (error) {
+        goto end_error;
     }
 
     for (struct token *i = tokens->first; i != NULL; i = i->next) {
         if (i->type == T_Chunk || i->type == T_Array) {
             i->body = preprocessJson(i->value);
             if (i->body == NULL) {
-                goto error;
+                goto end_error;
             }
         }
     }
 
     return tokens;
 
-    error:
-        json_error = false;
-    listFree(tokens);
+    end_error:
+        listFree(tokens);
         return NULL;
 }
 
@@ -141,7 +139,7 @@ static bool isValidJsonVal(struct token *token)
 }
 
 
-static struct element *getJsonEl(char *key, struct token *node)
+static struct element *getJsonEl(char *key, struct token *node, bool *error)
 {
     struct element *el = elementInit(key, NULL, 0, T_Null);
     el->type = node->type;
@@ -150,7 +148,7 @@ static struct element *getJsonEl(char *key, struct token *node)
     switch (node->type) {
         case T_String: el->value.string = strDup(node->value); break;
         case T_Number: el->value.number = strToD(node->value); break;
-        case T_Array: el->value.values = parseArrjJson(node->body); break;
+        case T_Array: el->value.values = parseArrjJson(node->body, error); break;
         case T_Identifier:
             el->type = T_Number;
             el->value.number = !strcmp(node->value, "true");
@@ -158,7 +156,7 @@ static struct element *getJsonEl(char *key, struct token *node)
         case T_Null: el->value.string = NULL; break;
         case T_Chunk:
             el->type = T_Object;
-            el->value.values = parseObjJson(node->body); break;
+            el->value.values = parseObjJson(node->body, error); break;
         default: break;
     }
 
@@ -166,7 +164,7 @@ static struct element *getJsonEl(char *key, struct token *node)
 }
 
 
-struct element_table *parseArrjJson(struct token_list *list)
+struct element_table *parseArrjJson(struct token_list *list, bool *error)
 {
     struct element_table *arr = elementTableInit();
 
@@ -175,7 +173,7 @@ struct element_table *parseArrjJson(struct token_list *list)
 
         if (ite->opcode == OP_Stmt_sep) {
             if (ite->next == NULL) {
-                json_error = true;
+                *error = true;
                 break;
             }
 
@@ -184,12 +182,12 @@ struct element_table *parseArrjJson(struct token_list *list)
 
         if (!isValidJsonVal(ite) ||
             (ite->next != NULL && ite->next->opcode != OP_Stmt_sep)) {
-            json_error = true;
+            *error = true;
             break;
         }
 
         key = strFromSizet(arr->next_index++);
-        elementTablePush(&arr, getJsonEl(key, ite));
+        elementTablePush(&arr, getJsonEl(key, ite, error));
         free(key);
     }
 
@@ -197,14 +195,14 @@ struct element_table *parseArrjJson(struct token_list *list)
 }
 
 
-struct element_table *parseObjJson(struct token_list *list)
+struct element_table *parseObjJson(struct token_list *list, bool *error)
 {
     struct element_table *obj = elementTableInit();
 
     for (struct token *i = list->first; i != NULL; i = i->next->next->next) {
         if (i->opcode == OP_Stmt_sep) {
             if (i->next == NULL) {
-                json_error = true;
+                *error = true;
                 break;
             }
 
@@ -215,72 +213,84 @@ struct element_table *parseObjJson(struct token_list *list)
             (i->next == NULL || i->next->opcode != OP_Colon || i->next->next == NULL) ||
             !isValidJsonVal(i->next->next) ||
             (i->next->next->next != NULL && i->next->next->next->opcode != OP_Stmt_sep)) {
-            json_error = true;
+            *error = true;
             break;
         }
 
-        elementTablePush(&obj, getJsonEl(i->value, i->next->next));
+        elementTablePush(&obj, getJsonEl(i->value, i->next->next, error));
     }
 
     return obj;
 }
 
 
-void stdJsonParse(struct result_list *args)
+static struct result *jsonParse(char *str, bool *error)
 {
-    char *str = getValueStr(args->first);
     struct token_list *list = preprocessJson(str);
-    struct element_table *aux_table;
-    json_error = false;
+    struct result *result = malloc_(sizeof(struct result));
 
     if (list == NULL || list->first == NULL ||
         !isValidJsonVal(list->first) || list->first->next != NULL) {
-        json_error = true;
+        *result = (struct result) {0};
         goto end;
     }
+
+    *result = (struct result) {
+        .type = list->first->type,
+    };
 
     switch (list->first->type) {
         case T_Array:
         case T_Chunk:
-            aux_table = list->first->type == T_Array ?
-                parseArrjJson(list->first->body) :
-                parseObjJson(list->first->body);
-            if (json_error) {
-                elementsTableFree(aux_table, 0);
-                free(aux_table);
-            } else {
-                list->first->type == T_Array ?
-                StatePushResultArr(aux_table) :
-                statePushResultObj(aux_table);
-            }
+            result->type = list->first->type == T_Array ? T_Array : T_Object;
+            result->value.values = list->first->type == T_Array ?
+                parseArrjJson(list->first->body, error) :
+                parseObjJson(list->first->body, error);
             break;
         case T_String:
-            statePushResultStr(strDup(list->first->value));
+            result->value.string = strDup(list->first->value);
             break;
         case T_Number:
-            statePushResultD(strToD(list->first->value));
+            result->value.number = strToD(list->first->value);
             break;
         case T_Null:
-            statePushResultNull();
+            result->value.string = NULL;
             break;
         case T_Identifier:
-            statePushResultD(!strcmp(list->first->value, "true"));
+            result->value.number = !strcmp(list->first->value, "true");
             break;
         default: break;
     }
 
     end:
-        if (json_error) {
-            statePushResultNull();
-        }
+        listFreeR(list);
+        return result;
+}
 
-    listFreeR(list);
-        free(str);
+
+void stdJsonParse(struct result_list *args)
+{
+    char *str = getValueStr(args->first);
+    bool error = false;
+    struct result *result = jsonParse(str, &error);
+
+    if (error) {
+        statePushResultNull();
+        resultFree(result);
+    } else {
+        statePushResult(state->stack, result);
+    }
+
+    free(str);
 }
 
 
 void stdIsvalid(struct result_list *args)
 {
-    stdJsonParse(args);
-    statePushResultD(!json_error);
+    char *str = getValueStr(args->first);
+    bool error = false;
+    struct result *result = jsonParse(str, &error);
+    statePushResultD(!error);
+    resultFree(result);
+    free(str);
 }

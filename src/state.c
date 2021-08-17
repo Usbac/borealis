@@ -362,7 +362,9 @@ void resultFree(struct result *node)
     }
 
     switch (node->type) {
-        case T_String: free(node->value.string); break;
+        case T_String:
+            free(node->value.string);
+            break;
         case T_Array:
         case T_Object:
             if (state->current_obj != node->value.values) {

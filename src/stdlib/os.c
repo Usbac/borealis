@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <sys/time.h>
+#include <math.h>
 #include "../element.h"
 #include "../state.h"
 #include "../engine/processor_helper.h"
@@ -177,7 +178,7 @@ void stdGetTime(struct result_list *args)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    statePushResultD((double) tv.tv_sec * 1000 + (double) tv.tv_usec / 1000);
+    statePushResultD(floor((double) tv.tv_sec * 1000 + (double) tv.tv_usec / 1000));
 }
 
 

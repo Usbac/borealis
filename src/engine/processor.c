@@ -1163,9 +1163,9 @@ static void evalProp(struct token **node)
     }
 
     end:
-    resultFree(obj_val);
+        resultFree(obj_val);
         free(prop_key);
-    resultFree(prop);
+        resultFree(prop);
 }
 
 

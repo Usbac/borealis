@@ -56,18 +56,16 @@ static void updateArrayNextIndex(struct element_table *el)
 
 static struct element *elementDup(struct element *src)
 {
-    struct element *dest;
+    if (src != NULL) {
+        struct element *dest = elementInit(src->key, src->file, src->scope, T_Null);
+        dest->public = src->public;
+        dest->constant = src->constant;
+        elementDupValues(&dest, src);
 
-    if (src == NULL) {
-        return NULL;
+        return dest;
     }
 
-    dest = elementInit(src->key, src->file, src->scope, T_Null);
-    dest->public = src->public;
-    dest->constant = src->constant;
-    elementDupValues(&dest, src);
-
-    return dest;
+    return NULL;
 }
 
 

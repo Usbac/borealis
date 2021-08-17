@@ -98,13 +98,6 @@ inline double strToD(const char *str)
     return strtod(str, NULL);
 }
 
-inline char *strFromC(char ch)
-{
-    char *str = calloc_(1, 2);
-    str[0] = ch;
-    return str;
-}
-
 
 inline char *strFromInt(int i)
 {

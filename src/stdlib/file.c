@@ -150,7 +150,7 @@ void stdCopy(struct result_list *args)
     }
 
     end:
-    statePushResultD(result);
+        statePushResultD(result);
         free(ori);
         free(dest);
 }

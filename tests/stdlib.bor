@@ -147,6 +147,7 @@ test.assert(Json.parse(json), obj {
     public any age = 23;
     public any arr = [];
 }, "Json.parse should return the value of the given json string");
+test.assert(Json.parse('asd'), null, "Json.parse should return null when the given json representation is not valid");
 
 test.assert(Json.isValid(json), true, "Json.isValid should return true when the given json representation is valid");
 test.assert(Json.isValid('{ "a": "b", "b": "c", }'), false, "Json.isValid should return false when the given json representation is not valid");
