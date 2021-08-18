@@ -212,7 +212,7 @@ void statePushResultRef(struct element *el)
 }
 
 
-void StatePushResultArr(struct element_table *values)
+void statePushResultArr(struct element_table *values)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {

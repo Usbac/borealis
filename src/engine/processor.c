@@ -877,7 +877,7 @@ static void evalArray(struct token **node)
 
     resultListFree(state->stack);
     state->stack = aux_stack;
-    StatePushResultArr(arr);
+    statePushResultArr(arr);
 }
 
 

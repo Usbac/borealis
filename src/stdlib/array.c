@@ -121,7 +121,7 @@ void stdGetKeys(struct result_list *args)
         }
     }
 
-    StatePushResultArr(keys);
+    statePushResultArr(keys);
 }
 
 
@@ -241,7 +241,7 @@ void stdRange(struct result_list *args)
         free(key_str);
     }
 
-    StatePushResultArr(arr);
+    statePushResultArr(arr);
 }
 
 
@@ -316,7 +316,7 @@ void stdColumn(struct result_list *args)
         }
     }
 
-    StatePushResultArr(result);
+    statePushResultArr(result);
     free(column_name);
 }
 
@@ -374,7 +374,7 @@ void stdMap(struct result_list *args)
         resultListFree(func_args);
     }
 
-    StatePushResultArr(result);
+    statePushResultArr(result);
 }
 
 
@@ -410,7 +410,7 @@ void stdFilter(struct result_list *args)
         resultListFree(func_args);
     }
 
-    StatePushResultArr(result);
+    statePushResultArr(result);
 }
 
 
@@ -485,7 +485,7 @@ void stdMerge(struct result_list *args)
         }
     }
 
-    StatePushResultArr(result);
+    statePushResultArr(result);
 }
 
 

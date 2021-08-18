@@ -288,7 +288,7 @@ void stdSplit(struct result_list *args)
         i += strlen(el->value.string) + needle_len;
     }
 
-    StatePushResultArr(arr);
+    statePushResultArr(arr);
 
     free(haystack);
     free(needle);

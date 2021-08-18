@@ -83,7 +83,7 @@ void stdToArray(struct result_list *args)
         default: arr = elementTableInit();
     }
 
-    StatePushResultArr(arr);
+    statePushResultArr(arr);
 }
 
 

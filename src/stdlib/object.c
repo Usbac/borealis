@@ -21,7 +21,7 @@ void stdGetObjectKeys(struct result_list *args)
         }
     }
 
-    StatePushResultArr(result);
+    statePushResultArr(result);
 }
 
 
@@ -44,5 +44,5 @@ void stdGetObjectValues(struct result_list *args)
         }
     }
 
-    StatePushResultArr(result);
+    statePushResultArr(result);
 }

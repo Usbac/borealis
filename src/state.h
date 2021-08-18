@@ -152,7 +152,7 @@ void statePushResultEl(struct element *el);
  * Pushes a new result of type array into the result list.
  * @param values the array values.
  */
-void StatePushResultArr(struct element_table *values);
+void statePushResultArr(struct element_table *values);
 
 /**
  * Pushes a new result of type object into the result list.

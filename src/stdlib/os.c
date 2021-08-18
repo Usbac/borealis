@@ -111,7 +111,7 @@ void stdGetFiles(struct result_list *args)
         free(key);
     }
 
-    StatePushResultArr(arr);
+    statePushResultArr(arr);
     closedir(dir);
     end: free(path);
 }
