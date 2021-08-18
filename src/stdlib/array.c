@@ -247,10 +247,16 @@ void stdRange(struct result_list *args)
 
 static int sortCompare(const void *a, const void *b)
 {
-    struct element_list **a_aux = (struct element_list **) a;
-    struct element_list **b_aux = (struct element_list **) b;
+    double a_num = getDouble((*(struct element_list **) a)->ptr);
+    double b_num = getDouble((*(struct element_list **) b)->ptr);
 
-    return getDouble((*a_aux)->ptr) - getDouble((*b_aux)->ptr);
+    if (a_num > b_num) {
+        return 1;
+    } else if (a_num < b_num) {
+        return -1;
+    }
+
+    return 0;
 }
 
 
