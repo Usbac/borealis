@@ -17,14 +17,6 @@ static void removeAndReturnArrEl(struct element_list *el)
 }
 
 
-static void swap(struct element_list **a, struct element_list **b)
-{
-    struct element_list *aux = *a;
-    *a = *b;
-    *b = aux;
-}
-
-
 static double getDouble(struct element *el)
 {
     struct element *ref = getTrueElement(el);
@@ -35,33 +27,6 @@ static double getDouble(struct element *el)
         case T_Null: return 0;
         case T_Number: return ref->value.number;
         default: return strToD(ref->value.string);
-    }
-}
-
-
-static int64_t partition(struct element_list **arr, int64_t low, int64_t high)
-{
-    struct element_list *pivot = arr[high];
-    int64_t i = low - 1;
-
-    for (int64_t j = low; j <= high; j++) {
-        if (getDouble(arr[j]->ptr) < getDouble(pivot->ptr)) {
-            i++;
-            swap(&arr[i], &arr[j]);
-        }
-    }
-
-    swap(&arr[i + 1], &arr[high]);
-    return i + 1;
-}
-
-
-static void quickSort(struct element_list **arr, int64_t low, int64_t high)
-{
-    if (low < high) {
-        int64_t pi = partition(arr, low, high);
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
     }
 }
 
@@ -280,6 +245,15 @@ void stdRange(struct result_list *args)
 }
 
 
+static int sortCompare(const void *a, const void *b)
+{
+    struct element_list **a_aux = (struct element_list **) a;
+    struct element_list **b_aux = (struct element_list **) b;
+
+    return getDouble((*a_aux)->ptr) - getDouble((*b_aux)->ptr);
+}
+
+
 void stdSort(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
@@ -295,7 +269,7 @@ void stdSort(struct result_list *args)
         return;
     }
 
-    values = malloc_(len * sizeof(struct element_list));
+    values = malloc_(len * sizeof(struct element_list *));
     i = 0;
     el = arr->first;
     while (el != NULL) {
@@ -303,7 +277,7 @@ void stdSort(struct result_list *args)
         el = el->next;
     }
 
-    quickSort(values, 0, len - 1);
+    qsort(values, len, sizeof(struct element_list *), sortCompare);
 
     for (i = 0; i < len; i++) {
         values[i]->prev = i == 0 ? NULL : values[i - 1];
