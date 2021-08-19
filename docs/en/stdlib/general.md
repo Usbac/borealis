@@ -62,7 +62,7 @@ debug(foo eq 'yes'); # The REPL will run only if the user entered 'yes'
 
 `isEmpty(any value): number`
 
-Returns true if the given value is considered empty, false otherwise.
+Returns `true` if the given value is considered empty, `false` otherwise.
 
 A value is considered empty if it's:
 
@@ -93,7 +93,7 @@ toString(20) # Returns '20'
 ```
 
 ```borealis
-toString([ 1,2,3 ]); # Returns '[array]'
+toString([ 1, 2, 3 ]); # Returns '[array]'
 ```
 
 ### To number
@@ -109,7 +109,7 @@ toNumber('1.5') # Returns 1.5
 ```
 
 ```borealis
-toNumber([ 1,2,3 ]); # Returns 1
+toNumber([ 1, 2, 3 ]); # Returns 1
 ```
 
 ### To boolean

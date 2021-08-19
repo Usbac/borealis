@@ -39,7 +39,7 @@ Prints the given value in verbose mode.
 Usually useful for printing non-scalar values like arrays and objects.
 
 ```borealis
-Io.printV([ 1,2,3 ]); # It will print '(array) [0:(number) 1,1:(number) 2,2:(number) 3]'
+Io.printV([ 1, 2, 3 ]); # It will print '(array) [0:(number) 1,1:(number) 2,2:(number) 3]'
 ```
 
 ```borealis

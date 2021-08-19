@@ -49,7 +49,7 @@ Variables defined this way only can hold values of the specified data type.
 ```borealis
 string name = 'alex';
 number age = 23;
-array ids = [ 1,2,3 ];
+array ids = [ 1, 2, 3 ];
 object foo = obj {};
 ```
 

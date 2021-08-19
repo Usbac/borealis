@@ -1,7 +1,7 @@
 
 ## Instructions separation
 
-As in C, statements in Borealis must end with a semicolon `;` no matter if they are in the same line or in different lines.
+As in C, statements in Borealis must end with a semicolon `;` no matter if they are in the same line or not.
 
 ```borealis
 any a = 1; # Valid

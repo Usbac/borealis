@@ -46,7 +46,7 @@ Json.parse('{"name":"foo","age":23}');
 Returns `true` if the given string is a valid JSON representation, `false` otherwise.
 
 ```borealis
-Json.isValid('[1,2,3]'); # Returns true
+Json.isValid('[1, 2, 3]'); # Returns true
 ```
 
 ```borealis

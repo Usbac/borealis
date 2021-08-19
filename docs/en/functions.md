@@ -205,6 +205,6 @@ Borealis comes with many different built-in functions, they are created when sta
 The built-in functions are usually faster than the user-defined functions in Borealis.
 
 ```borealis
-toString([ 1,2,3 ]);
+toString([ 1, 2, 3 ]);
 print('Hello world');
 ```
