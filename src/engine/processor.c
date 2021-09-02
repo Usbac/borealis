@@ -1301,7 +1301,7 @@ void processFile(const char *file, size_t line_n)
     stateAddFileImport(file);
     stmts = codeToList(code, SEPARATOR_DEFAULT, true, 1);
     preprocess(stmts, file);
-    bytecode = listToBytecode(stmts);
+    bytecode = bytecodeFromList(stmts);
     evalBytecode(bytecode);
 
     listFreeR(stmts);

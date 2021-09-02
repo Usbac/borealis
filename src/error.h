@@ -7,7 +7,7 @@
 /* Parser errors */
 #define E_TOKEN PARSER_ERROR("Invalid token '%s'")
 #define E_INVALID_NAME PARSER_ERROR("Invalid identifier name '%s'")
-#define E_SEMICOLON PARSER_ERROR("Unexpected end, expecting ';'")
+#define E_END PARSER_ERROR("Unexpected end, expecting '%s'")
 #define E_BLOCK_END PARSER_ERROR("Unexpected block end, expected closing tag '%c'")
 #define E_FUNC_DEFINITION PARSER_ERROR("Invalid format for function definition")
 #define E_FUNC_VARIADIC PARSER_ERROR("Only the last parameter can be variadic")

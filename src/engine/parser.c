@@ -337,7 +337,7 @@ static struct token_list *tokensToList(const struct token_list *tokens, bool str
         }
 
         if (strict_end && isUnexpectedEnd(i)) {
-            errorF(i->line_n, E_SEMICOLON);
+            errorF(i->line_n, E_END, SEPARATOR_DEFAULT);
         }
     }
 

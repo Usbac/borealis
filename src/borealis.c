@@ -141,7 +141,7 @@ static void runCodeLine(void)
 
     stmts = codeToList(arg_code, SEPARATOR_DEFAULT, true, 0);
     preprocess(stmts, NULL);
-    bytecode = listToBytecode(stmts);
+    bytecode = bytecodeFromList(stmts);
     evalBytecode(bytecode);
 
     listFreeR(stmts);
