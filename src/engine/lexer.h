@@ -55,12 +55,12 @@ enum OPCODE {
     OP_Mod_equal, OP_Null_coalesce,
 };
 
-struct operator {
+struct reserved_token {
     enum OPCODE opcode;
     char *string;
     uint8_t precedence;
     bool right_associated;
-    struct operator *next;
+    struct reserved_token *next;
 };
 
 struct token {
@@ -82,7 +82,7 @@ struct token_list {
 };
 
 
-extern struct operator *operators_head;
+extern struct reserved_token *reserved_tokens_head;
 
 /**
  * Initializes the lexer.

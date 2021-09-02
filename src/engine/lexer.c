@@ -7,30 +7,40 @@
 #include "../error.h"
 #include "lexer.h"
 
-struct operator *operators_head = NULL;
+struct reserved_token *reserved_tokens_head = NULL;
+
+struct {
+    enum OPCODE list[UINT8_MAX];
+    size_t last;
+} operators;
 
 
-static void addOperator(const char *string,
-                        enum OPCODE opcode,
-                        size_t precedence,
-                        bool right_associated)
+static void addReservedToken(const char *string,
+                             enum OPCODE opcode,
+                             size_t precedence,
+                             bool right_associated,
+                             bool is_operator)
 {
-    struct operator *new = malloc_(sizeof(struct operator));
-    *new = (struct operator) {
+    struct reserved_token *new = malloc_(sizeof(struct reserved_token));
+    *new = (struct reserved_token) {
         .opcode = opcode,
         .string = strDup(string),
         .precedence = precedence,
         .right_associated = right_associated,
     };
 
-    new->next = operators_head;
-    operators_head = new;
+    if (is_operator && operators.last + 1 <= UINT8_MAX) {
+        operators.list[operators.last++] = opcode;
+    }
+
+    new->next = reserved_tokens_head;
+    reserved_tokens_head = new;
 }
 
 
 static enum OPCODE getTokenOpcode(const char *str, const char *stmt_sep)
 {
-    struct operator *node = operators_head;
+    struct reserved_token *node = reserved_tokens_head;
 
     if (!strcmp(str, stmt_sep)) {
         return OP_Stmt_sep;
@@ -124,80 +134,81 @@ static void tokenListPush(struct token_list *list,
 
 void lexerInit(void)
 {
-    addOperator("!", OP_Negation, 12, true);
-    addOperator("-", OP_Negative, 12, true);
-    addOperator("+", OP_Positive, 12, true);
-    addOperator("^", OP_Concat, 9, false);
-    addOperator("+", OP_Plus, 10, false);
-    addOperator("-", OP_Minus, 10, false);
-    addOperator("*", OP_Multi, 11, false);
-    addOperator("/", OP_Div, 11, false);
-    addOperator("%", OP_Mod, 11, false);
-    addOperator("=", OP_Assignation, 3, true);
-    addOperator("+=", OP_Plus_equal, 3, true);
-    addOperator("-=", OP_Minus_equal, 3, true);
-    addOperator("*=", OP_Multi_equal, 3, true);
-    addOperator("/=", OP_Div_equal, 3, true);
-    addOperator("^=", OP_Concat_equal, 3, true);
-    addOperator("%=", OP_Mod_equal, 3, true);
-    addOperator("<", OP_Lower, 8, false);
-    addOperator(">", OP_Higher, 8, false);
-    addOperator("<=", OP_Lower_equal, 8, false);
-    addOperator(">=", OP_Higher_equal, 8, false);
-    addOperator("&&", OP_And, 6, false);
-    addOperator("||", OP_Or, 5, false);
-    addOperator("public", OP_Public, 0, false);
-    addOperator("return", OP_Return, 0, false);
-    addOperator("const", OP_Constant, 1, false);
-    addOperator("...", OP_Spread, 2, false);
-    addOperator("string", OP_Type_string, 2, false);
-    addOperator("number", OP_Type_number, 2, false);
-    addOperator("array", OP_Type_array, 2, false);
-    addOperator("object", OP_Type_object, 2, false);
-    addOperator("function", OP_Type_function, 2, false);
-    addOperator("any", OP_Definition, 2, true);
-    addOperator("==", OP_Compare, 7, false);
-    addOperator("!=", OP_Different, 7, false);
-    addOperator("eq", OP_Compare_string, 7, false);
-    addOperator("ne", OP_Different_string, 7, false);
-    addOperator("===", OP_Compare_strict, 7, false);
-    addOperator("!==", OP_Different_strict, 7, false);
-    addOperator(",", OP_Comma, 0, false);
-    addOperator("(", OP_Open_parenthesis, 18, false);
-    addOperator(")", OP_Closed_parenthesis, 18, false);
-    addOperator("[", OP_Open_square, 0, false);
-    addOperator("]", OP_Closed_square, 0, false);
-    addOperator("else", OP_Else, 13, false);
-    addOperator("break", OP_Break, 13, false);
-    addOperator("continue", OP_Continue, 13, false);
-    addOperator("obj", OP_Object, 14, false);
-    addOperator(".", OP_Dot, 15, false);
-    addOperator("?.", OP_Dot_safe, 15, false);
-    addOperator(":", OP_Colon, 15, false);
-    addOperator("++", OP_Increment_pos, 15, false);
-    addOperator("--", OP_Decrement_pos, 15, false);
-    addOperator("++", OP_Increment_pre, 12, true);
-    addOperator("--", OP_Decrement_pre, 12, true);
-    addOperator("??", OP_Null_coalesce, 4, true);
-    addOperator("**", OP_Pow, 16, false);
-    addOperator("&", OP_Reference, 12, true);
-    addOperator("import", OP_Import, 12, true);
-    addOperator("f", OP_Closure, 17, false);
-    addOperator("if", OP_If, 17, false);
-    addOperator("while", OP_While, 17, false);
-    addOperator("foreach", OP_Foreach, 17, false);
-    addOperator("case", OP_Case, 17, false);
-    addOperator("this", OP_This, 17, false);
-    addOperator("<<", OP_Bang, 2, false);
+    operators.list[operators.last++] = OP_Stmt_sep;
+    addReservedToken("!", OP_Negation, 12, true, true);
+    addReservedToken("-", OP_Negative, 12, true, true);
+    addReservedToken("+", OP_Positive, 12, true, true);
+    addReservedToken("^", OP_Concat, 9, false, true);
+    addReservedToken("+", OP_Plus, 10, false, true);
+    addReservedToken("-", OP_Minus, 10, false, true);
+    addReservedToken("*", OP_Multi, 11, false, true);
+    addReservedToken("/", OP_Div, 11, false, true);
+    addReservedToken("%", OP_Mod, 11, false, true);
+    addReservedToken("=", OP_Assignation, 3, true, true);
+    addReservedToken("+=", OP_Plus_equal, 3, true, true);
+    addReservedToken("-=", OP_Minus_equal, 3, true, true);
+    addReservedToken("*=", OP_Multi_equal, 3, true, true);
+    addReservedToken("/=", OP_Div_equal, 3, true, true);
+    addReservedToken("^=", OP_Concat_equal, 3, true, true);
+    addReservedToken("%=", OP_Mod_equal, 3, true, true);
+    addReservedToken("<", OP_Lower, 8, false, true);
+    addReservedToken(">", OP_Higher, 8, false, true);
+    addReservedToken("<=", OP_Lower_equal, 8, false, true);
+    addReservedToken(">=", OP_Higher_equal, 8, false, true);
+    addReservedToken("&&", OP_And, 6, false, true);
+    addReservedToken("||", OP_Or, 5, false, true);
+    addReservedToken("...", OP_Spread, 2, false, true);
+    addReservedToken("public", OP_Public, 0, false, false);
+    addReservedToken("return", OP_Return, 0, false, false);
+    addReservedToken("const", OP_Constant, 1, false, false);
+    addReservedToken("string", OP_Type_string, 2, false, false);
+    addReservedToken("number", OP_Type_number, 2, false, false);
+    addReservedToken("array", OP_Type_array, 2, false, false);
+    addReservedToken("object", OP_Type_object, 2, false, false);
+    addReservedToken("function", OP_Type_function, 2, false, false);
+    addReservedToken("any", OP_Definition, 2, true, false);
+    addReservedToken("==", OP_Compare, 7, false, true);
+    addReservedToken("!=", OP_Different, 7, false, true);
+    addReservedToken("eq", OP_Compare_string, 7, false, true);
+    addReservedToken("ne", OP_Different_string, 7, false, true);
+    addReservedToken("===", OP_Compare_strict, 7, false, true);
+    addReservedToken("!==", OP_Different_strict, 7, false, true);
+    addReservedToken(",", OP_Comma, 0, false, true);
+    addReservedToken("(", OP_Open_parenthesis, 18, false, true);
+    addReservedToken(")", OP_Closed_parenthesis, 18, false, true);
+    addReservedToken("[", OP_Open_square, 0, false, false);
+    addReservedToken("]", OP_Closed_square, 0, false, false);
+    addReservedToken("else", OP_Else, 13, false, false);
+    addReservedToken("break", OP_Break, 13, false, false);
+    addReservedToken("continue", OP_Continue, 13, false, false);
+    addReservedToken("obj", OP_Object, 14, false, false);
+    addReservedToken(".", OP_Dot, 15, false, true);
+    addReservedToken("?.", OP_Dot_safe, 15, false, true);
+    addReservedToken(":", OP_Colon, 15, false, true);
+    addReservedToken("++", OP_Increment_pos, 15, false, true);
+    addReservedToken("--", OP_Decrement_pos, 15, false, true);
+    addReservedToken("++", OP_Increment_pre, 12, true, true);
+    addReservedToken("--", OP_Decrement_pre, 12, true, true);
+    addReservedToken("??", OP_Null_coalesce, 4, true, true);
+    addReservedToken("**", OP_Pow, 16, false, true);
+    addReservedToken("&", OP_Reference, 12, true, true);
+    addReservedToken("foreach", OP_Foreach, 17, false, true);
+    addReservedToken("import", OP_Import, 12, true, false);
+    addReservedToken("f", OP_Closure, 17, false, false);
+    addReservedToken("if", OP_If, 17, false, false);
+    addReservedToken("while", OP_While, 17, false, false);
+    addReservedToken("case", OP_Case, 17, false, false);
+    addReservedToken("this", OP_This, 17, false, false);
+    addReservedToken("<<", OP_Bang, 2, false, true);
 }
 
 
 void lexerFree(void)
 {
-    struct operator *node;
+    struct reserved_token *node;
 
-    while ((node = operators_head) != NULL) {
-        operators_head = operators_head->next;
+    while ((node = reserved_tokens_head) != NULL) {
+        reserved_tokens_head = reserved_tokens_head->next;
         free(node->string);
         free(node);
     }
@@ -348,30 +359,13 @@ bool isKeyword(enum OPCODE opcode)
 
 bool isOperator(enum OPCODE opcode)
 {
-    return
-        opcode == OP_Concat || opcode == OP_Concat_equal ||
-        opcode == OP_Plus || opcode == OP_Minus ||
-        opcode == OP_Multi || opcode == OP_Div ||
-        opcode == OP_Positive || opcode == OP_Negative ||
-        opcode == OP_Plus_equal || opcode == OP_Minus_equal ||
-        opcode == OP_Multi_equal || opcode == OP_Div_equal ||
-        opcode == OP_Lower || opcode == OP_Higher ||
-        opcode == OP_Lower_equal || opcode == OP_Higher_equal ||
-        opcode == OP_And || opcode == OP_Or ||
-        opcode == OP_Compare || opcode == OP_Null_coalesce ||
-        opcode == OP_Compare_string || opcode == OP_Different_string ||
-        opcode == OP_Compare_strict || opcode == OP_Different_strict ||
-        opcode == OP_Stmt_sep || opcode == OP_Assignation ||
-        opcode == OP_Foreach || opcode == OP_Comma ||
-        opcode == OP_Open_parenthesis || opcode == OP_Closed_parenthesis ||
-        opcode == OP_Negation || opcode == OP_Different ||
-        opcode == OP_Spread || opcode == OP_Dot ||
-        opcode == OP_Reference || opcode == OP_Colon ||
-        opcode == OP_Pow || opcode == OP_Dot_safe ||
-        opcode == OP_Decrement_pre || opcode == OP_Decrement_pos ||
-        opcode == OP_Increment_pre || opcode == OP_Increment_pos ||
-        opcode == OP_Mod || opcode == OP_Mod_equal ||
-        opcode == OP_Bang;
+    for (size_t i = 0; i < operators.last; i++) {
+        if (opcode == operators.list[i]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 

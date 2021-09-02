@@ -88,7 +88,7 @@ static size_t getPrec(const struct token *node)
         return 15;
     }
 
-    for (struct operator *i = operators_head; i != NULL; i = i->next) {
+    for (struct reserved_token *i = reserved_tokens_head; i != NULL; i = i->next) {
         if (node->opcode == i->opcode) {
             return i->precedence;
         }
@@ -111,7 +111,7 @@ static bool isUnaryExpr(struct token *node)
 
 static bool isRightAssoc(struct token *node)
 {
-    for (struct operator *i = operators_head; i != NULL; i = i->next) {
+    for (struct reserved_token *i = reserved_tokens_head; i != NULL; i = i->next) {
         if (node->opcode == i->opcode && i->right_associated) {
             return true;
         }
