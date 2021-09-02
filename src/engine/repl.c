@@ -60,7 +60,7 @@ static bool runLine(char *line, struct element *el)
 
     stmts = codeToList(line, SEPARATOR_DEFAULT, true, state->line_n);
     preprocess(stmts, NULL);
-    bytecode = listToBytecode(stmts);
+    bytecode = bytecodeFromList(stmts);
     evalBytecode(bytecode);
 
     if (el != NULL && state->last_val != NULL) {

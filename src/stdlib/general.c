@@ -203,7 +203,7 @@ void stdEval(struct result_list *args)
     struct token_list *bytecode;
 
     preprocess(stmts, state->file);
-    bytecode = listToBytecode(stmts);
+    bytecode = bytecodeFromList(stmts);
     evalBytecode(bytecode);
 
     listFreeR(stmts);

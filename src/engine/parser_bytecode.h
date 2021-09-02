@@ -2,17 +2,17 @@
 #define BYTECODE_H
 
 /**
- * Returns the AST list as a bytecode list.
+ * Returns a bytecode list from the given AST list.
  * @param ast the AST list.
- * @return The AST list as a bytecode list.
+ * @return The bytecode list.
  */
-struct token_list *listToBytecode(struct token_list *ast);
+struct token_list *bytecodeFromList(struct token_list *ast);
 
 /**
  * Pushes the node into the given list as a bytecode node.
  * @param list the list.
  * @param node the node.
  */
-void pushBytecode(struct token_list *list, struct token *node);
+void bytecodePush(struct token_list *list, struct token *node);
 
 #endif /* BYTECODE_H */

@@ -352,12 +352,12 @@ static void declareFunc(struct token *node,
     prevalidateParams(node->rs->body);
 
     func = elementInit(node->rs->ls != NULL ? node->rs->ls->value : NULL,
-                       pre_state->file,
-                       0,
-                       T_Function);
+        pre_state->file,
+        0,
+        T_Function);
     func->value.function->def_file = strDup(pre_state->file);
-    func->value.function->params = listToBytecode(node->rs->body);
-    func->value.function->stmts = listToBytecode(node->ls->body);
+    func->value.function->params = bytecodeFromList(node->rs->body);
+    func->value.function->stmts = bytecodeFromList(node->ls->body);
     func->value.function->params_n = getParamsNumber(func->value.function->params);
     func->value.function->return_type = getOpcodeType(node->opcode);
     func->public = public;

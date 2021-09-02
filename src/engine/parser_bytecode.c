@@ -6,7 +6,7 @@
 #include "parser_bytecode.h"
 
 
-static void pushTokenToBytecode(struct token_list *list, struct token *node)
+static void bytecodePushToken(struct token_list *list, struct token *node)
 {
     push(list, node);
     list->last->ls = NULL;
@@ -14,16 +14,16 @@ static void pushTokenToBytecode(struct token_list *list, struct token *node)
 }
 
 
-static void pushBytecodeCode(struct token_list *list, struct token *node)
+static void bytecodePushCode(struct token_list *list, struct token *node)
 {
     struct token *code = malloc_(sizeof(struct token));
     *code = (struct token) {
         .type = node->type,
         .line_n = node->line_n,
-        .body = listToBytecode(node->body),
+        .body = bytecodeFromList(node->body),
     };
 
-    pushTokenToBytecode(list, code);
+    bytecodePushToken(list, code);
 }
 
 
@@ -40,9 +40,24 @@ static size_t getJmpLength(struct token *start, struct token *end)
 }
 
 
-void pushBytecode(struct token_list *list, struct token *node)
+static bool isTokenWithJmp(struct token *node)
+{
+    return node->opcode == OP_And || node->opcode == OP_Or ||
+        node->opcode == OP_Colon || node->opcode == OP_Assignation;
+}
+
+
+static bool isTokenWithDifferentFlow(struct token *node)
+{
+    return node->opcode == OP_If || node->opcode == OP_While ||
+        node->opcode == OP_Else || node->opcode == OP_Case;
+}
+
+
+void bytecodePush(struct token_list *list, struct token *node)
 {
     bool added = false;
+    bool is_token_with_jmp = false;
     struct token *start = NULL;
 
     if (node == NULL) {
@@ -51,51 +66,49 @@ void pushBytecode(struct token_list *list, struct token *node)
 
     if (node->opcode == OP_Closure || node->opcode == OP_Object ||
         node->opcode == OP_Foreach || isDefKeyword(node->opcode)) {
-        pushTokenToBytecode(list, tokenDup(node));
+        bytecodePushToken(list, tokenDup(node));
         added = true;
     }
 
     if (node->opcode == OP_Null_coalesce) {
-        pushBytecode(list, node->ls);
-        pushTokenToBytecode(list, tokenDup(node));
+        bytecodePush(list, node->ls);
+        bytecodePushToken(list, tokenDup(node));
         start = list->last;
-        pushBytecode(list, node->rs);
+        bytecodePush(list, node->rs);
         start->jmp = getJmpLength(start, list->last);
         return;
     }
 
-    pushBytecode(list, node->rs);
+    bytecodePush(list, node->rs);
 
-    if (node->opcode == OP_If || node->opcode == OP_While ||
-        node->opcode == OP_Else || node->opcode == OP_Case) {
-        pushTokenToBytecode(list, tokenDup(node));
+    is_token_with_jmp = isTokenWithJmp(node);
+    if (is_token_with_jmp || isTokenWithDifferentFlow(node)) {
+        bytecodePushToken(list, tokenDup(node));
         added = true;
-    } else if (node->opcode == OP_And || node->opcode == OP_Or ||
-        node->opcode == OP_Colon || node->opcode == OP_Assignation) {
-        pushTokenToBytecode(list, tokenDup(node));
-        start = list->last;
-        added = true;
+
+        if (is_token_with_jmp) {
+            start = list->last;
+        }
     } else if (node->type == T_Chunk) {
-        pushBytecodeCode(list, node);
+        bytecodePushCode(list, node);
         added = true;
     }
 
-    pushBytecode(list, node->ls);
+    bytecodePush(list, node->ls);
 
     if (start != NULL) {
         start->jmp = getJmpLength(start, list->last);
     }
 
-    if (node->type == T_Parameters || node->type == T_Array ||
-        node->type == T_Index || node->type == T_Arguments) {
-        pushBytecodeCode(list, node);
+    if (isPartial(node->type) && node->type != T_Chunk) {
+        bytecodePushCode(list, node);
     } else if (!added) {
-        pushTokenToBytecode(list, tokenDup(node));
+        bytecodePushToken(list, tokenDup(node));
     }
 }
 
 
-struct token_list *listToBytecode(struct token_list *ast)
+struct token_list *bytecodeFromList(struct token_list *ast)
 {
     struct token_list *list = listInit();
     struct token *node = ast != NULL ? ast->first : NULL;
@@ -105,10 +118,10 @@ struct token_list *listToBytecode(struct token_list *ast)
     };
 
     while (node != NULL) {
-        pushBytecode(list, node);
+        bytecodePush(list, node);
         if (node->next == NULL || node->next->opcode != OP_Else) {
             stmt_sep->line_n = node->line_n;
-            pushBytecode(list, stmt_sep);
+            bytecodePush(list, stmt_sep);
         }
 
         node = node->next;
