@@ -689,9 +689,9 @@ static struct result *getFuncResult(struct function *func,
     }
 
     elementTablePush(state->callstack->prev != NULL ?
-                     &state->callstack->prev->elements :
-                     &elements,
-                     el);
+        &state->callstack->prev->elements :
+        &elements,
+        el);
 
     *result = (struct result) {
         .type = T_Identifier,
