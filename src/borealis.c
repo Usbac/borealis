@@ -17,32 +17,21 @@ char *cwd = NULL;
 /**
  * List of arguments.
  */
-struct element_table *args;
+struct element_table *args_table;
 
 /**
- * Single code line to run.
+ * Arguments options.
  */
-char *arg_code = NULL;
-
-/**
- * Current file.
- */
-char *arg_file = NULL;
-
-/**
- * Interactive mode or not.
- */
-bool arg_interactive_mode = false;
-
-/**
- * Number of flags.
- */
-size_t flags_quantity = 0;
+struct {
+    char *code;
+    char *file;
+    bool interactive_mode;
+} args;
 
 
 static void runExit(void)
 {
-    int status_code = 0;
+    int status_code = EXIT_SUCCESS;
 
     if (state != NULL) {
         status_code = state->code;
@@ -66,12 +55,12 @@ static bool mapArgs(int argc, char *argv[])
         return true;
     }
 
-    args = elementTableInit();
+    args_table = elementTableInit();
     for (int i = 0; i < argc; i++) {
         struct element *arg = elementInit(NULL, NULL, 0, T_String);
         arg->key = strFromInt(i);
         arg->value.string = strDup(argv[i]);
-        elementTablePush(&args, arg);
+        elementTablePush(&args_table, arg);
     }
 
     for (int i = 0; i < argc; i++) {
@@ -83,7 +72,7 @@ static bool mapArgs(int argc, char *argv[])
 
         /* REPL */
         if (!strcmp(argv[i], "-i") || !strcmp(argv[i], "--interactive")) {
-            arg_interactive_mode = true;
+            args.interactive_mode = true;
         }
 
         /* Version */
@@ -99,14 +88,12 @@ static bool mapArgs(int argc, char *argv[])
 
         /* Run code line */
         if (!strcmp(argv[i], "-r") || !strcmp(argv[i], "--run")) {
-            arg_code = argv[++i];
-            flags_quantity += 2;
+            args.code = argv[++i];
         }
 
         /* File */
         if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--file")) {
-            arg_file = argv[++i];
-            flags_quantity += 2;
+            args.file = argv[++i];
         }
     }
 
@@ -116,16 +103,16 @@ static bool mapArgs(int argc, char *argv[])
 
 static void runFile(void)
 {
-    stateInit(arg_file);
-    stdlibInit(args, cwd, arg_file);
-    processFile(arg_file, 0);
+    stateInit(args.file);
+    stdlibInit(args_table, cwd, args.file);
+    processFile(args.file, 0);
 }
 
 
 static void runRepl(void)
 {
     stateInit(NULL);
-    stdlibInit(args, cwd, NULL);
+    stdlibInit(args_table, cwd, NULL);
     printf(MSG_REPL);
     state->in_repl = true;
     replProcess(false);
@@ -137,9 +124,9 @@ static void runCodeLine(void)
     struct token_list *stmts, *bytecode;
 
     stateInit(NULL);
-    stdlibInit(args, cwd, NULL);
+    stdlibInit(args_table, cwd, NULL);
 
-    stmts = codeToList(arg_code, SEPARATOR_DEFAULT, true, 0);
+    stmts = codeToList(args.code, SEPARATOR_DEFAULT, true, 0);
     preprocess(stmts, NULL);
     bytecode = bytecodeFromList(stmts);
     evalBytecode(bytecode);
@@ -153,17 +140,17 @@ int main(int argc, char* argv[])
 {
     atexit(runExit);
     if (mapArgs(argc, argv)) {
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     cwd = getcwd_();
     lexerInit();
 
-    if (arg_file != NULL) {
+    if (args.file != NULL) {
         runFile();
-    } else if (arg_code != NULL) {
+    } else if (args.code != NULL) {
         runCodeLine();
-    } else if (arg_interactive_mode) {
+    } else if (args.interactive_mode) {
         runRepl();
     }
 }

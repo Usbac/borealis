@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include "../../lib/linenoise.h"
 #include "../element.h"
 #include "../state.h"
 #include "../borealis.h"
@@ -8,7 +9,6 @@
 #include "parser_bytecode.h"
 #include "processor.h"
 #include "processor_helper.h"
-#include "../../lib/linenoise.h"
 #include "repl.h"
 
 
