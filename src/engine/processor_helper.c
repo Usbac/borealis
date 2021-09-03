@@ -41,15 +41,7 @@ double getValueD(struct result *node)
     union VALUE value;
 
     mapTypeVal(node, &type, &value);
-
-    switch (type) {
-        case T_Array:
-        case T_Object:
-        case T_Function: return 1;
-        case T_Null: return 0;
-        case T_Number: return value.number;
-        default: return strToD(value.string);
-    }
+    RETURN_DOUBLE_FROM_VALUE(type, value);
 }
 
 

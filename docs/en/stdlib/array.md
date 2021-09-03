@@ -172,7 +172,7 @@ Array.range(0, 5, 2); # Returns [ 0, 2, 4 ]
 
 ### Sort
 
-`sort(array arr)`
+`sort(array arr, function func = f() {})`
 
 Sorts the given array.
 
@@ -180,11 +180,60 @@ Elements will be arranged from lowest to highest using their numeric representat
 
 The [quicksort](https://www.google.com/search?q=quicksort) algorithm is used by this function.
 
+_The array keys are preserved._
+
 ```borealis
 any arr = [ 4, 2, 8, 0 ];
 Array.sort(arr);
 
 # Here arr will be [ 0, 2, 4, 8 ]
+```
+
+This function accepts an optional user-supplied comparison function to determine the order.
+
+Closure format:
+
+`number func(a, b)`
+
+The comparison function must return a number less than, equal to, or greater than zero if the first argument is considered to be respectively less than, equal to, or greater than the second.
+
+```borealis
+any people = [
+    [
+        'name' = 'Steve',
+        'age' = 23,
+    ],
+    [
+        'name' = 'Bill',
+        'age' = 20,
+    ],
+    [
+        'name' = 'Linus',
+        'age' = 15,
+    ],
+];
+
+Array.sort(people, f(a, b) {
+    return a['age'] - b['age'];
+});
+
+/**
+ * Here the people array will be like this:
+ * [
+ *     [
+ *         'name' = 'Linus',
+ *         'age' = 15,
+ *     ],
+ *     [
+ *         'name' = 'Bill',
+ *         'age' = 20,
+ *     ],
+ *     [
+ *         'name' = 'Steve',
+ *         'age' = 23,
+ *     ],
+ * ]
+ */
 ```
 
 ### Column

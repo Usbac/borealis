@@ -232,7 +232,7 @@ static void initFunctions(void)
     declareModuleFunc(arr, "has", stdHas, "a,v");
     declareModuleFunc(arr, "reverse", stdReverse, "a");
     declareModuleFunc(arr, "range", stdRange, "d,d|d");
-    declareModuleFunc(arr, "sort", stdSort, "a");
+    declareModuleFunc(arr, "sort", stdSort, "a|f");
     declareModuleFunc(arr, "column", stdColumn, "a,s");
     declareModuleFunc(arr, "map", stdMap, "a,f");
     declareModuleFunc(arr, "filter", stdFilter, "a,f");

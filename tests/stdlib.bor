@@ -89,6 +89,34 @@ foreach (arr, val) {
 }
 test.assert(sorted, [ 0,1,2,2,3,3,6,6,7,7,9 ], "Array.sort should sort the array");
 
+any age_arr = [
+    [
+        'age' = 23,
+    ],
+    [
+        'age' = 20,
+    ],
+    [
+        'age' = 15,
+    ],
+];
+
+Array.sort(age_arr, f(a,b) {
+    return a['age'] - b['age'];
+});
+
+test.assert(age_arr, [
+    2 = [
+        'age' = 15,
+    ],
+    1 = [
+        'age' = 20,
+    ],
+    0 = [
+        'age' = 23,
+    ],
+], "Array.sort should sort the array with the given function");
+
 test.assert(Array.column([
     [
         'name' = 'alex',

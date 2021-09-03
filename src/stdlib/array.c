@@ -5,6 +5,8 @@
 #include "../engine/processor.h"
 #include "array.h"
 
+struct function *func_compare = NULL;
+
 
 static void removeAndReturnArrEl(struct element_list *el)
 {
@@ -20,14 +22,7 @@ static void removeAndReturnArrEl(struct element_list *el)
 static double getDouble(struct element *el)
 {
     struct element *ref = getTrueElement(el);
-    switch (ref->type) {
-        case T_Array:
-        case T_Object:
-        case T_Function: return 1;
-        case T_Null: return 0;
-        case T_Number: return ref->value.number;
-        default: return strToD(ref->value.string);
-    }
+    RETURN_DOUBLE_FROM_VALUE(ref->type, ref->value);
 }
 
 
@@ -260,6 +255,26 @@ static int sortCompare(const void *a, const void *b)
 }
 
 
+static int customSortCompare(const void *a, const void *b)
+{
+    struct result_list *args = resultListInit();
+    struct result *func_result;
+    int result;
+
+    statePushResult(args, getResultFromElement((*(struct element_list **) a)->ptr));
+    statePushResult(args, getResultFromElement((*(struct element_list **) b)->ptr));
+
+    funcExec(func_compare, args, state->current_obj);
+    func_result = statePopResult();
+    result = (int) getValueD(func_result);
+
+    resultFree(func_result);
+    resultListFree(args);
+
+    return result;
+}
+
+
 void stdSort(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
@@ -283,7 +298,13 @@ void stdSort(struct result_list *args)
         el = el->next;
     }
 
-    qsort(values, len, sizeof(struct element_list *), sortCompare);
+    if (args->first->next != NULL) {
+        func_compare = getValueFunc(args->first->next);
+        func_compare->params_n = 2;
+        qsort(values, len, sizeof(struct element_list *), customSortCompare);
+    } else {
+        qsort(values, len, sizeof(struct element_list *), sortCompare);
+    }
 
     for (i = 0; i < len; i++) {
         values[i]->prev = i == 0 ? NULL : values[i - 1];

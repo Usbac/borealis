@@ -11,6 +11,17 @@
 #define TYPEOF_FUNCTION "function"
 #define TYPEOF_NULL "null"
 
+#define RETURN_DOUBLE_FROM_VALUE(type, value) {\
+    switch (type) {\
+        case T_Array:\
+        case T_Object:\
+        case T_Function: return 1;\
+        case T_Null: return 0;\
+        case T_Number: return value.number;\
+        default: return strToD(value.string);\
+    }\
+}\
+
 /**
  * Sets the given type and value based on the given result.
  * @param node the result.
