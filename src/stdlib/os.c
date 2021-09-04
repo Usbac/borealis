@@ -188,3 +188,48 @@ void stdExec(struct result_list *args)
     statePushResultD(system(str));
     free(str);
 }
+
+
+void stdGetModTime(struct result_list *args)
+{
+    char *path = getValueStr(args->first);
+    struct stat info;
+
+    if (stat(path, &info) < 0) {
+        statePushResultNull();
+    } else {
+        statePushResultD((double) info.st_mtime);
+    }
+
+    free(path);
+}
+
+
+void stdGetChangeTime(struct result_list *args)
+{
+    char *path = getValueStr(args->first);
+    struct stat info;
+
+    if (stat(path, &info) < 0) {
+        statePushResultNull();
+    } else {
+        statePushResultD((double) info.st_ctime);
+    }
+
+    free(path);
+}
+
+
+void stdGetAccessTime(struct result_list *args)
+{
+    char *path = getValueStr(args->first);
+    struct stat info;
+
+    if (stat(path, &info) < 0) {
+        statePushResultNull();
+    } else {
+        statePushResultD((double) info.st_atime);
+    }
+
+    free(path);
+}

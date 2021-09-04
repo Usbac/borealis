@@ -27,11 +27,6 @@ void stdAppendFile(struct result_list *args);
 void stdCopy(struct result_list *args);
 
 /**
- * Returns the modification time of a file in seconds.
- */
-void stdGetModTime(struct result_list *args);
-
-/**
  * Returns the file type.
  * file: regular file
  * dir: directory

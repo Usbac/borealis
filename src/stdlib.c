@@ -179,6 +179,9 @@ static void initFunctions(void)
     declareModuleFunc(os, "getEnv", stdGetEnv, "s");
     declareModuleFunc(os, "getTime", stdGetTime, "");
     declareModuleFunc(os, "exec", stdExec, "s");
+    declareModuleFunc(os, "getModTime", stdGetModTime, "s");
+    declareModuleFunc(os, "getChangeTime", stdGetChangeTime, "s");
+    declareModuleFunc(os, "getAccessTime", stdGetAccessTime, "s");
 #endif
     value.string = strDup(END_OF_LINE);
     declareModuleConst(os, "EOL", value, T_String);
@@ -263,7 +266,6 @@ static void initFunctions(void)
     declareModuleFunc(file, "write", stdWriteFile, "s,s|d");
     declareModuleFunc(file, "append", stdAppendFile, "s,s");
     declareModuleFunc(file, "copy", stdCopy, "s,s");
-    declareModuleFunc(file, "getModTime", stdGetModTime, "s");
     declareModuleFunc(file, "getType", stdGetType, "s");
     declareModuleFunc(file, "getSize", stdGetFileSize, "s");
 #endif

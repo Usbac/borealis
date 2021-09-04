@@ -156,21 +156,6 @@ void stdCopy(struct result_list *args)
 }
 
 
-void stdGetModTime(struct result_list *args)
-{
-    char *path = getValueStr(args->first);
-    struct stat info;
-
-    if (stat(path, &info) < 0) {
-        statePushResultNull();
-    } else {
-        statePushResultD((double) info.st_mtime);
-    }
-
-    free(path);
-}
-
-
 void stdGetType(struct result_list *args)
 {
     char *path = getValueStr(args->first);

@@ -76,4 +76,19 @@ void stdGetTime(struct result_list *args);
  */
 void stdExec(struct result_list *args);
 
+/**
+ * Returns the modification time of a file in seconds.
+ */
+void stdGetModTime(struct result_list *args);
+
+/**
+ * Returns the change time of a file in seconds.
+ */
+void stdGetChangeTime(struct result_list *args);
+
+/**
+ * Returns the access time of a file in seconds.
+ */
+void stdGetAccessTime(struct result_list *args);
+
 #endif /* OS_H */
