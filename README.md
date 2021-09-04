@@ -27,7 +27,7 @@ Borealis is a small, elegant and consistent scripting language. Includes a C-lik
 
 2. Run the following command where the Borealis executable is located: `sudo cp ./borealis /usr/local/bin`
 
-    Or move to your Borealis folder and run the following command: `sudo make install`
+    Or move to your Borealis folder and run the command: `sudo make install`
 
 Now you should be able to access Borealis by running `borealis` in your terminal.
 
@@ -77,9 +77,9 @@ Io.printLine('Name: ' ^ user.name ^ '. Age: ' ^ user.age);
 
 ## Testing
 
-Just run the following command in your Borealis repository folder:
+Just run the command: `make test`
 
-`./borealis -f ./tests/main.bor`
+Or run the following command in your Borealis repository folder: `borealis -f ./tests/main.bor`
 
 ## Documentation
 
