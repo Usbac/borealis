@@ -50,11 +50,11 @@ char *getcwd_(void)
 
 int mkdir_(char *path, unsigned int mode)
 {
-    #if defined(_WIN32)
-        return _mkdir(path);
-    #else
-        return mkdir(path, mode);
-    #endif
+#if defined(_WIN32)
+    return _mkdir(path);
+#else
+    return mkdir(path, mode);
+#endif
 }
 
 
@@ -390,17 +390,17 @@ char *readF(const char *path, bool binary)
 
 char *getPlatform(void)
 {
-    #if defined(_WIN32) || defined(WIN32)
-        return "windows";
-    #elif defined(__linux__)
-        return "linux";
-    #elif defined(__APPLE__)
-        return "mac";
-    #elif defined(__FreeBSD__)
-        return "bsd";
-    #else
-        return "unknown"
-    #endif
+#if defined(_WIN32) || defined(WIN32)
+    return "windows";
+#elif defined(__linux__)
+    return "linux";
+#elif defined(__APPLE__)
+    return "mac";
+#elif defined(__FreeBSD__)
+    return "bsd";
+#else
+    return "unknown"
+#endif
 }
 
 
@@ -418,11 +418,11 @@ size_t getIntBytes(int n)
 
 bool isAbsolutePath(const char *path)
 {
-    #if defined(_WIN32) || defined(WIN32)
-        return strlen(path) > 1 && isupper(path[0]) && path[1] == ':';
-    #else
-        return path[0] == '/' || path[0] == '~';
-    #endif
+#if defined(_WIN32) || defined(WIN32)
+    return strlen(path) > 1 && isupper(path[0]) && path[1] == ':';
+#else
+    return path[0] == '/' || path[0] == '~';
+#endif
 }
 
 

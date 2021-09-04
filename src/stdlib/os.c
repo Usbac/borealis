@@ -141,11 +141,11 @@ void stdGetPermissions(struct result_list *args)
     }
 
     stat(filename, &info);
-    #if defined(_WIN32) || defined(WIN32)
-        snprintf(result, BUFFER, "%o", info.st_mode & S_IRWXU);
-    #else
-        snprintf(result, BUFFER, "%o", info.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO));
-    #endif
+#if defined(_WIN32) || defined(WIN32)
+    snprintf(result, BUFFER, "%o", info.st_mode & S_IRWXU);
+#else
+    snprintf(result, BUFFER, "%o", info.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+#endif
 
     statePushResultStr(result);
     end: free(filename);
