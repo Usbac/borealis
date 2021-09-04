@@ -136,7 +136,7 @@ test.assert(Array.map([ 1, 2, 3 ], f(e) { return e + 1; }), [ 2, 3, 4 ], "Array.
 test.assert(Array.filter([ 1, 2, 3, 4, 5, 6 ], f(e) { return e % 2 == 0; }), [ 1 = 2, 3 = 4, 5 = 6 ], "Array.filter should filter the given array");
 test.assert(Array.reduce([ 1, 2, 3 ], f(acc, el) { return acc + el; }), 6, "Array.reduce should reduce the given array to a single value");
 test.assert(Array.merge([ 'name' = 'a', 'age' = 23 ], [ 'name' = 'b', 'city' = 'NY' ]), [ 'name' = 'b', 'age' = 23, 'city' = 'NY' ], "Array.merge should return a merge of the given arrays");
-test.assert(Array.some([ 1, 2, 3, 4 ], f(e) { return e > 0; }) ^ Array.some([ 1, 2, 3, 4 ], f(e) { return e <= 0; }), "10", "Array.some should return true whether at least one element passes the test in the given closure");
+test.assert(Array.some([ 1, 2, 3, 4 ], f(e) { return e > 0; }) && !Array.some([ 1, 2, 3, 4 ], f(e) { return e <= 0; }), true, "Array.some should return true whether at least one element passes the test in the given closure");
 
 # Number
 
