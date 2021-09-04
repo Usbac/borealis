@@ -84,18 +84,6 @@ _The destination path needs to contain the actual file name, not just the path t
 File.copy('./original.txt', './new.txt'); # A copy of the file original.txt with the name new.txt will be created
 ```
 
-### Get modification time
-
-`getModTime(string filename): any`
-
-Returns the time of the last modification to the file as an unix timestamp (in seconds).
-
-If the file does not exist or is not accessible, `null` will be returned.
-
-```borealis
-File.getModTime('file.txt'); # Can return something like 1620226469
-```
-
 ### Get type
 
 `getType(string filename): any`

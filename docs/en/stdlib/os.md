@@ -4,10 +4,10 @@ The standard object `Os` gives you multiple methods related with the operating s
 
 The object also has some useful constants.
 
-| Name     | Description                                          |
-|----------|------------------------------------------------------|
-| EOL      | End of line used by the system.                      |
-| PLATFORM | Platform name (windows, linux, mac, bsd or unknown). |
+| Name     | Type   | Description                                          | Example |
+|----------|--------|------------------------------------------------------|---------|
+| EOL      | String | End of line used by the system.                      | \r\n    |
+| PLATFORM | String | Platform name (windows, linux, mac, bsd or unknown). | windows |
 
 ### Examples
 
@@ -124,7 +124,7 @@ Os.makeDir('./pictures');
 
 `getFiles(string path): array`
 
-Returns an array with all the directories and files in the given directory path.
+Returns an array with all the directories and files in the given path.
 
 If the directory path is invalid, `false` is returned.
 
@@ -178,7 +178,7 @@ Os.chmod('./file.txt', '0755');
 
 Returns the value of an environment variable.
 
-If the environment variable does not exists, `null` is returned.
+If the environment variable does not exist, `null` is returned.
 
 ```borealis
 Os.getEnv('LANG');
@@ -188,10 +188,46 @@ Os.getEnv('LANG');
 
 `getTime(): number`
 
-Returns the current system time as an Unix timestamp (in milliseconds).
+Returns the current system time as a Unix timestamp (in milliseconds).
 
 ```borealis
 Os.getTime(); # Can return something like 1620149607020
+```
+
+### Get modification time
+
+`getModTime(string filename): any`
+
+Returns the time of the last modification to the file as a unix timestamp (in seconds).
+
+If the file does not exist or is not accessible, `null` will be returned.
+
+```borealis
+Os.getModTime('file.txt'); # Can return something like 1620226469
+```
+
+### Get change time
+
+`getChangeTime(string filename): any`
+
+Returns the time of the last change to the file as a unix timestamp (in seconds).
+
+If the file does not exist or is not accessible, `null` will be returned.
+
+```borealis
+Os.getChangeTime('file.txt'); # Can return something like 1620226460
+```
+
+### Get access time
+
+`getAccessTime(string filename): any`
+
+Returns the time of the last access to the file as a unix timestamp (in seconds).
+
+If the file does not exist or is not accessible, `null` will be returned.
+
+```borealis
+Os.getAccessTime('file.txt'); # Can return something like 1620226400
 ```
 
 ### Execute
