@@ -5,6 +5,11 @@
 #include <dirent.h>
 #include <sys/time.h>
 #include <math.h>
+#if !defined(WIN32) && !defined(_WIN32)
+#include <pwd.h>
+#include <grp.h>
+#include <unistd.h>
+#endif
 #include "../element.h"
 #include "../state.h"
 #include "../engine/processor_helper.h"
@@ -46,11 +51,10 @@ void stdExists(struct result_list *args)
 {
     char *path = getValueStr(args->first);
     struct stat info;
-    bool result = stat(path, &info) < 0 ?
-        false :
-        (S_ISREG(info.st_mode) || S_ISDIR(info.st_mode));
 
-    statePushResultD(result);
+    statePushResultD(stat(path, &info) < 0 ?
+        false :
+        (S_ISREG(info.st_mode) || S_ISDIR(info.st_mode)));
     free(path);
 }
 
@@ -126,6 +130,39 @@ void stdChmod(struct result_list *args)
 
     free(path);
     free(mode_str);
+}
+
+
+void stdChown(struct result_list *args)
+{
+#if defined(WIN32) || defined(_WIN32)
+    statePushResultD(false);
+#else
+    char *path_str = getValueStr(args->first);
+    char *user_str = getValueStr(args->first->next);
+    struct passwd *user = getpwnam(user_str);
+    int result;
+
+    if (user == NULL) {
+        statePushResultD(false);
+        goto end;
+    }
+
+    if (args->first->next->next != NULL) {
+        char *group_str = getValueStr(args->first->next->next);
+        struct group *group = getgrnam(group_str);
+        result = chown(path_str, user->pw_uid, group != NULL ? group->gr_gid : 0);
+        free(group_str);
+    } else {
+        result = chown(path_str, user->pw_uid, 0);
+    }
+
+    statePushResultD(result != -1);
+
+    end:
+        free(path_str);
+        free(user_str);
+#endif
 }
 
 

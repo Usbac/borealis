@@ -172,6 +172,20 @@ Returns `true` on success, `false` otherwise.
 Os.chmod('./file.txt', '0755');
 ```
 
+### Change owner
+
+`chmod(string path, string user, string group = ''): number`
+
+Changes the owner of the given path.
+
+Returns `true` on success, `false` otherwise.
+
+_On windows this function always returns `false`._
+
+```borealis
+Os.chown('./file.txt', 'alex');
+```
+
 ### Get environment
 
 `getEnv(string key): any`

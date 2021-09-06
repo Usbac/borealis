@@ -52,6 +52,11 @@ void stdGetFiles(struct result_list *args);
 void stdChmod(struct result_list *args);
 
 /**
+ * Changes the owner of the given path.
+ */
+void stdChown(struct result_list *args);
+
+/**
  * Returns the given file permissions.
  */
 void stdGetPermissions(struct result_list *args);
