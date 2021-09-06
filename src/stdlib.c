@@ -124,6 +124,7 @@ static void initConstants(struct element_table *args, const char *cwd, const cha
     union VALUE file_val = { .string = strDup(state->file) };
     union VALUE version_val = { .string = strDup(BOREALIS_VERSION) };
     union VALUE args_val = { .values = args };
+    union VALUE globals_val = { .values = elementTableInit() };
 
     declareModuleConst(NULL, "true", true_val, T_Number);
     declareModuleConst(NULL, "false", false_val, T_Number);
@@ -131,6 +132,7 @@ static void initConstants(struct element_table *args, const char *cwd, const cha
     declareModuleConst(NULL, "_START_FILE", start_file_val, T_String);
     declareModuleConst(NULL, "_VERSION", version_val, T_String);
     declareModuleConst(NULL, "_ARGS", args_val, T_Array);
+    declareModuleConst(NULL, "_GLOBALS", globals_val, T_Array);
     declareModuleConst(NULL, STATE_FILE_KEY, file_val, T_String);
 }
 
