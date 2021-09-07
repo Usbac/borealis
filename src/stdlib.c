@@ -179,6 +179,8 @@ static void initFunctions(void)
     declareModuleFunc(os, "getPermissions", stdGetPermissions, "s");
     declareModuleFunc(os, "chmod", stdChmod, "s,s");
     declareModuleFunc(os, "chown", stdChown, "s,s|s");
+    declareModuleFunc(os, "getUser", stdGetUser, "s");
+    declareModuleFunc(os, "getGroup", stdGetGroup, "s");
     declareModuleFunc(os, "getEnv", stdGetEnv, "s");
     declareModuleFunc(os, "getTime", stdGetTime, "");
     declareModuleFunc(os, "exec", stdExec, "s");

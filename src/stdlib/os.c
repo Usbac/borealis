@@ -166,6 +166,103 @@ void stdChown(struct result_list *args)
 }
 
 
+void stdGetUser(struct result_list *args)
+{
+#if defined(WIN32) || defined(_WIN32)
+    statePushResultNull();
+#else
+    char *user_str = getValueStr(args->first);
+    struct passwd *user = getpwnam(user_str);
+
+    if (user == NULL) {
+        statePushResultNull();
+    } else {
+        struct element_table *result = elementTableInit();
+        struct element *el = elementInit("name", NULL, 0, T_String);
+        el->value.string = strDup(user->pw_name);
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("password", NULL, 0, T_String);
+        el->value.string = strDup(user->pw_passwd);
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("directory", NULL, 0, T_String);
+        el->value.string = strDup(user->pw_dir);
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("id", NULL, 0, T_Number);
+        el->value.number = user->pw_uid;
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("group_id", NULL, 0, T_Number);
+        el->value.number = user->pw_gid;
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("shell", NULL, 0, T_String);
+        el->value.string = strDup(user->pw_shell);
+        el->public = true;
+        elementTablePush(&result, el);
+
+        statePushResultObj(result);
+    }
+
+    free(user_str);
+#endif
+}
+
+
+void stdGetGroup(struct result_list *args)
+{
+#if defined(WIN32) || defined(_WIN32)
+    statePushResultNull();
+#else
+    char *group_str = getValueStr(args->first);
+    struct group *group = getgrnam(group_str);
+
+    if (group == NULL) {
+        statePushResultNull();
+    } else {
+        struct element_table *result = elementTableInit();
+        struct element *el = elementInit("name", NULL, 0, T_String);
+        el->value.string = strDup(group->gr_name);
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("password", NULL, 0, T_String);
+        el->value.string = strDup(group->gr_passwd);
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("id", NULL, 0, T_Number);
+        el->value.number = group->gr_gid;
+        el->public = true;
+        elementTablePush(&result, el);
+
+        el = elementInit("members", NULL, 0, T_Array);
+        el->public = true;
+        elementTablePush(&result, el);
+        for (size_t i = 0; group->gr_mem[i] != NULL; i++) {
+            char *user_name = strFromSizet(i);
+            struct element *user = elementInit(user_name, NULL, 0, T_String);
+            user->value.string = strDup(group->gr_mem[i]);
+
+            elementTablePush(&el->value.values, user);
+            free(user_name);
+        }
+
+        statePushResultObj(result);
+    }
+
+    free(group_str);
+#endif
+}
+
+
 void stdGetPermissions(struct result_list *args)
 {
     char *filename = getValueStr(args->first);

@@ -186,6 +186,74 @@ _On windows this function always returns `false`._
 Os.chown('./file.txt', 'alex');
 ```
 
+### Get user
+
+`getUser(string name): any`
+
+Returns an object with information about a user with the given name.
+
+If the given user is invalid, `null` is returned.
+
+_On Windows this function always returns `null`._
+
+The object has the following properties:
+
+| Name      | Type   | Description                                                                                                                        |
+|-----------|--------|------------------------------------------------------------------------------------------------------------------------------------|
+| name      | string | The username of the user.                                                                                                          |
+| password  | string | The user's password in an encrypted format (for example, on a system employing shadow passwords, an asterisk is returned instead). |
+| directory | string | The absolute path to the home directory of the user.                                                                               |
+| id        | number | The id of the user.                                                                                                                |
+| group_id  | number | The group id of the user.                                                                                                          |
+| shell     | string | The absolute path to the executable of the user's default shell.                                                                   |
+
+```borealis
+Os.getUser('root');
+
+/* The above code can return something like this:
+ * obj {
+ *     public any name = 'root';
+ *     public any password = 'x';
+ *     public any directory = '/root';
+ *     public any id = 0;
+ *     public any group_id = 0;
+ *     public any shell = '/bin/bash';
+ * }
+ */
+```
+
+### Get group
+
+`getGroup(string name): any`
+
+Returns an object with information about a group with the given name.
+
+If the given group is invalid, `null` is returned.
+
+_On Windows this function always returns `null`._
+
+The object has the following properties:
+
+| Name      | Type   | Description                                  |
+|-----------|--------|----------------------------------------------|
+| name      | string | The group's name.                            |
+| password  | string | The group's password in an encrypted format. |
+| id        | number | The id of the group.                         |
+| members   | array  | The list of users in the group.              |
+
+```borealis
+Os.getGroup('sudo');
+
+/* The above code can return something like this:
+ * obj {
+ *     public any name = 'sudo';
+ *     public any password = 'x';
+ *     public any id = 27;
+ *     public any members = [ 'alejandro' ];
+ * }
+ */
+```
+
 ### Get environment
 
 `getEnv(string key): any`

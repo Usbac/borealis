@@ -57,6 +57,16 @@ void stdChmod(struct result_list *args);
 void stdChown(struct result_list *args);
 
 /**
+ * Returns an object with information about the given system user.
+ */
+void stdGetUser(struct result_list *args);
+
+/**
+ * Returns and object with information about the given system group.
+ */
+void stdGetGroup(struct result_list *args);
+
+/**
  * Returns the given file permissions.
  */
 void stdGetPermissions(struct result_list *args);
