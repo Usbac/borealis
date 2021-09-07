@@ -3,11 +3,14 @@ return obj {
 
     public any total = 0;
 
+    const any ERROR_PAD = 14;
+
     public any assert = f(val, expected, text = '') {
         any icon = '✓';
         any color = "\x1b[32m ";
         any reset = "\x1b[0m ";
-        if (val !== expected) {
+        any success = val === expected;
+        if (!success) {
             icon = '✕';
             color = "\x1b[31m ";
             this.errors++;
@@ -15,5 +18,13 @@ return obj {
 
         this.total++;
         printLine(color ^ icon ^ reset ^ text);
+        if (!success) {
+            print(String.padStart('Expected: ', this.ERROR_PAD));
+            Io.printV(expected);
+            printLine();
+            print(String.padStart('Given: ', this.ERROR_PAD));
+            Io.printV(val);
+            printLine();
+        }
     };
 };
