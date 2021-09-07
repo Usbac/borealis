@@ -1,5 +1,10 @@
 language: c
+os:
+  - linux
+  - osx
 sudo: false
-compiler: gcc
+compiler:
+  - clang
+  - gcc
 script:
   - make test
