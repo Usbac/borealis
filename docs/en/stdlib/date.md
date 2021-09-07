@@ -1,12 +1,14 @@
 The standard object `Date` gives you multiple methods related with dates.
 
+_All of the unix timestamps explained below are in (or expected to be given in) seconds._
+
 ## Functions
 
 ### Current date
 
 `now(): number`
 
-Returns the current time as a unix timestamp (in seconds).
+Returns the current time as a unix timestamp.
 
 ```borealis
 Date.now(); # Can return something like 1620149607
@@ -17,8 +19,6 @@ Date.now(); # Can return something like 1620149607
 `toString(string format, number date): string`
 
 Returns a string representing the date of the given unix timestamp with the specified format.
-
-The unix timestamp must be in seconds.
 
 ```borealis
 Date.toString('%Y-%m-%d', 1617557432); # Returns '2021-04-04'
@@ -113,7 +113,7 @@ printLine("The date's year is: " ^ date.year);
 
 `getGMTOffset(): number`
 
-Returns the unix timestamp difference between the current timezone and GMT (in seconds).
+Returns the unix timestamp difference between the current timezone and GMT.
 
 ```borealis
 Date.getGMTOffset(); # In New York it will return -14400
