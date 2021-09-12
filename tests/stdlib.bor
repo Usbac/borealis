@@ -184,24 +184,29 @@ test.assert(Json.isValid('{ "a": "b", "b": "c", }'), false, "Json.isValid should
 
 printLine("\nStdlib Math");
 
+# Used to allow results with different precision across multiple systems
+number getSlice(number n) {
+    return toNumber(String.slice(toString(n), 0, 8));
+}
+
 test.assert(Math.floor(1.234), 1, "Math.floor should round down the given value");
 test.assert(Math.ceil(1.234), 2, "Math.floor should round up the given value");
 test.assert(Math.round(1.4) ^ Math.round(1.52), "12", "Math.round should round the given value");
 test.assert(Math.abs(-43), 43, "Math.abs should return the absolute value");
-test.assert(Math.cos(1.4), 0.16996714290024104, "Math.cos should return the cosine of the given number");
-test.assert(Math.acos(0.4), 1.1592794807274085, "Math.acos should return the of the arc cosine given number");
-test.assert(Math.cosh(1.7), 2.8283154578899672, "Math.cosh should return the hyperbolic cosine of the given number");
-test.assert(Math.acosh(1.7), 1.1232309825872959, "Math.acosh should return the arc hyperbolic cosine of the given number");
-test.assert(Math.sin(1.4), 0.98544972998846014, "Math.sin should return the sine of the given number");
-test.assert(Math.asin(0.4), 0.41151684606748806, "Math.asin should return the arc sine of the given number");
-test.assert(Math.sinh(1.7), 2.6456319338372323, "Math.sinh should return the hyperbolic sine of the given number");
-test.assert(Math.asinh(1.7), 1.3008204268406467, "Math.asinh should return the arc hyperbolic sine of the given number");
-test.assert(Math.tan(1.4), 5.7978837154828868, "Math.tan should return the tangent of the given number");
-test.assert(Math.atan(2.4), 1.176005207095135, "Math.atan should return the arc tangent of the given number");
-test.assert(Math.tanh(2.4), 0.98367485769368024, "Math.tanh should return the hyperbolic tangent of the given number");
-test.assert(Math.atanh(0.45), 0.48470027859405174, "Math.atanh should return the arc hyperbolic tangent of the given number");
+test.assert(getSlice(Math.cos(1.4)), 0.169967, "Math.cos should return the cosine of the given number");
+test.assert(getSlice(Math.acos(0.4)), 1.159279, "Math.acos should return the of the arc cosine given number");
+test.assert(getSlice(Math.cosh(1.7)), 2.828315, "Math.cosh should return the hyperbolic cosine of the given number");
+test.assert(getSlice(Math.acosh(1.7)), 1.123230, "Math.acosh should return the arc hyperbolic cosine of the given number");
+test.assert(getSlice(Math.sin(1.4)), 0.985449, "Math.sin should return the sine of the given number");
+test.assert(getSlice(Math.asin(0.4)), 0.411516, "Math.asin should return the arc sine of the given number");
+test.assert(getSlice(Math.sinh(1.7)), 2.645631, "Math.sinh should return the hyperbolic sine of the given number");
+test.assert(getSlice(Math.asinh(1.7)), 1.300820, "Math.asinh should return the arc hyperbolic sine of the given number");
+test.assert(getSlice(Math.tan(1.4)), 5.797883, "Math.tan should return the tangent of the given number");
+test.assert(getSlice(Math.atan(2.4)), 1.176005, "Math.atan should return the arc tangent of the given number");
+test.assert(getSlice(Math.tanh(2.4)), 0.983674, "Math.tanh should return the hyperbolic tangent of the given number");
+test.assert(getSlice(Math.atanh(0.45)), 0.484700, "Math.atanh should return the arc hyperbolic tangent of the given number");
 test.assert(Math.sqrt(841), 29, "Math.sqrt should return the square root of the given number");
-test.assert(Math.log(4.6), 1.5260563034950492, "Math.log should return the natural logarithm of the given number");
+test.assert(getSlice(Math.log(4.6)), 1.526056, "Math.log should return the natural logarithm of the given number");
 
 # Crypt
 
