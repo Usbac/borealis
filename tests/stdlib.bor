@@ -251,7 +251,7 @@ printLine("\nStdlib Os");
 test.assert(Os.isFile(_FILE), true, "isFile should return true when the given path is for an existing file");
 test.assert(Os.isDir(Os.clearPath(_FILE ^ '/../')), true, "isDir should return true when the given path is for an existing directory");
 test.assert(Os.clearPath("/home/./user/Documents/../Downloads"), "/home/user/Downloads", "clearPath should return the given path resolved");
-test.assert(Os.exists(Os.clearPath(_FILE ^ '/../')) ^ Os.exists(_FILE), "11", "exists should return true when the given path exists");
+test.assert(Os.exists(Os.clearPath(_FILE ^ '/../')) && Os.exists(_FILE), true, "exists should return true when the given path exists");
 if (Os.PLATFORM eq 'windows') {
     test.assert(Os.isAbsolute("C:\\Program files"), true, "isAbsolute should return true when the given path is absolute");
     test.assert(Os.isAbsolute("./Program files"), false, "isAbsolute should return false when the given path is not absolute");
@@ -277,11 +277,11 @@ test.assert(toArray(obj {
     any another = 1;
 }), [ 'name' = 'alex', 'age' = 23, 'another' = 1 ], "toArray should convert the given vale to an object");
 
-test.assert(isEmpty(12) ^ isEmpty(0) ^
-isEmpty('hello') ^ isEmpty('') ^
-isEmpty([ 1 ]) ^ isEmpty([]) ^
-isEmpty(obj { any foo = 1; }) ^ isEmpty(obj {}) ^
-isEmpty(null), "010101011", "isEmpty should return true when the given value is blank, false otherwise");
+test.assert(!isEmpty(12) && isEmpty(0) &&
+!isEmpty('hello') && isEmpty('') &&
+!isEmpty([ 1 ]) && isEmpty([]) &&
+!isEmpty(obj { any foo = 1; }) && isEmpty(obj {}) &&
+isEmpty(null), true, "isEmpty should return true when the given value is blank, false otherwise");
 
 eval('any var_in_eval = true;');
 test.assert(var_in_eval, true, "eval should evaluate the code in the given string");
