@@ -49,8 +49,8 @@ void stdNew(struct result_list *args)
 #if defined(_WIN32) || defined(WIN32)
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) == SOCKET_ERROR) {
-        pushResultD(false);
-        freeElementsTable(result, 0);
+        statePushResultD(false);
+        elementsTableFree(result, 0);
         return;
     }
 #endif

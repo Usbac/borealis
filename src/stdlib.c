@@ -28,6 +28,10 @@
 
 #if defined(_WIN32) || defined(WIN32)
 #include <winsock2.h>
+#define EADDRINUSE WSAEADDRINUSE
+#define EBADF WSAEBADF
+#define ENOTSOCK WSAENOTSOCK
+#define EOPNOTSUPP WSAEOPNOTSUPP
 #else
 #include <sys/socket.h>
 #include <sys/errno.h>
