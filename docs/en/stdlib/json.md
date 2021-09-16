@@ -16,8 +16,8 @@ For objects, only the public properties are taken into account and will be avail
 
 ```borealis
 Json.stringify(obj {
-    public any name = 'foo';
-    public any age = 23;
+    pub any name = 'foo';
+    pub any age = 23;
     any bar = 1;
 }); # Returns '{"name":"foo","age":23}'
 ```
@@ -36,7 +36,7 @@ Json.parse('[1, 2, 3]'); # Returns [ 1, 2, 3 ]
 
 ```borealis
 Json.parse('{"name":"foo","age":23}');
-# Returns obj { public any name = 'foo'; public any age = 23; }
+# Returns obj { pub any name = 'foo'; pub any age = 23; }
 ```
 
 ### Is valid

@@ -155,10 +155,10 @@ test.assert(Number.format(1850320.45, ".", ","), "1.850.320,45", "Number.format 
 printLine("\nStdlib Object");
 
 any foo = obj {
-    public any name = 'alex';
-    public any age = 23;
+    pub any name = 'alex';
+    pub any age = 23;
     any password = '1234';
-    public any arr = [];
+    pub any arr = [];
 };
 
 test.assert(Object.getKeys(foo), [ 'name', 'age', 'arr' ], "Object.getKeys should return all the public object keys");
@@ -171,9 +171,9 @@ printLine("\nStdlib Json");
 any json = '{"name":"alex","age":23,"arr":[]}';
 test.assert(Json.stringify(foo), json, "Json.stringify should return the json string of the given value");
 test.assert(Json.parse(json), obj {
-    public any name = 'alex';
-    public any age = 23;
-    public any arr = [];
+    pub any name = 'alex';
+    pub any age = 23;
+    pub any arr = [];
 }, "Json.parse should return the value of the given json string");
 test.assert(Json.parse('asd'), null, "Json.parse should return null when the given json representation is not valid");
 
@@ -234,14 +234,14 @@ any date_time = 1617557432 - Date.getGMTOffset();
 test.assert(Date.toString("%Y-%m-%d %H:%M:%S", date_time), "2021-04-04 17:30:32", "Date.toString should return the date string of the given unix timestamp");
 test.assert(Date.fromString("2021-04-04 17:30:32"), date_time, "Date.fromString should return the unix timestamp of the given date string");
 test.assert(Date.toObject(date_time), obj {
-    public any seconds = 32;
-    public any minutes = 30;
-    public any hours = 17;
-    public any day = 4;
-    public any month = 4;
-    public any year = 2021;
-    public any yday = 94;
-    public any wday = 1;
+    pub any seconds = 32;
+    pub any minutes = 30;
+    pub any hours = 17;
+    pub any day = 4;
+    pub any month = 4;
+    pub any year = 2021;
+    pub any yday = 94;
+    pub any wday = 1;
 }, "Date.toObject should return and object based on the given unix timestamp");
 
 # Os
@@ -268,12 +268,12 @@ test.assert(toString(obj {}), "[object]", "toString should convert the given val
 test.assert(toNumber("1.46"), 1.46, "toNumber should convert the given value to number");
 test.assert(toBool("hello"), true, "toBool should convert the given value to a boolean");
 test.assert(toObject([ 'name' = 'alex', 'age' = 23 ]), obj {
-    public any name = 'alex';
-    public any age = 23;
+    pub any name = 'alex';
+    pub any age = 23;
 }, "toObject should convert the given vale to an object");
 test.assert(toArray(obj {
-    public any name = 'alex';
-    public any age = 23;
+    pub any name = 'alex';
+    pub any age = 23;
     any another = 1;
 }), [ 'name' = 'alex', 'age' = 23, 'another' = 1 ], "toArray should convert the given vale to an object");
 

@@ -44,7 +44,7 @@ Io.printV([ 1, 2, 3 ]); # It will print '(array) [0:(number) 1,1:(number) 2,2:(n
 
 ```borealis
 Io.printV(obj {
-    public any foo = 'a';
+    pub any foo = 'a';
     any bar = 'b';
 });
 

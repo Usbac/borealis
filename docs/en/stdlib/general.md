@@ -138,8 +138,8 @@ Returns the array representation of a value.
 
 ```borealis
 toArray(obj {
-    public any name = 'alex';
-    public any age = 23;
+    pub any name = 'alex';
+    pub any age = 23;
     any another = 1;
 });
 # Returns [ 'name' = 'alex', 'age' = 23, 'another' = 1 ]
@@ -155,7 +155,7 @@ Returns the object representation of a value.
 
 ```borealis
 toObject([ 'name' = 'alex', 'age' = 23 ]);
-# Returns obj { public any name = 'alex'; public any age = 23; }
+# Returns obj { pub any name = 'alex'; pub any age = 23; }
 ```
 
 When converting an array to an object, all the properties will be public.

@@ -145,15 +145,15 @@ They can be created with the syntax `obj { }`.
 any customer = obj {
     any name = 'alex';
     any age = 23;
-    public any foo = 'bar';
+    pub any foo = 'bar';
 };
 ```
 
-Object properties are private by default, they can be made public by adding the `public` keyword before the declaration.
+Object properties are private by default, they can be made public by adding the `pub` keyword before the declaration.
 
 ```borealis
 obj {
-    public any foo;
+    pub any foo;
 };
 ```
 

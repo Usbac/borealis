@@ -91,14 +91,14 @@ Date.toObject(1617557432);
 
 /* The above code will return:
  * obj {
- *     public any seconds = 32;
- *     public any minutes = 30;
- *     public any hours = 13;
- *     public any day = 4;
- *     public any month = 4;
- *     public any year = 2021;
- *     public any yday = 94;
- *     public any wday = 1;
+ *     pub any seconds = 32;
+ *     pub any minutes = 30;
+ *     pub any hours = 13;
+ *     pub any day = 4;
+ *     pub any month = 4;
+ *     pub any year = 2021;
+ *     pub any yday = 94;
+ *     pub any wday = 1;
  * }
  */
 ```

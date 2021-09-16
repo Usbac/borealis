@@ -1,5 +1,15 @@
 # Release Notes
 
+## v0.3.0 ()
+
+### Added
+
+- Add `getUser` and `getGroup` functions to the `Os` standard module.
+
+### Changed
+
+- Change the `public` keyword to `pub`.
+
 ## v0.2.0 (2021-09-07)
 
 ### Added

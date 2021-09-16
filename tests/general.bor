@@ -4,7 +4,7 @@ any test = import "test.bor";
 
 any prec() {
     return obj {
-        public any foo = 'obj';
+        pub any foo = 'obj';
     };
 }
 
@@ -51,7 +51,7 @@ element << String.toUpper;
 test.assert(element, "HELLO", "'<<' should set the element value to the result of the function by using the same element as argument");
 
 any foo = obj {
-    public any bar = 'hello there';
+    pub any bar = 'hello there';
 };
 
 test.assert(foo.bar, 'hello there', "'.' should access a property");
@@ -115,9 +115,9 @@ test.assert(constant, 1, "constant declaration should work");
 test.assert(1 + 0 /*100*/, 1, "comments should be ignored");
 
 any mod_obj = obj {
-    public any index = 0;
+    pub any index = 0;
 
-    public any increment = f() {
+    pub any increment = f() {
         this.index++;
     };
 };
@@ -130,16 +130,16 @@ test.assert("hello"[0], 'h', "index access in string should work correctly");
 test.assert("hello"[123], null, "index access in string should return null when an invalid index is given");
 
 any scoping = obj {
-    public any item = 'foo';
+    pub any item = 'foo';
 
-    public any bar = f() {
+    pub any bar = f() {
         return item;
     };
 };
 
 any scopingFunc() {
     any bar = obj {
-        public any item;
+        pub any item;
     };
 
     bar.item = 'bar';

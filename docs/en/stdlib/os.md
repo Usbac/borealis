@@ -212,12 +212,12 @@ Os.getUser('root');
 
 /* The above code can return something like this:
  * obj {
- *     public any name = 'root';
- *     public any password = 'x';
- *     public any directory = '/root';
- *     public any id = 0;
- *     public any group_id = 0;
- *     public any shell = '/bin/bash';
+ *     pub any name = 'root';
+ *     pub any password = 'x';
+ *     pub any directory = '/root';
+ *     pub any id = 0;
+ *     pub any group_id = 0;
+ *     pub any shell = '/bin/bash';
  * }
  */
 ```
@@ -246,10 +246,10 @@ Os.getGroup('sudo');
 
 /* The above code can return something like this:
  * obj {
- *     public any name = 'sudo';
- *     public any password = 'x';
- *     public any id = 27;
- *     public any members = [ 'alejandro' ];
+ *     pub any name = 'sudo';
+ *     pub any password = 'x';
+ *     pub any id = 27;
+ *     pub any members = [ 'alejandro' ];
  * }
  */
 ```

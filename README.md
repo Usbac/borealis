@@ -68,8 +68,8 @@ fact(7); # 5040
 Objects:
 ```borealis
 object user = obj {
-    public string name = 'alex';
-    public number age = 23;
+    pub string name = 'alex';
+    pub number age = 23;
 };
 
 Io.printLine('Name: ' ^ user.name ^ '. Age: ' ^ user.age);

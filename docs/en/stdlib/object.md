@@ -12,8 +12,8 @@ Only public properties are taken into account.
 
 ```borealis
 any foo = obj {
-    public any name = 'alex';
-    public any age = 23;
+    pub any name = 'alex';
+    pub any age = 23;
     any password = '1234';
 };
 
@@ -30,8 +30,8 @@ Only public properties are taken into account.
 
 ```borealis
 any foo = obj {
-    public any name = 'alex';
-    public any age = 23;
+    pub any name = 'alex';
+    pub any age = 23;
     any password = '1234';
 };
 

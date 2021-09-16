@@ -158,7 +158,7 @@ void lexerInit(void)
     addReservedToken("&&", OP_And, 6, false, true);
     addReservedToken("||", OP_Or, 5, false, true);
     addReservedToken("...", OP_Spread, 2, false, true);
-    addReservedToken("public", OP_Public, 0, false, false);
+    addReservedToken("pub", OP_Public, 0, false, false);
     addReservedToken("return", OP_Return, 0, false, false);
     addReservedToken("const", OP_Constant, 1, false, false);
     addReservedToken("string", OP_Type_string, 2, false, false);
