@@ -13,10 +13,6 @@ The object also has some useful constants.
 | SOCK_DGRAM   | Socket type    | A datagram socket provides connectionless, unreliable messaging.                                      |
 | SOCK_RAW     | Socket type    | A raw socket provides low-level access for direct access/implementing network protocols.              |
 | SOCK_RDM     | Socket type    | A reliable datagram socket provides reliable delivery of messages.                                    |
-| EADDRINUSE   | Socket error   | Another socket is already listening on the same port.                                                 |
-| EBADF        | Socket error   | The socket is not a valid file descriptor.                                                            |
-| ENOTSOCK     | Socket error   | The socket file descriptor does not refer to a real socket.                                           |
-| EOPNOTSUPP   | Socket error   | The socket is not of a type that supports the listen operation.                                       |
 | SO_RCVTIMEO  | Socket option  | The timeout value for input operations (in milliseconds).                                             |
 | SO_SNDTIMEO  | Socket option  | The timeout value specifying the amount of time that an output function blocks (in milliseconds).     |
 | SO_RCVLOWAT  | Socket option  | The minimum number of bytes to process for socket input operations.                                   |

@@ -18,6 +18,8 @@
 
 - Remove the `setTimeout` and `getTimeout` functions from the `Socket` standard module.
 
+- Remove the `EADDRINUSE`, `EBADF`, `ENOTSOCK` and `EOPNOTSUPP` constants from the `Socket` standard module.
+
 ## v0.2.0 (2021-09-07)
 
 ### Added

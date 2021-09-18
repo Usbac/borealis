@@ -354,14 +354,6 @@ static void initFunctions(void)
     declareModuleConst(socket, "SOCK_RAW", value, T_Number);
     value.number = SOCK_RDM;
     declareModuleConst(socket, "SOCK_RDM", value, T_Number);
-    value.number = EADDRINUSE;
-    declareModuleConst(socket, "EADDRINUSE", value, T_Number);
-    value.number = EBADF;
-    declareModuleConst(socket, "EBADF", value, T_Number);
-    value.number = ENOTSOCK;
-    declareModuleConst(socket, "ENOTSOCK", value, T_Number);
-    value.number = EOPNOTSUPP;
-    declareModuleConst(socket, "EOPNOTSUPP", value, T_Number);
     value.number = MSG_OOB;
     declareModuleConst(socket, "MSG_OOB", value, T_Number);
     value.number = MSG_PEEK;
