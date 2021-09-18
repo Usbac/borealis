@@ -118,14 +118,7 @@ void stdBind(struct result_list *args)
 void stdListen(struct result_list *args)
 {
     const int SOCK = getSocketProp(getValueObj(args->first), "_SOCK");
-    int result = listen(SOCK, (int) getValueD(args->first->next));
-
-    if (result == -1) {
-        statePushResultD(errno);
-        return;
-    }
-
-    statePushResultD(result);
+    statePushResultD(listen(SOCK, (int) getValueD(args->first->next)) == 0);
 }
 
 
@@ -175,25 +168,46 @@ void stdHtonl(struct result_list *args)
 }
 
 
-void stdSetTimeout(struct result_list *args)
+void stdSetOption(struct result_list *args)
 {
     SOCKET sock = getSocketProp(getValueObj(args->first), "_SOCK");
-    struct timeval timeout = {
-        .tv_sec = (int) getValueD(args->first->next),
-        .tv_usec = 0,
-    };
+    int opt = (int) getValueD(args->first->next);
+    int val = (int) getValueD(args->first->next->next);
 
-    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+    if (opt == SO_RCVTIMEO || opt == SO_SNDTIMEO) {
+        struct timeval timeout = (struct timeval) {
+            .tv_sec = val / 1000,
+            .tv_usec = (val % 1000) * 1000,
+        };
+
+        statePushResultD(setsockopt(sock, SOL_SOCKET, opt, &timeout, sizeof(timeout)) == 0);
+        return;
+    } else if (opt == SO_RCVLOWAT || opt == SO_SNDLOWAT ||
+        opt == SO_DONTROUTE || opt == SO_KEEPALIVE || opt == SO_BROADCAST) {
+        statePushResultD(setsockopt(sock, SOL_SOCKET, opt, &val, sizeof(val)) == 0);
+    }
 }
 
 
-void stdGetTimeout(struct result_list *args)
+void stdGetOption(struct result_list *args)
 {
     SOCKET sock = getSocketProp(getValueObj(args->first), "_SOCK");
-    int timeout = 0;
-    socklen_t len = sizeof(timeout);
+    int opt = (int) getValueD(args->first->next);
+    int val = 0;
+    socklen_t len = sizeof(val);
 
-    getsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, &len);
-    statePushResultD(timeout);
+    if (opt == SO_RCVTIMEO || opt == SO_SNDTIMEO) {
+        struct timeval timeout;
+        socklen_t timeout_len = sizeof(timeout);
+
+        getsockopt(sock, SOL_SOCKET, opt, &timeout, &timeout_len);
+        statePushResultD(((double) timeout.tv_sec * 1000.0) + (timeout.tv_usec / 1000.0));
+        return;
+    }
+
+    getsockopt(sock, SOL_SOCKET, opt, &val, &len);
+    statePushResultD(opt == SO_DONTROUTE || opt == SO_KEEPALIVE || opt == SO_BROADCAST ?
+        val == opt :
+        val);
 }
+

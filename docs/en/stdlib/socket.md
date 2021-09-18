@@ -4,21 +4,26 @@ The standard object `Socket` gives you multiple methods related with socket netw
 
 The object also has some useful constants.
 
-| Name         | Type           | Description                                                                              |
-|--------------|----------------|------------------------------------------------------------------------------------------|
-| AF_INET      | Socket domain  | IPv4 protocol.                                                                           |
-| AF_INET6     | Socket domain  | IPv6 protocol.                                                                           |
-| AF_UNIX      | Socket domain  | UNIX socket.                                                                             |
-| SOCK_STREAM  | Socket type    | A stream socket provides a sequenced, reliable two-way connection for a byte stream.     |
-| SOCK_DGRAM   | Socket type    | A datagram socket provides connectionless, unreliable messaging.                         |
-| SOCK_RAW     | Socket type    | A raw socket provides low-level access for direct access/implementing network protocols. |
-| SOCK_RDM     | Socket type    | A reliable datagram socket provides reliable delivery of messages.                       |
-| EADDRINUSE   | Socket error   | Another socket is already listening on the same port.                                    |
-| EBADF        | Socket error   | The socket is not a valid file descriptor.                                               |
-| ENOTSOCK     | Socket error   | The socket file descriptor does not refer to a real socket.                              |
-| EOPNOTSUPP   | Socket error   | The socket is not of a type that supports the listen operation.                          |
-| MSG_OOB      | Socket option  | Process out-of-band data.                                                                |
-| MSG_PEEK     | Socket option  | Receive data from the beginning of the receive queue without removing it.                |
+| Name         | Type           | Description                                                                                           |
+|--------------|----------------|-------------------------------------------------------------------------------------------------------|
+| AF_INET      | Socket domain  | IPv4 protocol.                                                                                        |
+| AF_INET6     | Socket domain  | IPv6 protocol.                                                                                        |
+| AF_UNIX      | Socket domain  | UNIX socket.                                                                                          |
+| SOCK_STREAM  | Socket type    | A stream socket provides a sequenced, reliable two-way connection for a byte stream.                  |
+| SOCK_DGRAM   | Socket type    | A datagram socket provides connectionless, unreliable messaging.                                      |
+| SOCK_RAW     | Socket type    | A raw socket provides low-level access for direct access/implementing network protocols.              |
+| SOCK_RDM     | Socket type    | A reliable datagram socket provides reliable delivery of messages.                                    |
+| EADDRINUSE   | Socket error   | Another socket is already listening on the same port.                                                 |
+| EBADF        | Socket error   | The socket is not a valid file descriptor.                                                            |
+| ENOTSOCK     | Socket error   | The socket file descriptor does not refer to a real socket.                                           |
+| EOPNOTSUPP   | Socket error   | The socket is not of a type that supports the listen operation.                                       |
+| SO_RCVTIMEO  | Socket option  | The timeout value for input operations (in milliseconds).                                             |
+| SO_SNDTIMEO  | Socket option  | The timeout value specifying the amount of time that an output function blocks (in milliseconds).     |
+| SO_RCVLOWAT  | Socket option  | The minimum number of bytes to process for socket input operations.                                   |
+| SO_SNDLOWAT  | Socket option  | The minimum number of bytes to process for socket output operations.                                  |
+| SO_DONTROUTE | Socket option  | Reports whether outgoing messages bypass the standard routing facilities (This is boolean).           |
+| SO_KEEPALIVE | Socket option  | Reports whether connections are kept active with periodic transmission of messages (This is boolean). |
+| SO_BROADCAST | Socket option  | Permit sending of broadcast messages, if this is supported by the protocol (This is boolean).         |
 
 ## Functions
 
@@ -51,19 +56,14 @@ Socket.bind(sock, '127.0.0.1', 8080);
 
 Listens for a connection on the given socket.
 
-This function returns 0 on success, otherwise one of the following error codes will be returned:
-
-* EADDRINUSE
-* EBADF
-* ENOTSOCK
-* EOPNOTSUPP
+Returns `true` on success, `false` otherwise.
 
 ```borealis
 Socket.listen(sock, 10);
 ```
 
 ```borealis
-Socket.listen(socket_in_use, 10); # Returns Socket.EADDRINUSE
+Socket.listen(socket_in_use, 10); # Returns false
 ```
 
 ### Accept
@@ -126,7 +126,7 @@ The value of the parameter `how` can be one of the following:
 | `1`   | Shutdown socket writing.             |
 | `2`   | Shutdown socket reading and writing. |
 
-The function returns `true` on success, `false` otherwise.
+Returns `true` on success, `false` otherwise.
 
 ```borealis
 Socket.shutdown(sock);
@@ -156,24 +156,39 @@ Converts the given number (as unsigned long integer) from a host byte order to a
 Socket.htonl(8080); # Returns 2417950720
 ```
 
-### Set timeout
+### Set option
 
-`setTimeout(object sock, number time)`
+`setOption(object socket, number option, number value): number`
 
-Sets the socket timeout in seconds of inactivity.
+Sets a socket option for the given socket.
+
+Returns `true` on success, `false` otherwise.
+
+The option parameter must be one of the socket option constants defined in the `Socket` object.
 
 ```borealis
-Socket.setTimeout(sock, 10); # Timeout after 10 second of inactivity
+object server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
+
+# Set the timeout value for input operations to 1200 milliseconds.
+Socket.setOption(server, Socket.SO_RCVTIMEO, 1200);
 ```
 
-### Get timeout
+```borealis
+object server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
 
-`getTimeout(object sock): number`
+# Permit sending of broadcast messages.
+Socket.setOption(server, Socket.SO_BROADCAST, true);
+```
 
-Returns the socket timeout.
+### Get option
+
+`getOption(object socket, number option): number`
+
+Returns the specified socket option of the given socket.
 
 ```borealis
-Socket.getTimeout(sock); # Can return something like 10
+# Will return true if the socket permits sending of broadcast messages.
+Socket.getOption(server, Socket.SO_BROADCAST);
 ```
 
 ## Example

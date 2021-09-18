@@ -337,8 +337,8 @@ static void initFunctions(void)
     declareModuleFunc(socket, "shutdown", stdShutdown, "o|d");
     declareModuleFunc(socket, "recv", stdRecv, "o,d|d");
     declareModuleFunc(socket, "send", stdSend, "o,s|d");
-    declareModuleFunc(socket, "setTimeout", stdSetTimeout, "o,n");
-    declareModuleFunc(socket, "getTimeout", stdGetTimeout, "o");
+    declareModuleFunc(socket, "setOption", stdSetOption, "o,n,n");
+    declareModuleFunc(socket, "getOption", stdGetOption, "o,n");
 #endif
     value.number = AF_INET;
     declareModuleConst(socket, "AF_INET", value, T_Number);
@@ -366,6 +366,20 @@ static void initFunctions(void)
     declareModuleConst(socket, "MSG_OOB", value, T_Number);
     value.number = MSG_PEEK;
     declareModuleConst(socket, "MSG_PEEK", value, T_Number);
+    value.number = SO_RCVTIMEO;
+    declareModuleConst(socket, "SO_RCVTIMEO", value, T_Number);
+    value.number = SO_SNDTIMEO;
+    declareModuleConst(socket, "SO_SNDTIMEO", value, T_Number);
+    value.number = SO_RCVLOWAT;
+    declareModuleConst(socket, "SO_RCVLOWAT", value, T_Number);
+    value.number = SO_SNDLOWAT;
+    declareModuleConst(socket, "SO_SNDLOWAT", value, T_Number);
+    value.number = SO_DONTROUTE;
+    declareModuleConst(socket, "SO_DONTROUTE", value, T_Number);
+    value.number = SO_KEEPALIVE;
+    declareModuleConst(socket, "SO_KEEPALIVE", value, T_Number);
+    value.number = SO_BROADCAST;
+    declareModuleConst(socket, "SO_BROADCAST", value, T_Number);
     /* general */
     declareModuleFunc(NULL, "toString", stdToString, "v");
     declareModuleFunc(NULL, "toNumber", stdToNumber, "v|d");

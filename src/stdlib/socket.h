@@ -55,13 +55,13 @@ void stdHtons(struct result_list *args);
 void stdHtonl(struct result_list *args);
 
 /**
- * Sets the socket timeout.
+ * Sets a socket option.
  */
-void stdSetTimeout(struct result_list *args);
+void stdSetOption(struct result_list *args);
 
 /**
- * Returns the socket timeout.
+ * Returns a socket option.
  */
-void stdGetTimeout(struct result_list *args);
+void stdGetOption(struct result_list *args);
 
 #endif /* BOREALIS_SOCKET_H */

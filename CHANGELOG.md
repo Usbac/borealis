@@ -6,9 +6,17 @@
 
 - Add `getUser` and `getGroup` functions to the `Os` standard module.
 
+- Add `setOption` and `getOption` functions to the `Socket` standard module.
+
 ### Changed
 
 - Change the `public` keyword to `pub`.
+
+- Change the return value of the `listen` function of the `Socket` standard module to a boolean.
+
+### Removed
+
+- Remove the `setTimeout` and `getTimeout` functions from the `Socket` standard module.
 
 ## v0.2.0 (2021-09-07)
 
