@@ -251,6 +251,7 @@ static void initFunctions(void)
     declareModuleFunc(arr, "reduce", stdReduce, "a,f|v");
     declareModuleFunc(arr, "some", stdSome, "a,f");
     declareModuleFunc(arr, "merge", stdMerge, "a,*");
+    declareModuleFunc(arr, "fill", stdFill, "d,d,v");
     /* number */
     declareModuleFunc(num, "min", stdMin, "*");
     declareModuleFunc(num, "max", stdMax, "*");

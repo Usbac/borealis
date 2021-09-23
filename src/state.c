@@ -311,7 +311,7 @@ struct result *statePopResultSafe(void)
 }
 
 
-struct result_list *stateResultListDup(struct result_list *list)
+struct result_list *resultListDup(struct result_list *list)
 {
     struct result_list *new_list;
 
@@ -322,13 +322,7 @@ struct result_list *stateResultListDup(struct result_list *list)
     new_list = resultListInit();
 
     for (struct result *node = list->first; node != NULL; node = node->next) {
-        struct result *cpy = malloc_(sizeof(struct result));
-        cpy->line_n = node->line_n;
-        cpy->type = node->type;
-        cpy->p_el = node->p_el;
-        cpy->value = valueDup(node->value, node->type);
-
-        statePushResult(new_list, cpy);
+        statePushResult(new_list, resultDup(node));
     }
 
     return new_list;
@@ -380,6 +374,18 @@ void resultFree(struct result *node)
     }
 
     FREE_AND_NULL(node);
+}
+
+
+struct result *resultDup(struct result *node)
+{
+    struct result *cpy = malloc_(sizeof(struct result));
+    cpy->line_n = node->line_n;
+    cpy->type = node->type;
+    cpy->p_el = node->p_el;
+    cpy->value = valueDup(node->value, node->type);
+
+    return cpy;
 }
 
 

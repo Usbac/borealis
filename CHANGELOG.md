@@ -4,6 +4,8 @@
 
 ### Added
 
+- Add `fill` function to the `Array` standard module.
+
 - Add `getUser` and `getGroup` functions to the `Os` standard module.
 
 - Add `setOption` and `getOption` functions to the `Socket` standard module.

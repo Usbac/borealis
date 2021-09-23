@@ -58,11 +58,10 @@ void stdGetSize(struct result_list *args)
 void stdPush(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
-    struct result *arg = args->first->next;
     char *key = strFromSizet(arr->next_index);
     struct element *prop = elementInit(key, NULL, 0, T_Null);
     prop->public = true;
-    mapResultToElement(prop, arg);
+    mapResultToElement(prop, args->first->next);
     elementTablePush(&arr, prop);
 
     free(key);
@@ -72,11 +71,10 @@ void stdPush(struct result_list *args)
 void stdPrepend(struct result_list *args)
 {
     struct element_table *arr = getValueArr(args->first);
-    struct result *arg = args->first->next;
     char *key = strFromSizet(arr->next_index);
     struct element *prop = elementInit(key, NULL, 0, T_Null);
     prop->public = true;
-    mapResultToElement(prop, arg);
+    mapResultToElement(prop, args->first->next);
     ElementTablePrepend(&arr, prop);
 
     free(key);
@@ -548,4 +546,26 @@ void stdSome(struct result_list *args)
     }
 
     statePushResultD(false);
+}
+
+
+void stdFill(struct result_list *args)
+{
+    int start = (int) getValueD(args->first);
+    int count = (int) getValueD(args->first->next);
+    struct element_table *result = elementTableInit();
+
+    for (int i = 0; i < count; i++) {
+        char *key = strFromInt(start++);
+        struct result *val = resultDup(args->first->next->next);
+        struct element *el = elementInit(key, NULL, 0, T_Null);
+        el->public = true;
+        mapResultToElement(el, val);
+        elementTablePush(&result, el);
+
+        free(key);
+        resultFree(val);
+    }
+
+    statePushResultArr(result);
 }

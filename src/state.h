@@ -189,13 +189,20 @@ struct result *statePopResultSafe(void);
  * @param list the result list to copy.
  * @return the copy of the result list.
  */
-struct result_list *stateResultListDup(struct result_list *list);
+struct result_list *resultListDup(struct result_list *list);
 
 /**
  * Frees the given result.
  * @param node the result.
  */
 void resultFree(struct result *node);
+
+/**
+ * Returns a copy of the given result.
+ * @param node the result to copy.
+ * @return the copy of the result.
+ */
+struct result *resultDup(struct result *node);
 
 /**
  * Frees the given result list.

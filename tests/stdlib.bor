@@ -137,6 +137,10 @@ test.assert(Array.filter([ 1, 2, 3, 4, 5, 6 ], f(e) { return e % 2 == 0; }), [ 1
 test.assert(Array.reduce([ 1, 2, 3 ], f(acc, el) { return acc + el; }), 6, "Array.reduce should reduce the given array to a single value");
 test.assert(Array.merge([ 'name' = 'a', 'age' = 23 ], [ 'name' = 'b', 'city' = 'NY' ]), [ 'name' = 'b', 'age' = 23, 'city' = 'NY' ], "Array.merge should return a merge of the given arrays");
 test.assert(Array.some([ 1, 2, 3, 4 ], f(e) { return e > 0; }) && !Array.some([ 1, 2, 3, 4 ], f(e) { return e <= 0; }), true, "Array.some should return true whether at least one element passes the test in the given closure");
+test.assert(
+    Array.fill(0, 3, 2) === [ '0' = 2, '1' = 2, '2' = 2 ] &&
+    Array.fill(5, 6, [ 'a' ]) === [ '5' = [ 'a' ], '6' = [ 'a' ], '7' = [ 'a' ], '8' = [ 'a' ], '9' = [ 'a' ], '10' = [ 'a' ] ]
+, true, "Array.fill should return a filled array");
 
 # Number
 

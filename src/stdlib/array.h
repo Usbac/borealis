@@ -97,4 +97,9 @@ void stdMerge(struct result_list *args);
  */
 void stdSome(struct result_list *args);
 
+/**
+ * Returns an array filled with the given value.
+ */
+void stdFill(struct result_list *args);
+
 #endif /* ARRAY_H */

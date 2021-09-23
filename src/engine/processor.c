@@ -511,7 +511,7 @@ static void evalReturn(struct token *node)
 static void evalObject(struct token **node)
 {
     struct element_table *aux_current_obj = state->current_obj;
-    struct result_list *aux_stack = stateResultListDup(state->stack);
+    struct result_list *aux_stack = resultListDup(state->stack);
     struct element_table *obj = elementTableInit();
 
     resultListFree(state->stack);
@@ -857,7 +857,7 @@ static void evalArraySpread(struct element_table *arr, struct token **node)
 
 static void evalArray(struct token **node)
 {
-    struct result_list *aux_stack = stateResultListDup(state->stack);
+    struct result_list *aux_stack = resultListDup(state->stack);
     struct element_table *arr = elementTableInit();
 
     resultListFree(state->stack);

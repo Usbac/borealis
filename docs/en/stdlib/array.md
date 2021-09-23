@@ -411,3 +411,19 @@ any arr2 = [
 
 Array.merge(arr1, arr2); # Returns [ 'name' = 'juan', 'age' = 23, 'city' = 'NY' ]
 ```
+
+### Fill
+
+`fill(number start_index, number length, any value): array`
+
+Returns an array filled with the given value.
+
+The array keys will start at the specified start_index parameter.
+
+```borealis
+Array.fill(0, 3, 1912); # Returns [ 1912, 1912, 1912 ]
+```
+
+```borealis
+Array.fill(5, 6, 'apple'); # Returns [ '5' = 'apple', '6' = 'apple', '7' = 'apple', '8' = 'apple', '9' = 'apple', '10' = 'apple' ]
+```

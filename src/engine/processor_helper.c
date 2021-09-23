@@ -347,7 +347,7 @@ struct state *saveState(struct element_table *obj, char *file)
     struct state *aux = malloc_(sizeof(struct state));
     *aux = (struct state) {
         .null_coalescing = state->null_coalescing,
-        .stack = stateResultListDup(state->stack),
+        .stack = resultListDup(state->stack),
         .file = strDup(state->file),
         .current_obj = state->current_obj,
     };
