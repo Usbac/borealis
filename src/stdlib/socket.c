@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
 #include <sys/time.h>
 #include "../engine/processor_helper.h"
 #include "../state.h"
@@ -34,6 +33,12 @@ static int getSocketProp(struct element_table *obj, char *key)
     }
 
     return (int) prop->value.number;
+}
+
+
+static bool isTimeOption(int opt)
+{
+    return opt == SO_RCVTIMEO || opt == SO_SNDTIMEO;
 }
 
 
@@ -174,7 +179,7 @@ void stdSetOption(struct result_list *args)
     int opt = (int) getValueD(args->first->next);
     int val = (int) getValueD(args->first->next->next);
 
-    if (opt == SO_RCVTIMEO || opt == SO_SNDTIMEO) {
+    if (isTimeOption(opt)) {
         struct timeval timeout = (struct timeval) {
             .tv_sec = val / 1000,
             .tv_usec = (val % 1000) * 1000,
@@ -196,7 +201,7 @@ void stdGetOption(struct result_list *args)
     int val = 0;
     socklen_t len = sizeof(val);
 
-    if (opt == SO_RCVTIMEO || opt == SO_SNDTIMEO) {
+    if (isTimeOption(opt)) {
         struct timeval timeout;
         socklen_t timeout_len = sizeof(timeout);
 
