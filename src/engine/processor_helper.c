@@ -335,9 +335,7 @@ void mapResultToElement(struct element *el, struct result *node)
         elementDupValues(&el, node->p_el);
     } else {
         el->type = node->type;
-        el->value = node->value;
-        node->type = T_Null;
-        node->value.string = NULL;
+        el->value = valueDup(node->value, node->type);
     }
 }
 

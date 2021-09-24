@@ -112,8 +112,8 @@ static void evalDefinition(struct token **node)
 static void evalAssignation(struct token **node)
 {
     struct result *identifier = statePopResult();
-    struct result *val;
     struct element *el = getValueEl(identifier);
+    struct result *val;
 
     processJmpSection(node);
     val = statePopResult();
