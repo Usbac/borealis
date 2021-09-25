@@ -30,7 +30,7 @@ The error constants usually refer internally  to a C value defined in the errno 
 | NOT_SUPPORTED  | Operation not supported.           | ENOTSUP       |
 | BUSY           | Device or resource busy.           | EBUSY         |
 | MAX_LINK       | Too many links.                    | EMLINK        |
-| INTERRUMPED    | Interrupted system call.           | EINTR         |
+| INTERRUPTED    | Interrupted system call.           | EINTR         |
 
 ## Examples
 
