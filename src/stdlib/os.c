@@ -32,8 +32,9 @@ void stdClearPath(struct result_list *args)
 
 void stdIsFile(struct result_list *args)
 {
+    struct stat info;
     char *path = getValueStr(args->first);
-    statePushResultD(isFilePath(path));
+    statePushResultD(stat(path, &info) < 0 ? false : S_ISREG(info.st_mode) && !S_ISDIR(info.st_mode));
     free(path);
 }
 
