@@ -25,9 +25,11 @@ The object also has some useful constants.
 
 ### New
 
-`new(number domain, number type, number protocol = 0): object`
+`new(number domain, number type, number protocol = 0): any`
 
 Creates a new socket and returns it.
+
+In case of errors, `null` will be returned.
 
 ```borealis
 Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);

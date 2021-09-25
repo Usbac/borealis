@@ -5,7 +5,6 @@
 #include "../engine/processor_helper.h"
 #include "../state.h"
 #include "socket.h"
-
 #if defined(_WIN32) || defined(WIN32)
 #include <winsock2.h>
 typedef int socklen_t;
@@ -48,8 +47,9 @@ void stdNew(struct result_list *args)
     int type = (int) getValueD(args->first->next);
     int protocol = args->first->next->next != NULL ?
         (int) getValueD(args->first->next->next) : 0;
-    struct element_table *result = elementTableInit();
+    struct element_table *result;
     struct element *prop;
+    int socket_result;
 
 #if defined(_WIN32) || defined(WIN32)
     WSADATA wsaData;
@@ -60,8 +60,16 @@ void stdNew(struct result_list *args)
     }
 #endif
 
+    socket_result = socket(domain, type, protocol);
+    if (socket_result == -1) {
+        statePushResultNull();
+        return;
+    }
+
+    result = elementTableInit();
+
     prop = elementInit("_SOCK", NULL, 0, T_Number);
-    prop->value.number = socket(domain, type, protocol);
+    prop->value.number = socket_result;
     elementTablePush(&result, prop);
 
     prop = elementInit("_DOMAIN", NULL, 0, T_Number);
