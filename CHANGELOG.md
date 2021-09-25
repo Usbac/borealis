@@ -4,6 +4,8 @@
 
 ### Added
 
+- Add `Error` standard module.
+
 - Add `fill` function to the `Array` standard module.
 
 - Add `getUser` and `getGroup` functions to the `Os` standard module.

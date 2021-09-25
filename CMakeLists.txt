@@ -33,6 +33,7 @@ add_executable(borealis
         src/stdlib/crypt.c src/stdlib/crypt.h
         src/stdlib/socket.c src/stdlib/socket.h
         src/stdlib/bit.c src/stdlib/bit.h
+        src/stdlib/error.c src/stdlib/error.h
         lib/linenoise.c lib/linenoise.h
         lib/sha1.c lib/sha1.h
         lib/sha256.c lib/sha256.h

@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <sys/time.h>
 #include <math.h>
+#include <errno.h>
 #if !defined(WIN32) && !defined(_WIN32)
 #include <pwd.h>
 #include <grp.h>
@@ -13,6 +14,7 @@
 #include "../element.h"
 #include "../state.h"
 #include "../engine/processor_helper.h"
+#include "error.h"
 #include "os.h"
 
 
@@ -34,7 +36,13 @@ void stdIsFile(struct result_list *args)
 {
     struct stat info;
     char *path = getValueStr(args->first);
-    statePushResultD(stat(path, &info) < 0 ? false : S_ISREG(info.st_mode) && !S_ISDIR(info.st_mode));
+    if (stat(path, &info) < 0) {
+        statePushResultD(false);
+        setLastError(errno);
+    } else {
+        statePushResultD(S_ISREG(info.st_mode) && !S_ISDIR(info.st_mode));
+    }
+
     free(path);
 }
 
@@ -43,7 +51,13 @@ void stdIsDir(struct result_list *args)
 {
     struct stat info;
     char *path = getValueStr(args->first);
-    statePushResultD(stat(path, &info) < 0 ? false : S_ISDIR(info.st_mode));
+    if (stat(path, &info) < 0) {
+        statePushResultD(false);
+        setLastError(errno);
+    } else {
+        statePushResultD(S_ISDIR(info.st_mode));
+    }
+
     free(path);
 }
 
@@ -53,9 +67,13 @@ void stdExists(struct result_list *args)
     char *path = getValueStr(args->first);
     struct stat info;
 
-    statePushResultD(stat(path, &info) < 0 ?
-        false :
-        (S_ISREG(info.st_mode) || S_ISDIR(info.st_mode)));
+    if (stat(path, &info) < 0) {
+        statePushResultD(false);
+        setLastError(errno);
+    } else {
+        statePushResultD(S_ISREG(info.st_mode) || S_ISDIR(info.st_mode));
+    }
+
     free(path);
 }
 
@@ -64,7 +82,13 @@ void stdRename(struct result_list *args)
 {
     char *ori = getValueStr(args->first);
     char *new = getValueStr(args->first->next);
-    statePushResultD(rename(ori, new) == 0);
+    int result = rename(ori, new) == 0;
+
+    if (!result) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result);
     free(ori);
     free(new);
 }
@@ -73,7 +97,13 @@ void stdRename(struct result_list *args)
 void stdUnlink(struct result_list *args)
 {
     char *path = getValueStr(args->first);
-    statePushResultD(remove(path) == 0);
+    int result = remove(path) == 0;
+
+    if (!result) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result);
     free(path);
 }
 
@@ -81,7 +111,13 @@ void stdUnlink(struct result_list *args)
 void stdMakeDir(struct result_list *args)
 {
     char *path = getValueStr(args->first);
-    statePushResultD(mkdir_(path, 0777) == 0);
+    int result = mkdir_(path, 0777) == 0;
+
+    if (!result) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result);
     free(path);
 }
 
@@ -127,7 +163,13 @@ void stdChmod(struct result_list *args)
     char *path = getValueStr(args->first);
     char *mode_str = getValueStr(args->first->next);
     long mode = strtol(mode_str, NULL, 8);
-    statePushResultD(chmod(path, mode) == 0);
+    int result = chmod(path, mode) == 0;
+
+    if (!result) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result);
 
     free(path);
     free(mode_str);
@@ -156,6 +198,10 @@ void stdChown(struct result_list *args)
         free(group_str);
     } else {
         result = chown(path_str, user->pw_uid, 0);
+    }
+
+    if (result == -1) {
+        setLastError(errno);
     }
 
     statePushResultD(result != -1);
@@ -270,8 +316,9 @@ void stdGetPermissions(struct result_list *args)
     char *result = malloc_(BUFFER);
     struct stat info;
 
-    if (stat(filename, &info) < 0) {
+    if (stat(filename, &info) == 0) {
         statePushResultD(false);
+        setLastError(errno);
         goto end;
     }
 
@@ -330,8 +377,9 @@ void stdGetModTime(struct result_list *args)
     char *path = getValueStr(args->first);
     struct stat info;
 
-    if (stat(path, &info) < 0) {
+    if (stat(path, &info) != 0) {
         statePushResultNull();
+        setLastError(errno);
     } else {
         statePushResultD((double) info.st_mtime);
     }
@@ -345,8 +393,9 @@ void stdGetChangeTime(struct result_list *args)
     char *path = getValueStr(args->first);
     struct stat info;
 
-    if (stat(path, &info) < 0) {
+    if (stat(path, &info) != 0) {
         statePushResultNull();
+        setLastError(errno);
     } else {
         statePushResultD((double) info.st_ctime);
     }
@@ -362,6 +411,7 @@ void stdGetAccessTime(struct result_list *args)
 
     if (stat(path, &info) < 0) {
         statePushResultNull();
+        setLastError(errno);
     } else {
         statePushResultD((double) info.st_atime);
     }

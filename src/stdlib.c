@@ -24,6 +24,7 @@
 #include "stdlib/socket.h"
 #include "stdlib/io.h"
 #include "stdlib/bit.h"
+#include "stdlib/error.h"
 #include "stdlib.h"
 
 #if defined(_WIN32) || defined(WIN32)
@@ -156,6 +157,7 @@ static void initFunctions(void)
     struct element *date = declareModule("Date");
     struct element *socket = declareModule("Socket");
     struct element *bit = declareModule("Bit");
+    struct element *err = declareModule("Error");
     union VALUE value;
 
     /* io */
@@ -389,6 +391,8 @@ static void initFunctions(void)
     declareModuleFunc(NULL, "typeof", stdTypeof, "v");
     declareModuleFunc(NULL, "print", stdPrint, "*");
     declareModuleFunc(NULL, "printLine", stdPrintLine, "*");
+    /* error */
+    initErrorModule(err);
 }
 
 
