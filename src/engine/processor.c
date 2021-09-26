@@ -538,7 +538,7 @@ static void evalImport(void)
     char *file;
     struct state *aux_state;
     bool imported_file = false;
-    struct element *el;
+    struct element *el = NULL;
 
     if (slash != NULL) {
         *slash = '\0';

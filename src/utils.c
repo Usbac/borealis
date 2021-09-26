@@ -53,7 +53,7 @@ int mkdir_(char *path, unsigned int mode)
 #if defined(_WIN32)
     return _mkdir(path);
 #else
-    return mkdir(path, mode);
+    return mkdir(path, (mode_t) mode);
 #endif
 }
 
@@ -343,7 +343,7 @@ char *strReplace(const char *str, const char *old, const char *rep)
 size_t getHash(const char *str, size_t limit)
 {
     size_t hash = 5381;
-    uint8_t c;
+    char c;
 
     if (str == NULL) {
         return 0;

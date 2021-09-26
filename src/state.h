@@ -221,7 +221,7 @@ void stateDeclareElement(struct element **el);
 /**
  * Returns the element with the given key.
  * It will be searched in the order:
- * curent element -> callstack -> global.
+ * current element -> callstack -> global.
  * @param key the element key.
  * @param file the file where the element is being called.
  * @return the element.

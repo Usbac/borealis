@@ -82,7 +82,7 @@ void stdNew(struct result_list *args)
 
 void stdSend(struct result_list *args)
 {
-    SOCKET sock = (int) getSocketProp(getValueObj(args->first), "_SOCK");;
+    SOCKET sock = (int) getSocketProp(getValueObj(args->first), "_SOCK");
     char *msg = getValueStr(args->first->next);
     const int FLAGS = args->first->next->next != NULL ?
         (int) getValueD(args->first->next->next) : 0;

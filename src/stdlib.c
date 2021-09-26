@@ -35,7 +35,6 @@
 #define EOPNOTSUPP WSAEOPNOTSUPP
 #else
 #include <sys/socket.h>
-#include <sys/errno.h>
 #endif
 
 #if defined(_WIN32) || defined(WIN32)
