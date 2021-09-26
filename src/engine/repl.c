@@ -90,7 +90,7 @@ void replProcess(bool debug)
 
     if (!debug) {
         el = elementInit("_", NULL, 0, T_Null);
-        stateDeclareElement(&el);
+        stateElementDeclare(&el);
     }
 
     state->jmp_buffer = malloc_(sizeof(jmp_buf));

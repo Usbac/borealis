@@ -53,7 +53,7 @@ int mkdir_(char *path, unsigned int mode)
 #if defined(_WIN32)
     return _mkdir(path);
 #else
-    return mkdir(path, (mode_t) mode);
+    return mkdir(path, mode);
 #endif
 }
 

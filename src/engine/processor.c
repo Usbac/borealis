@@ -48,7 +48,7 @@ static void evalOperator(struct token *node)
 
 static void evalIdentifier(struct token *node)
 {
-    statePushResultEl(stateGetElement(node->value, state->file));
+    statePushResultEl(stateElementGet(node->value, state->file));
     state->stack->last->value.string = node->value;
 }
 
@@ -95,7 +95,7 @@ static void evalDefinition(struct token **node)
     identifier = statePopResultSafe();
     key = identifier->value.string;
 
-    redeclared_out = stateGetElement(key, state->file) != NULL;
+    redeclared_out = stateElementGet(key, state->file) != NULL;
     redeclared_obj = elementGet(key, state->current_obj, NULL) != NULL;
     if (redeclared_obj || (state->current_obj == NULL && redeclared_out)) {
         errorF(identifier->line_n, E_REDECLARE, key);
@@ -103,7 +103,7 @@ static void evalDefinition(struct token **node)
 
     el = elementInit(key, state->file, state->scope, T_Null);
     el->static_type = getOpcodeType((*node)->opcode);
-    stateDeclareElement(&el);
+    stateElementDeclare(&el);
 
     resultFree(identifier);
 }
@@ -419,22 +419,22 @@ static void evalForeachIterations(struct token **node,
         if (key != NULL) {
             struct element *key_el;
 
-            if (stateGetElement(i->ptr->key, state->file) != NULL) {
+            if (stateElementGet(i->ptr->key, state->file) != NULL) {
                 errorF((*node)->line_n, E_REDECLARE, i->ptr->key);
             }
 
             key_el = elementInit(key->value.string, state->file, state->scope, T_String);
             key_el->value.string = strDup(i->ptr->key);
-            stateDeclareElement(&key_el);
+            stateElementDeclare(&key_el);
         }
 
-        if (stateGetElement(val->value.string, state->file) != NULL) {
+        if (stateElementGet(val->value.string, state->file) != NULL) {
             errorF((*node)->line_n, E_REDECLARE, val->value.string);
         }
 
         val_el = elementInit(val->value.string, state->file, state->scope, T_Null);
         elementDupValues(&val_el, i->ptr);
-        stateDeclareElement(&val_el);
+        stateElementDeclare(&val_el);
 
         evalBytecode(code->body);
         stateElementsFree(state->scope);
@@ -564,7 +564,7 @@ static void evalImport(void)
             returned = statePopResult();
         }
     } else {
-        el = stateGetElement(file, NULL);
+        el = stateElementGet(file, NULL);
     }
 
     restoreState(aux_state);
@@ -1055,11 +1055,11 @@ void funcExec(struct function *func,
     aux_state = saveState(obj, func->def_file);
 
     statePushContext(C_Function);
-    statePushCallstack(getArgsTable(func, args), obj);
+    stateCallstackPush(getArgsTable(func, args), obj);
     evalBytecode(func->stmts);
     result = getFuncResult(func, aux_state->file);
     statePopContext();
-    statePopCallstack();
+    stateCallstackPop();
     restoreState(aux_state);
 
     statePushResult(state->stack, result);

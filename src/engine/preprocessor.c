@@ -43,7 +43,7 @@ static void prevalidateFuncDefinition(struct token *node,
         (node->rs->ls != NULL && node->rs->ls->type != T_Identifier)) {
         errorF(node->line_n, E_FUNC_DEFINITION);
     } else if (node->rs->ls != NULL &&
-            stateGetElement(node->rs->ls->value, pre_state->file) != NULL) {
+            stateElementGet(node->rs->ls->value, pre_state->file) != NULL) {
         errorF(node->line_n, E_REDECLARE, node->rs->ls->value);
     }
 }
@@ -363,7 +363,7 @@ static void declareFunc(struct token *node,
     func->public = public;
     func->constant = true;
 
-    stateDeclareElement(&func);
+    stateElementDeclare(&func);
 
     pre_state->current_type = aux_type;
 }

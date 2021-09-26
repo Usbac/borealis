@@ -39,7 +39,7 @@ void stateInit(const char *file)
 void stateFree(void)
 {
     while (state->callstack != NULL) {
-        statePopCallstack();
+        stateCallstackPop();
     }
 
     while (state->context_head != NULL) {
@@ -65,7 +65,7 @@ void stateSetFile(char *file)
 {
     FREE_AND_NULL(state->file);
     state->file = file;
-    struct element *el = stateGetElement(STATE_FILE_KEY, NULL);
+    struct element *el = stateElementGet(STATE_FILE_KEY, NULL);
     if (el != NULL) {
         free(el->value.string);
         el->value.string = strDup(file);
@@ -389,13 +389,13 @@ struct result *resultDup(struct result *node)
 }
 
 
-void stateDeclareElement(struct element **el)
+void stateElementDeclare(struct element **el)
 {
     elementTablePush(getDefinitionTable(), *el);
 }
 
 
-struct element *stateGetElement(const char *key, const char *file)
+struct element *stateElementGet(const char *key, const char *file)
 {
     struct element *el = NULL;
 
@@ -425,7 +425,7 @@ void stateElementsFree(size_t scope)
 }
 
 
-void statePushCallstack(struct element_table *args, struct element_table *obj)
+void stateCallstackPush(struct element_table *args, struct element_table *obj)
 {
     struct call *node;
 
@@ -443,7 +443,7 @@ void statePushCallstack(struct element_table *args, struct element_table *obj)
 }
 
 
-void statePopCallstack(void)
+void stateCallstackPop(void)
 {
     struct call *tmp;
 

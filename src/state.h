@@ -216,7 +216,7 @@ void resultListFree(struct result_list *list);
  * current object -> callstack -> global.
  * @param el the element.
  */
-void stateDeclareElement(struct element **el);
+void stateElementDeclare(struct element **el);
 
 /**
  * Returns the element with the given key.
@@ -226,7 +226,7 @@ void stateDeclareElement(struct element **el);
  * @param file the file where the element is being called.
  * @return the element.
  */
-struct element *stateGetElement(const char *key, const char *file);
+struct element *stateElementGet(const char *key, const char *file);
 
 /**
  * Frees the elements in the global list and callstack
@@ -240,11 +240,11 @@ void stateElementsFree(size_t scope);
  * @param args the calling arguments.
  * @param obj the function's object
  */
-void statePushCallstack(struct element_table *args, struct element_table *obj);
+void stateCallstackPush(struct element_table *args, struct element_table *obj);
 
 /**
  * Pops a call from the callstack.
  */
-void statePopCallstack(void);
+void stateCallstackPop(void);
 
 #endif /* STATE_H */

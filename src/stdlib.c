@@ -73,7 +73,7 @@ static struct element *declareModule(const char *key)
 {
     struct element *el = elementInit(key, NULL, 0, T_Object);
     el->constant = true;
-    stateDeclareElement(&el);
+    stateElementDeclare(&el);
 
     return el;
 }
@@ -93,7 +93,7 @@ static void declareModuleFunc(struct element *module,
     el->value.function->native_code = true;
 
     if (module == NULL) {
-        stateDeclareElement(&el);
+        stateElementDeclare(&el);
     } else {
         elementTablePush(&module->value.values, el);
     }
@@ -112,7 +112,7 @@ static void declareModuleConst(struct element *module,
     el->value = val;
 
     if (module == NULL) {
-        stateDeclareElement(&el);
+        stateElementDeclare(&el);
     } else {
         elementTablePush(&module->value.values, el);
     }
