@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "../element.h"
 #include "../state.h"
 #include "../engine/processor_helper.h"
 #include "../../lib/base64.h"
+#include "error.h"
 #include "file.h"
 
 
@@ -20,6 +22,10 @@ void stdCreateFile(struct result_list *args)
     } else {
         fp = fopen(path, "w");
         result = fp != NULL;
+
+        if (fp == NULL) {
+            setLastError(errno);
+        }
     }
 
     if (fclose(fp) != 0) {
@@ -43,6 +49,7 @@ void stdReadFile(struct result_list *args)
 
     if (!fp) {
         statePushResultNull();
+        setLastError(errno);
         goto end;
     }
 
@@ -93,8 +100,16 @@ void stdWriteFile(struct result_list *args)
         true;
     bool result = fp == NULL || override;
 
+    if (fp == NULL) {
+        setLastError(errno);
+    }
+
     if (result) {
         fp = fopen(path, "w");
+        if (fp == NULL) {
+            setLastError(errno);
+        }
+
         result = fprintf(fp, "%s", content) >= 0;
     }
 
@@ -113,7 +128,14 @@ void stdAppendFile(struct result_list *args)
     char *path = getValueStr(args->first);
     char *content = getValueStr(args->first->next);
     FILE *fp = fopen(path, "a");
-    bool result = fprintf(fp, "%s", content) >= 0;
+    bool result;
+
+    if (fp == NULL) {
+        setLastError(errno);
+        result = false;
+    } else {
+        result = fprintf(fp, "%s", content) >= 0;
+    }
 
     if (fclose(fp) != 0) {
         result = false;
@@ -137,6 +159,7 @@ void stdCopy(struct result_list *args)
 
     if (fp_ori == NULL || fp_dest == NULL) {
         result = false;
+        setLastError(errno);
         goto end;
     }
 
@@ -164,6 +187,7 @@ void stdGetType(struct result_list *args)
     struct stat info;
     if (stat(path, &info) < 0) {
         statePushResultNull();
+        setLastError(errno);
         goto end;
     }
 
@@ -197,6 +221,7 @@ void stdGetFileSize(struct result_list *args)
 
     if (!fp || (size = getFileSize(fp)) == 0) {
         statePushResultNull();
+        setLastError(errno);
     } else {
         statePushResultD((double) size);
     }
