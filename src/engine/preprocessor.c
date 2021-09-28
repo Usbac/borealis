@@ -43,7 +43,7 @@ static void prevalidateFuncDefinition(struct token *node,
         (node->rs->ls != NULL && node->rs->ls->type != T_Identifier)) {
         errorF(node->line_n, E_FUNC_DEFINITION);
     } else if (node->rs->ls != NULL &&
-            stateElementGet(node->rs->ls->value, pre_state->file) != NULL) {
+        stateElementGet(node->rs->ls->value, pre_state->file) != NULL) {
         errorF(node->line_n, E_REDECLARE, node->rs->ls->value);
     }
 }
@@ -432,8 +432,10 @@ static bool isStmt(struct token *node)
 }
 
 
-static bool preprocessObj(struct token *node)
+static bool preprocessObj(struct token *node, struct pre_state *pre_state)
 {
+    enum TYPE aux_type;
+
     if (node->opcode != OP_Object) {
         return false;
     }
@@ -441,6 +443,11 @@ static bool preprocessObj(struct token *node)
     if (node->rs != NULL || node->ls == NULL || node->ls->type != T_Chunk) {
         errorF(node->line_n, E_TOKEN, node->value);
     }
+
+    aux_type = pre_state->current_type;
+    pre_state->current_type = T_Object;
+    preprocessTokenList(node->ls->body, pre_state);
+    pre_state->current_type = aux_type;
 
     return true;
 }
@@ -507,11 +514,13 @@ static void preprocessNode(struct token *node, struct pre_state *pre_state)
         return;
     }
 
-    if (pre_state->current_type != T_Chunk && isStmt(node)) {
+    if (pre_state->current_type != T_Chunk &&
+        pre_state->current_type != T_Object &&
+        isStmt(node)) {
         errorF(node->line_n, E_TOKEN, node->value);
     }
 
-    if (preprocessFuncDef(node, pre_state) || preprocessObj(node)) {
+    if (preprocessFuncDef(node, pre_state) || preprocessObj(node, pre_state)) {
         return;
     }
 
