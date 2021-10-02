@@ -251,36 +251,12 @@ static void evalOr(struct token **node)
 }
 
 
-/**
- * Used in conjunction with continue, break and return statements.
- */
-static void evalBodylessIf(struct token **node)
-{
-    *node = (*node)->next;
-    while (*node != NULL && (*node)->opcode != OP_Stmt_sep) {
-        struct result *cond = NULL;
-        if ((*node)->opcode == OP_Continue || (*node)->opcode == OP_Break ||
-            (*node)->opcode == OP_Return) {
-            cond = statePopResult();
-        }
-
-        if (cond == NULL || isTrue(cond)) {
-            evalNode(node);
-        }
-
-        resultFree(cond);
-        *node = (*node)->next;
-    }
-}
-
-
 static void evalIf(struct token **node)
 {
     struct result *cond = statePopResult();
     bool evaluated = false;
 
     if (cond == NULL) {
-        evalBodylessIf(node);
         return;
     }
 

@@ -56,7 +56,10 @@ any getExtra(first, ...args) {
 }
 
 any earlyReturn(cond) {
-    return if (cond);
+    if (cond) {
+        return;
+    }
+
     return 'hello';
 }
 

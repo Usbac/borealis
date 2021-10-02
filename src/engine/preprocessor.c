@@ -99,7 +99,7 @@ static void prevalidateAssignation(struct token *node)
 static void prevalidateReturn(struct token *node)
 {
     if (node->ls != NULL && !isExpression(node->ls) &&
-        !isOperator(node->ls->opcode) && node->ls->opcode != OP_If) {
+        !isOperator(node->ls->opcode)) {
         errorF(node->ls->line_n, E_TOKEN, node->ls->value);
     }
 }
@@ -224,7 +224,7 @@ static void prevalidateForeach(struct token *node)
 
 static void prevalidateLoopStmt(struct token *node)
 {
-    if (node->ls != NULL && node->ls->opcode != OP_If) {
+    if (node->ls != NULL) {
         errorF(node->ls->line_n, E_TOKEN, node->ls->value);
     }
 }

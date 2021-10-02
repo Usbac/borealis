@@ -25,37 +25,19 @@ while (i < 10) {
 
 test.assert(i == 10, true, "while loop should iterate the right amount of times");
 
-i = 0;
-while (true) {
-    break;
-    i++;
-}
-
 while (false) {
     test.assert(false, true, "should not enter in falsy while");
 }
 
 # CONTINUE & BREAK
 
+i = 0;
+while (true) {
+    break;
+    i++;
+}
+
 test.assert(i, 0, "loop should break after a 'break' statement");
-
-i = 0;
-while (true) {
-    break if (1 === 1);
-    i++;
-}
-
-test.assert(i, 0, "loop should break after a 'break if' truly statement");
-
-i = 0;
-while (true) {
-    break if (0 === 1);
-    i++;
-    break if (1 === 1);
-    i++;
-}
-
-test.assert(i, 1, "loop should not break after a 'break if' falsy statement");
 
 i = 0;
 while (i < 10) {
@@ -65,24 +47,6 @@ while (i < 10) {
 }
 
 test.assert(i, 10, "loop should go to next iteration after a 'continue' statement");
-
-i = 0;
-while (i < 10) {
-    i++;
-    continue if (1 == 1);
-    i++;
-}
-
-test.assert(i, 10, "loop should go to next iteration after a 'continue if' truly statement");
-
-i = 0;
-while (i < 10) {
-    i++;
-    continue if (1 == 0);
-    i++;
-}
-
-test.assert(i, 10, "loop should not go to next iteration after a 'continue if' falsy statement");
 
 # FOREACH
 

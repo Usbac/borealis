@@ -156,19 +156,6 @@ while (true) {
 # It will print 0123
 ```
 
-The break can be combined with the if statement to make it more English like:
-
-```borealis
-number i = 0;
-
-while (true) {
-    break if (i > 3);
-    print(i++);
-}
-
-# It will print 0123
-```
-
 ## Continue
 
 Is used within looping structures to skip the rest of the current loop iteration, continue execution at the condition evaluation and then the beginning of the next iteration.
@@ -179,17 +166,6 @@ foreach ([ 1, 2, 3, 4, 5 ], val) {
         continue;
     }
 
-    print(val);
-}
-
-# It will print 135
-```
-
-The continue can be combined with the if statement to make it more English like:
-
-```borealis
-foreach ([ 1, 2, 3, 4, 5 ], val) {
-    continue if (val == 2 || val == 4);
     print(val);
 }
 
@@ -218,14 +194,4 @@ any my_array = import 'b.bor';
 
 # b.bor
 return [ 1, 2, 3 ];
-```
-
-The return can be combined with the if statement to make it more English like:
-
-```borealis
-any printIfNumber(num) {
-    return if (typeof(num) ne 'number');
-
-    print(num);
-}
 ```

@@ -22,6 +22,8 @@
 
 ### Removed
 
+- Remove the support for body-less if statements with `continue`, `break` and `return`.
+
 - Remove the `setTimeout` and `getTimeout` functions from the `Socket` standard module.
 
 - Remove the `EADDRINUSE`, `EBADF`, `ENOTSOCK` and `EOPNOTSUPP` constants from the `Socket` standard module.
