@@ -23,40 +23,74 @@ The functions of the standard library that modify the `last` property are listed
 * `Os.getModTime`
 * `Os.getChangeTime`
 * `Os.getAccessTime`
+* `Socket.new`
+* `Socket.send`
+* `Socket.recv`
+* `Socket.bind`
+* `Socket.listen`
+* `Socket.accept`
+* `Socket.close`
+* `Socket.shutdown`
+* `Socket.getOption`
+* `Socket.setOption`
 
 ## Constants
 
 Keep in mind that all the error constants are of type `number`.
 
-The error constants usually refer internally  to a C value defined in the errno header file.
+The error constants usually refer internally to a C value defined in the errno header file.
 
-| Name           | Description                        | C counterpart |
-|----------------|------------------------------------|---------------|
-| ACCESS         | Permission denied.                 | EACCES        |
-| FAULT          | Bad address.                       | EFAULT        |
-| IO             | Input/Output error.                | EIO           |
-| LOOP           | Too many levels of symbolic links. | ELOOP         |
-| NAME_TOO_LONG  | Too long file name.                | ENAMETOOLONG  |
-| NOT_ENTRY      | No such file or directory.         | ENOENT        |
-| NOT_DIR        | Not a directory.                   | ENOTDIR       |
-| IS_DIR         | Is a directory.                    | EISDIR        |
-| NOT_EMPTY      | The directory is not empty.        | ENOTEMPTY     |
-| EXISTS         | File already exists.               | EEXIST        |
-| FAULT          | Bad address.                       | EFAULT        |
-| INVALID        | Invalid argument.                  | EINVAL        |
-| PERMISSION     | Operation not permitted.           | EPERM         |
-| READ_ONLY_FS   | Read only filesystem.              | EROFS         |
-| CROSS_DEVICE   | Cross-device link.                 | EXDEV         |
-| NO_SPACE       | No space left on device.           | ENOSPC        |
-| QUOTA_EXCEEDED | Disc quota exceeded.               | EDQUOT        |
-| NOT_SUPPORTED  | Operation not supported.           | ENOTSUP       |
-| BUSY           | Device or resource busy.           | EBUSY         |
-| MAX_LINK       | Too many links.                    | EMLINK        |
-| INTERRUPTED    | Interrupted system call.           | EINTR         |
+_Keep in mind that the C counterpart name could vary across different systems._
+
+| Name                  | Description                        | C counterpart   |
+|-----------------------|------------------------------------|-----------------|
+| ACCESS                | Permission denied.                 | EACCES          |
+| FAULT                 | Bad address.                       | EFAULT          |
+| IO                    | Input/Output error.                | EIO             |
+| LOOP                  | Too many levels of symbolic links. | ELOOP           |
+| NAME_TOO_LONG         | Too long file name.                | ENAMETOOLONG    |
+| NOT_ENTRY             | No such file or directory.         | ENOENT          |
+| NOT_DIR               | Not a directory.                   | ENOTDIR         |
+| IS_DIR                | Is a directory.                    | EISDIR          |
+| NOT_EMPTY             | The directory is not empty.        | ENOTEMPTY       |
+| EXISTS                | File already exists.               | EEXIST          |
+| FAULT                 | Bad address.                       | EFAULT          |
+| INVALID               | Invalid argument.                  | EINVAL          |
+| PERMISSION            | Operation not permitted.           | EPERM           |
+| READ_ONLY_FS          | Read only filesystem.              | EROFS           |
+| CROSS_DEVICE          | Cross-device link.                 | EXDEV           |
+| NO_SPACE              | No space left on device.           | ENOSPC          |
+| QUOTA_EXCEEDED        | Disc quota exceeded.               | EDQUOT          |
+| NOT_SUPPORTED         | Operation not supported.           | ENOTSUP         |
+| BUSY                  | Device or resource busy.           | EBUSY           |
+| MAX_LINK              | Too many links.                    | EMLINK          |
+| INTERRUPTED           | Interrupted system call.           | EINTR           |
+| ADDRESS_FAMILY        | Address family not supported.      | EAFNOSUPPORT    |
+| M_FILE                | Too many open files.               | EMFILE          |
+| N_FILE                | Too many open files in system.     | ENFILE          |
+| NO_BUFFER             | No buffer space available.         | ENOBUFS         |
+| NO_MEMORY             | Not enough space.                  | ENOMEM          |
+| PROTOCOL              | Protocol not supported.            | EPROTONOSUPPORT |
+| PROTOCOL_TYPE         | Wrong protocol type for socket.    | EPROTOTYPE      |
+| AGAIN                 | Resource temporarily unavailable.  | EAGAIN          |
+| BAD_FILE              | Bad file descriptor.               | EBADF           |
+| CONNECTION_RESET      | Connection reset.                  | ECONNRESET      |
+| HOST                  | Host is unreachable.               | EHOSTUNREACH    |
+| INTERRUPTED           | Interrupted function call.         | EINTR           |
+| MSG_SIZE              | Message too long.                  | EMSGSIZE        |
+| NETWORK_DOWN          | Network is down.                   | ENETDOWN        |
+| NOT_SOCKET            | Not a socket.                      | ENOTSOCK        |
+| PIPE                  | Broken pipe.                       | EPIPE           |
+| ADDRESS_NOT_AVAILABLE | Address not available.             | EADDRNOTAVAIL   |
+| NOT_CONNECTION        | The socket is not connected.       | ENOTCONN        |
+| TIMEOUT               | Connection timed out.              | ETIMEDOUT       |
+| ADDRESS_IN_USE        | Address already in use.            | EADDRINUSE      |
+| DESTINATION_ADDRESS   | Destination address required.      | EDESTADDRREQ    |
+| CONNECTION_ABORTED    | Connection aborted.                | ECONNABORTED    |
 
 ## Examples
 
-This code will print the string 'Error' if the file does not exists:
+This code will print the string 'Error' if the file does not exist:
 
 ```borealis
 Os.remove('not_existing_file.txt');

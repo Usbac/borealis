@@ -70,7 +70,7 @@ Socket.listen(socket_in_use, 10); # Returns false
 
 Accepts a connection on the given socket.
 
-This function returns a new socket object on success, otherwise `false` will be returned.
+This function returns a new socket object on success, otherwise `null` will be returned.
 
 ```borealis
 Socket.accept(sock);
@@ -183,6 +183,8 @@ Socket.setOption(server, Socket.SO_BROADCAST, true);
 `getOption(object socket, number option): number`
 
 Returns the specified socket option of the given socket.
+
+In case of errors, `null` will be returned.
 
 ```borealis
 # Will return true if the socket permits sending of broadcast messages.

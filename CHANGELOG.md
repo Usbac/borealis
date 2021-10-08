@@ -16,7 +16,7 @@
 
 - Change the `public` keyword to `pub`.
 
-- Change the return value of the `new` function of the `Socket` standard module to null when an error happens.
+- Change the return value of the `new`, `accept` and `getOption` functions of the `Socket` standard module to null when an error happens.
 
 - Change the return value of the `listen` function of the `Socket` standard module to a boolean.
 

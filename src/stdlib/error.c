@@ -36,7 +36,6 @@ static void initErrorConstants(void)
     declareModuleConst("IS_DIR", EISDIR);
     declareModuleConst("NOT_EMPTY", ENOTEMPTY);
     declareModuleConst("EXIST", EEXIST);
-    declareModuleConst("FAULT", EFAULT);
     declareModuleConst("INVALID", EINVAL);
     declareModuleConst("PERMISSION", EPERM);
     declareModuleConst("READ_ONLY_FS", EROFS);
@@ -47,6 +46,30 @@ static void initErrorConstants(void)
     declareModuleConst("BUSY", EBUSY);
     declareModuleConst("MAX_LINK", EMLINK);
     declareModuleConst("INTERRUPTED", EINTR);
+    declareModuleConst("ADDRESS_FAMILY", EAFNOSUPPORT);
+    declareModuleConst("M_FILE", EMFILE);
+    declareModuleConst("N_FILE", ENFILE);
+    declareModuleConst("NO_BUFFER", ENOBUFS);
+    declareModuleConst("NO_MEMORY", ENOMEM);
+    declareModuleConst("PROTOCOL", EPROTONOSUPPORT);
+    declareModuleConst("PROTOCOL_TYPE", EPROTOTYPE);
+    declareModuleConst("AGAIN", EAGAIN);
+    declareModuleConst("BAD_FILE", EBADF);
+    declareModuleConst("CONNECTION_RESET", ECONNRESET);
+    declareModuleConst("HOST", EHOSTUNREACH);
+    declareModuleConst("INTERRUPTED", EINTR);
+    declareModuleConst("MSG_SIZE", EMSGSIZE);
+    declareModuleConst("NETWORK_DOWN", ENETDOWN);
+    declareModuleConst("NETWORK_UNREACHABLE", ENETUNREACH);
+    declareModuleConst("NOT_SOCKET", ENOTSOCK);
+    declareModuleConst("NOT_SUPPORTED", EOPNOTSUPP);
+    declareModuleConst("PIPE", EPIPE);
+    declareModuleConst("ADDRESS_NOT_AVAILABLE", EADDRNOTAVAIL);
+    declareModuleConst("NOT_CONNECTION", ENOTCONN);
+    declareModuleConst("TIMEOUT", ETIMEDOUT);
+    declareModuleConst("ADDRESS_IN_USE", EADDRINUSE);
+    declareModuleConst("DESTINATION_ADDRESS", EDESTADDRREQ);
+    declareModuleConst("CONNECTION_ABORTED", ECONNABORTED);
 }
 
 

@@ -2,9 +2,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/time.h>
+#include <errno.h>
 #include "../engine/processor_helper.h"
 #include "../state.h"
 #include "socket.h"
+#include "error.h"
 #if defined(_WIN32) || defined(WIN32)
 #include <winsock2.h>
 typedef int socklen_t;
@@ -13,6 +15,7 @@ typedef int socklen_t;
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #define closesocket(x) close(x)
+#define SOCKET_ERROR (-1)
 #endif
 
 #ifndef SOCKET
@@ -61,8 +64,9 @@ void stdNew(struct result_list *args)
 #endif
 
     socket_result = socket(domain, type, protocol);
-    if (socket_result == -1) {
+    if (socket_result == SOCKET_ERROR) {
         statePushResultNull();
+        setLastError(errno);
         return;
     }
 
@@ -86,8 +90,13 @@ void stdSend(struct result_list *args)
     char *msg = getValueStr(args->first->next);
     const int FLAGS = args->first->next->next != NULL ?
         (int) getValueD(args->first->next->next) : 0;
+    ssize_t result = send(sock, msg, strlen(msg), FLAGS);
 
-    statePushResultD((double) send(sock, msg, strlen(msg), FLAGS));
+    if (result == SOCKET_ERROR) {
+        setLastError(errno);
+    }
+
+    statePushResultD((double) result);
     free(msg);
 }
 
@@ -101,7 +110,8 @@ void stdRecv(struct result_list *args)
     char *res = calloc_(1, RES_SIZE + 1);
     ssize_t bytes = recv(sock, res, RES_SIZE, FLAGS);
 
-    if (bytes <= 0) {
+    if (bytes == SOCKET_ERROR) {
+        setLastError(errno);
         statePushResultD(false);
         free(res);
     } else {
@@ -116,13 +126,19 @@ void stdBind(struct result_list *args)
     char *host = getValueStr(args->first->next);
     const int SOCK = getSocketProp(sock, "_SOCK");
     struct sockaddr_in addr;
+    int result;
 
     addr.sin_family = getSocketProp(sock, "_DOMAIN");
     addr.sin_addr.s_addr = inet_addr(host);
     addr.sin_port = (int) getValueD(args->first->next->next);
     memset(addr.sin_zero, '\0', sizeof addr.sin_zero);
 
-    statePushResultD((int) bind(SOCK, (struct sockaddr *) &addr, sizeof(addr)));
+    result = bind(SOCK, (struct sockaddr *) &addr, sizeof(addr));
+    if (result == SOCKET_ERROR) {
+        setLastError(errno);
+    }
+
+    statePushResultD((int) result);
 
     free(host);
 }
@@ -131,18 +147,31 @@ void stdBind(struct result_list *args)
 void stdListen(struct result_list *args)
 {
     const int SOCK = getSocketProp(getValueObj(args->first), "_SOCK");
-    statePushResultD(listen(SOCK, (int) getValueD(args->first->next)) == 0);
+    int result = listen(SOCK, (int) getValueD(args->first->next));
+
+    if (result == SOCKET_ERROR) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result != SOCKET_ERROR);
 }
 
 
 void stdAccept(struct result_list *args)
 {
-    struct element_table *result = elementTableInit();
-    struct element_table *sock = getValueObj(args->first);
+    struct element_table *result, *sock = getValueObj(args->first);
     struct element *prop;
+    int accept_result = accept(getSocketProp(sock, "_SOCK"), NULL, NULL);
 
+    if (accept_result == SOCKET_ERROR) {
+        setLastError(errno);
+        statePushResultNull();
+        return;
+    }
+
+    result = elementTableInit();
     prop = elementInit("_SOCK", NULL, 0, T_Number);
-    prop->value.number = accept(getSocketProp(sock, "_SOCK"), NULL, NULL);
+    prop->value.number = accept_result;
     elementTablePush(&result, prop);
 
     prop = elementInit("_DOMAIN", NULL, 0, T_Number);
@@ -158,14 +187,22 @@ void stdClose(struct result_list *args)
 #if defined(_WIN32) || defined(WIN32)
     WSACleanup();
 #endif
-    closesocket(getSocketProp(getValueObj(args->first), "_SOCK"));
+    if (closesocket(getSocketProp(getValueObj(args->first), "_SOCK")) == SOCKET_ERROR) {
+        setLastError(errno);
+    }
 }
 
 
 void stdShutdown(struct result_list *args)
 {
     int how = args->first->next != NULL ? (int) getValueD(args->first->next) : 2;
-    statePushResultD((double) shutdown(getSocketProp(getValueObj(args->first), "_SOCK"), how) == 0);
+    int result = shutdown(getSocketProp(getValueObj(args->first), "_SOCK"), how);
+
+    if (result == SOCKET_ERROR) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result != SOCKET_ERROR);
 }
 
 
@@ -186,6 +223,7 @@ void stdSetOption(struct result_list *args)
     SOCKET sock = getSocketProp(getValueObj(args->first), "_SOCK");
     int opt = (int) getValueD(args->first->next);
     int val = (int) getValueD(args->first->next->next);
+    int result = SOCKET_ERROR;
 
     if (isTimeOption(opt)) {
         struct timeval timeout = (struct timeval) {
@@ -193,12 +231,17 @@ void stdSetOption(struct result_list *args)
             .tv_usec = (val % 1000) * 1000,
         };
 
-        statePushResultD(setsockopt(sock, SOL_SOCKET, opt, &timeout, sizeof(timeout)) == 0);
-        return;
+        result = setsockopt(sock, SOL_SOCKET, opt, &timeout, sizeof(timeout));
     } else if (opt == SO_RCVLOWAT || opt == SO_SNDLOWAT ||
         opt == SO_DONTROUTE || opt == SO_KEEPALIVE || opt == SO_BROADCAST) {
-        statePushResultD(setsockopt(sock, SOL_SOCKET, opt, &val, sizeof(val)) == 0);
+        result = setsockopt(sock, SOL_SOCKET, opt, &val, sizeof(val));
     }
+
+    if (result == SOCKET_ERROR) {
+        setLastError(errno);
+    }
+
+    statePushResultD(result != SOCKET_ERROR);
 }
 
 
@@ -208,17 +251,32 @@ void stdGetOption(struct result_list *args)
     int opt = (int) getValueD(args->first->next);
     int val = 0;
     socklen_t len = sizeof(val);
+    int result;
 
     if (isTimeOption(opt)) {
         struct timeval timeout;
         socklen_t timeout_len = sizeof(timeout);
 
-        getsockopt(sock, SOL_SOCKET, opt, &timeout, &timeout_len);
+        result = getsockopt(sock, SOL_SOCKET, opt, &timeout, &timeout_len);
+
+        if (result == SOCKET_ERROR) {
+            setLastError(errno);
+            statePushResultNull();
+            return;
+        }
+
         statePushResultD(((double) timeout.tv_sec * 1000.0) + (timeout.tv_usec / 1000.0));
         return;
     }
 
-    getsockopt(sock, SOL_SOCKET, opt, &val, &len);
+    result = getsockopt(sock, SOL_SOCKET, opt, &val, &len);
+
+    if (result == SOCKET_ERROR) {
+        setLastError(errno);
+        statePushResultNull();
+        return;
+    }
+
     statePushResultD(opt == SO_DONTROUTE || opt == SO_KEEPALIVE || opt == SO_BROADCAST ?
         val == opt :
         val);
