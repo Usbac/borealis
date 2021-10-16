@@ -113,7 +113,7 @@ static void runRepl(void)
 {
     stateInit(NULL);
     stdlibInit(args_table, cwd, NULL);
-    printf(MSG_REPL);
+    printf(REPL_MSG);
     state->in_repl = true;
     replProcess(false);
 }

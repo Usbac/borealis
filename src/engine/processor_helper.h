@@ -203,7 +203,7 @@ bool isFunctionNode(struct token *node);
 void validateElementMod(struct result *identifier, enum TYPE type);
 
 /**
- * Returns the type equilavent of the given opcode.
+ * Returns the type equivalent of the given opcode.
  * @param opcode the opcode.
  * @return the type representation.
  */

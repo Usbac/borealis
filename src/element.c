@@ -103,7 +103,7 @@ static void insertElementInHashmap(struct element_table **table,
 }
 
 
-void ElementTablePrepend(struct element_table **table, struct element *el)
+void elementTablePrepend(struct element_table **table, struct element *el)
 {
     struct element_list *new = malloc_(sizeof(struct element_list));
     insertElementInHashmap(table, el);
@@ -143,7 +143,7 @@ void elementTablePush(struct element_table **table, struct element *el)
 }
 
 
-struct function *funcInit(void)
+struct function *functionInit(void)
 {
     struct function *func = malloc_(sizeof(struct function));
     *func = (struct function) {0};
@@ -160,7 +160,7 @@ struct function *functionDup(struct function *func)
         return NULL;
     }
 
-    new = funcInit();
+    new = functionInit();
     new->def_file = strDup(func->def_file);
     new->params = listDup(func->params);
     new->stmts = listDup(func->stmts);
@@ -191,7 +191,7 @@ struct element *elementInit(const char *key,
         case T_Object:
         case T_Array: el->value.values = elementTableInit(); break;
         case T_Number: el->value.number = 0; break;
-        case T_Function: el->value.function = funcInit(); break;
+        case T_Function: el->value.function = functionInit(); break;
         default: el->value.string = NULL;
     }
 

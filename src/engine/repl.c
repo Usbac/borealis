@@ -40,7 +40,7 @@ static bool runLine(char *line, struct element *el)
         state->exiting = true;
         goto end;
     } else if (!strcmp(line, REPL_HELP)) {
-        printf(MSG_REPL);
+        printf(REPL_MSG);
         goto end;
     } else if (!strcmp(line, REPL_CLEAR)) {
         linenoiseClearScreen();

@@ -7,7 +7,7 @@
 #define REPL_SAVE ".save"
 #define REPL_SAVED "REPL history successfully saved to file %s!\n"
 #define REPL_DEFAULT_FILE "./repl.bor"
-#define MSG_REPL "Borealis\n" \
+#define REPL_MSG "Borealis\n" \
     "Version "BOREALIS_VERSION"\n" \
     "The last given value is stored in the _ (underscore) variable\n" \
     "Type \""REPL_CLEAR"\" to clear the terminal\n" \

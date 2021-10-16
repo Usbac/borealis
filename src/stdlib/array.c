@@ -75,7 +75,7 @@ void stdPrepend(struct result_list *args)
     struct element *prop = elementInit(key, NULL, 0, T_Null);
     prop->public = true;
     mapResultToElement(prop, args->first->next);
-    ElementTablePrepend(&arr, prop);
+    elementTablePrepend(&arr, prop);
 
     free(key);
 }

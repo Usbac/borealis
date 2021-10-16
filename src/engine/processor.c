@@ -66,7 +66,7 @@ static void evalAnonFunc(struct token **node)
         return;
     }
 
-    func = funcInit();
+    func = functionInit();
     func->def_file = strDup(state->file);
     func->params = listDup((*node)->next->body);
     func->stmts = listDup((*node)->next->next->body);

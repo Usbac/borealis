@@ -79,7 +79,7 @@ struct element_table *elementTableInit(void);
  * @param table the table.
  * @param el the element.
  */
-void ElementTablePrepend(struct element_table **table, struct element *el);
+void elementTablePrepend(struct element_table **table, struct element *el);
 
 /**
  * Adds the given element to the end of the given table.
@@ -92,7 +92,7 @@ void elementTablePush(struct element_table **table, struct element *el);
  * Returns a new function.
  * @return the new function.
  */
-struct function *funcInit(void);
+struct function *functionInit(void);
 
 /**
  * Returns a copy of the given function.
