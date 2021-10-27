@@ -157,13 +157,15 @@ static void prevalidateOpEqual(struct token *node)
 {
     if (node->rs == NULL ||
         (node->rs->type != T_Identifier &&
-        node->rs->type != T_Index)) {
+        node->rs->type != T_Index &&
+        node->rs->opcode != OP_Dot &&
+        node->rs->opcode != OP_Dot_safe)) {
         errorF(node->line_n, E_TOKEN, node->value);
     }
 }
 
 
-static bool isPosibleObj(struct token *node)
+static bool isPossibleObj(struct token *node)
 {
     return node->opcode == OP_Object || node->type == T_Identifier ||
         node->type == T_Arguments || node->type == T_Index ||
@@ -178,7 +180,7 @@ static void prevalidateDot(struct token *node)
         errorF(node->line_n, E_TOKEN, node->value);
     } else if (node->ls->type != T_Identifier) {
         errorF(node->ls->line_n, E_TOKEN, node->ls->value);
-    } else if (!isPosibleObj(node->rs)) {
+    } else if (!isPossibleObj(node->rs)) {
         errorF(node->rs->line_n, E_TOKEN, node->rs->value);
     }
 }

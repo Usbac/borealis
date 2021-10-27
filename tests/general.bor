@@ -147,3 +147,10 @@ any scopingFunc() {
 }
 
 test.assert(scopingFunc() ^ scoping.bar(), "barfoo", "scope should work correctly");
+
+any foo2 = obj {
+    pub any bar = 0;
+};
+
+foo2.bar += 1;
+test.assert(foo2.bar, 1, "should be possible to access and modify a public property");
