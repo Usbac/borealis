@@ -138,7 +138,7 @@ void stdSlice(struct result_list *args)
     }
 
     end:
-    statePushResultStr(value);
+        statePushResultStr(value);
         free(start_str);
         free(end_str);
 }

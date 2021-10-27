@@ -331,8 +331,7 @@ static void evalWhile(struct token **node)
     state->breaking_loop = false;
     state->continuing_loop = false;
 
-    end:
-    resultFree(cond);
+    end: resultFree(cond);
 }
 
 
@@ -965,8 +964,8 @@ static void evalIndex(struct token *node)
 
     free(key);
     end:
-    resultFree(index);
-    resultFree(val);
+        resultFree(index);
+        resultFree(val);
 }
 
 

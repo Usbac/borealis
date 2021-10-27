@@ -50,8 +50,7 @@ void stdGetSize(struct result_list *args)
         size += !i->ptr->unset;
     }
 
-    end:
-    statePushResultD(size);
+    end: statePushResultD(size);
 }
 
 
