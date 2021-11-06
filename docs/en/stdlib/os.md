@@ -138,7 +138,7 @@ Os.getFiles('./folder'); # Can return something like [ '.gitignore', 'src', 'Mak
 
 Returns the permissions of the given path.
 
-If the path does not exists, `false` is returned.
+If the path does not exist, `false` is returned.
 
 ```borealis
 Os.getPermissions('./my_file.txt'); # Can return '0755'
