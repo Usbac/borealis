@@ -26,7 +26,7 @@ printLine('hello'); # It will print 'hello\n'
 
 `t(any cond, any left, any right): any`
 
-Returns the second parameter if the first parameter evaluates to true, otherwise returns the third paremeter.
+Returns the second parameter if the first parameter evaluates to true, otherwise returns the third parameter.
 
 This function simulates the ternary operator functionality.
 
@@ -62,7 +62,7 @@ debug(foo eq 'yes'); # The REPL will run only if the user entered 'yes'
 
 `isEmpty(any value): number`
 
-Returns `true` if the given value is considered empty, `false` otherwise.
+Returns `true` if the given value is empty, `false` otherwise.
 
 A value is considered empty if it's:
 
