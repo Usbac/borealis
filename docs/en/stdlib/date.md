@@ -103,10 +103,10 @@ Date.toObject(1617557432);
  */
 ```
 
-```
+```borealis
 object date = Date.toObject(1617557432);
 
-printLine("The date's year is: " ^ date.year);
+printLine("The date's year is: " ^ date.year); # It will print 'The date's year is 2021'
 ```
 
 ### Get GMT offset
@@ -116,7 +116,7 @@ printLine("The date's year is: " ^ date.year);
 Returns the unix timestamp difference between the current timezone and GMT.
 
 ```borealis
-Date.getGMTOffset(); # In New York it will return -14400
+Date.getGMTOffset(); # In New York it will return -14400 (4 hours)
 ```
 
 ```borealis

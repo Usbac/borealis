@@ -290,7 +290,7 @@ An optional second parameter can be given to the closure which will be used as t
 ```borealis
 Array.map([ 'a', 'b', 'c' ], f(el, index) {
     print(el ^ index);
-}); # Will print 'a0b1c2'
+}); # It will print 'a0b1c2'
 ```
 
 ### Filter
@@ -319,7 +319,7 @@ An optional second parameter can be given to the closure which will be used as t
 Array.filter([ 'a', 'b', 'c' ], f(el, index) {
     print(el ^ index);
     return true;
-}); # Will print 'a0b1c2'
+}); # It will print 'a0b1c2'
 ```
 
 ### Reduce

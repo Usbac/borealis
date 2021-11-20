@@ -86,8 +86,6 @@ isEmpty([ 1 ]); # Returns false
 
 Returns the string representation of a value.
 
-#### Examples
-
 ```borealis
 toString(20) # Returns '20'
 ```
@@ -101,8 +99,6 @@ toString([ 1, 2, 3 ]); # Returns '[array]'
 `toNumber(any value): number`
 
 Returns the numeric representation of a value.
-
-#### Examples
 
 ```borealis
 toNumber('1.5') # Returns 1.5
@@ -118,8 +114,6 @@ toNumber([ 1, 2, 3 ]); # Returns 1
 
 Returns the boolean representation (`0` or `1`) of a value.
 
-#### Examples
-
 ```borealis
 toBool('hello'); # Returns 1
 ```
@@ -133,8 +127,6 @@ toBool(''); # Returns 0
 `toArray(any value): array`
 
 Returns the array representation of a value.
-
-#### Examples
 
 ```borealis
 toArray(obj {
@@ -150,8 +142,6 @@ toArray(obj {
 `toObject(any value): object`
 
 Returns the object representation of a value.
-
-#### Examples
 
 ```borealis
 toObject([ 'name' = 'alex', 'age' = 23 ]);
