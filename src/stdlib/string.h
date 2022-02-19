@@ -47,7 +47,7 @@ void stdIndexOf(struct result_list *args);
 void stdLastIndexOf(struct result_list *args);
 
 /**
- * Returns a string divided into an array by the given separator.
+ * Returns a string divided into a table by the given separator.
  */
 void stdSplit(struct result_list *args);
 
@@ -115,7 +115,7 @@ void stdCompareI(struct result_list *args);
 void stdContainsChars(struct result_list *args);
 
 /**
- * Interpolates the array values into the string with the format {key}.
+ * Interpolates the table values into the string with the format {key}.
  */
 void stdInterpolate(struct result_list *args);
 

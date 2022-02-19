@@ -2,18 +2,18 @@
 #define JSON_H
 
 /**
- * Returns a new array from the given json.
+ * Returns a new table from the given json.
  * @param list the json tokens list.
  * @param error the error status.
- * @return the new array.
+ * @return the new table.
  */
 struct element_table *parseArrjJson(struct token_list *list, bool *error);
 
 /**
- * Returns a new object from the given json.
+ * Returns a new table from the given json.
  * @param list the json tokens list.
  * @param error the error status.
- * @return the new object.
+ * @return the new table.
  */
 struct element_table *parseObjJson(struct token_list *list, bool *error);
 

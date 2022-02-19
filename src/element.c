@@ -42,7 +42,7 @@ static void addToGarbage(struct element *el)
 }
 
 
-static void updateArrayNextIndex(struct element_table *el)
+static void updateTableNextIndex(struct element_table *el)
 {
     char *key = strFromSizet(el->next_index);
 
@@ -98,7 +98,7 @@ static void insertElementInHashmap(struct element_table **table,
 
     el->next = (*table)->map[hash];
     (*table)->map[hash] = el;
-    updateArrayNextIndex(*table);
+    updateTableNextIndex(*table);
 }
 
 
@@ -187,7 +187,7 @@ struct element *elementInit(const char *key,
     };
 
     switch (type) {
-        case T_Array: el->value.values = elementTableInit(); break;
+        case T_Table: el->value.values = elementTableInit(); break;
         case T_Number: el->value.number = 0; break;
         case T_Function: el->value.function = functionInit(); break;
         default: el->value.string = NULL;
@@ -220,7 +220,7 @@ void elementFreeValues(struct element **el)
     switch ((*el)->type) {
         case T_Reference: (*el)->value.reference = NULL; break;
         case T_Number: (*el)->value.number = 0; break;
-        case T_Array:
+        case T_Table:
             elementsTableFree((*el)->value.values, 0);
             FREE_AND_NULL((*el)->value.values);
             break;
@@ -241,7 +241,7 @@ union VALUE valueDup(union VALUE val, enum TYPE type)
     switch (type) {
         case T_Reference: new.reference = val.reference; break;
         case T_Number: new.number = val.number; break;
-        case T_Array: new.values = elementTableDup(val.values); break;
+        case T_Table: new.values = elementTableDup(val.values); break;
         case T_Function: new.function = functionDup(val.function); break;
         case T_String: new.string = strDup(val.string); break;
         default: new.string = NULL; break;

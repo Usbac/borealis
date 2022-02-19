@@ -20,11 +20,11 @@ void stdDateToString(struct result_list *args);
 void stdFromString(struct result_list *args);
 
 /**
- * Returns a date object created from the given unix timestamp.
- * The date object has the properties:
+ * Returns a date table created from the given unix timestamp.
+ * The date table has the properties:
  * 'seconds', 'minutes', 'hours', 'day', 'month', 'year', 'yday' and 'wday'.
  */
-void stdDateToObject(struct result_list *args);
+void stdDateToTable(struct result_list *args);
 
 /**
  * Returns the time difference between the current timezone and GMT

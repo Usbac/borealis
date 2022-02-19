@@ -25,7 +25,7 @@ void mapTypeVal(const struct result *node, enum TYPE *type, union VALUE *value)
 char *getUnionStr(enum TYPE type, union VALUE value)
 {
     switch (type) {
-        case T_Array: return strDup("["TYPEOF_ARRAY"]");
+        case T_Table: return strDup("["TYPEOF_TABLE"]");
         case T_Function: return strDup("["TYPEOF_FUNCTION"]");
         case T_Number: return strFromD(value.number);
         case T_String: return strDup(value.string);
@@ -52,13 +52,13 @@ struct element *getValueEl(const struct result *node)
 }
 
 
-struct element_table *getValueArr(const struct result *node)
+struct element_table *getValueTable(const struct result *node)
 {
     enum TYPE type;
     union VALUE value;
     mapTypeVal(node, &type, &value);
 
-    return type == T_Array ? value.values : NULL;
+    return type == T_Table ? value.values : NULL;
 }
 
 
@@ -159,7 +159,7 @@ static bool compareElementTables(struct element_table *a,
                     return false;
                 }
                 break;
-            case T_Array:
+            case T_Table:
                 if (!compareElementTables(a_el->value.values,
                     b_el->value.values)) {
                     return false;
@@ -195,7 +195,7 @@ bool compareResults(struct result *a, struct result *b)
     }
 
     switch (a_type) {
-        case T_Array: return compareElementTables(a_val.values, b_val.values);
+        case T_Table: return compareElementTables(a_val.values, b_val.values);
         case T_Number: return compareNumbers(a_val.number, b_val.number);
         case T_String: return !strcmp(a_val.string, b_val.string);
         default: return true;
@@ -214,7 +214,7 @@ enum TYPE getResultType(struct result *node)
     switch (node->type) {
         case T_String:
         case T_Number:
-        case T_Array:
+        case T_Table:
         case T_Function:
         case T_Null: return node->type;
         default:
@@ -229,7 +229,7 @@ char *getElementTypeAsStr(enum TYPE type)
     switch (type) {
         case T_String: return TYPEOF_STRING;
         case T_Number: return TYPEOF_NUMBER;
-        case T_Array: return TYPEOF_ARRAY;
+        case T_Table: return TYPEOF_TABLE;
         case T_Function: return TYPEOF_FUNCTION;
         default: return TYPEOF_NULL;
     }
@@ -325,14 +325,14 @@ void mapResultToElement(struct element *el, struct result *node)
 }
 
 
-struct state *saveState(struct element_table *obj, char *file)
+struct state *saveState(struct element_table *table, char *file)
 {
     struct state *aux = malloc_(sizeof(struct state));
     *aux = (struct state) {
         .null_coalescing = state->null_coalescing,
         .stack = resultListDup(state->stack),
         .file = strDup(state->file),
-        .current_obj = state->current_obj,
+        .current_table = state->current_table,
     };
 
     resultListFree(state->stack);
@@ -343,7 +343,7 @@ struct state *saveState(struct element_table *obj, char *file)
 
     state->null_coalescing = false;
     state->stack = resultListInit();
-    state->current_obj = obj;
+    state->current_table = table;
 
     return aux;
 }
@@ -356,7 +356,7 @@ void restoreState(struct state *aux)
     stateSetFile(aux->file);
     state->null_coalescing = aux->null_coalescing;
     state->stack = aux->stack;
-    state->current_obj = aux->current_obj;
+    state->current_table = aux->current_table;
     state->breaking_loop = false;
     state->continuing_loop = false;
     state->returning = false;
@@ -429,7 +429,7 @@ enum TYPE getOpcodeType(enum OPCODE opcode)
     switch (opcode) {
         case OP_Type_string: return T_String;
         case OP_Type_number: return T_Number;
-        case OP_Type_array: return T_Array;
+        case OP_Type_table: return T_Table;
         case OP_Type_function: return T_Function;
         default: return T_Null;
     }

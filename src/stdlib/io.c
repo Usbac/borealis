@@ -60,12 +60,12 @@ char *getResultStr(enum TYPE type, union VALUE val)
             strAppendC(&str_val, '"');
             break;
         case T_Function: str_val = strDup(TYPEOF_FUNCTION); break;
-        case T_Array:
+        case T_Table:
             table = getElementTableStr(val.values);
             str_val = strInit();
-            strAppendC(&str_val, type == T_Array ? '[' : '{');
+            strAppendC(&str_val, type == T_Table ? '[' : '{');
             strAppend(&str_val, table);
-            strAppendC(&str_val, type == T_Array ? ']' : '}');
+            strAppendC(&str_val, type == T_Table ? ']' : '}');
             free(table);
             break;
         default: str_val = strDup(TYPEOF_NULL);

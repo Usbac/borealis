@@ -264,7 +264,7 @@ void stdLastIndexOf(struct result_list *args)
 
 void stdSplit(struct result_list *args)
 {
-    struct element_table *arr = elementTableInit();
+    struct element_table *table = elementTableInit();
     char *haystack = getValueStr(args->first);
     char *needle = getValueStr(args->first->next);
     size_t needle_len = strlen(needle);
@@ -273,21 +273,21 @@ void stdSplit(struct result_list *args)
 
     while (true) {
         struct element *el = elementInit(NULL, NULL, 0, T_String);
-        el->key = strFromSizet(arr->next_index);
+        el->key = strFromSizet(table->next_index);
 
         p = utf8str(&haystack[i], needle);
         if (p == NULL || needle_len == 0) {
             el->value.string = utf8dup(&haystack[i]);
-            elementTablePush(&arr, el);
+            elementTablePush(&table, el);
             break;
         }
 
         el->value.string = utf8ndup(&haystack[i], p - &haystack[i]);
-        elementTablePush(&arr, el);
+        elementTablePush(&table, el);
         i += strlen(el->value.string) + needle_len;
     }
 
-    statePushResultArr(arr);
+    statePushResultTable(table);
 
     free(haystack);
     free(needle);
@@ -490,10 +490,10 @@ void stdContainsChars(struct result_list *args)
 void stdInterpolate(struct result_list *args)
 {
     char *str = getValueStr(args->first);
-    struct element_table *arr = getValueArr(args->first->next);
+    struct element_table *table = getValueTable(args->first->next);
     char *result = strDup(str);
 
-    for (struct element_list *i = arr->first; i != NULL; i = i->next) {
+    for (struct element_list *i = table->first; i != NULL; i = i->next) {
         struct element *el = getTrueElement(i->ptr);
         char *aux, *key, *val;
         size_t len;

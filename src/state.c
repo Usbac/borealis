@@ -12,10 +12,10 @@ struct state *state = NULL;
 
 static struct element_table **getDefinitionTable(void)
 {
-    if (state->callstack != NULL && state->callstack->object == state->current_obj) {
+    if (state->callstack != NULL && state->callstack->table == state->current_table) {
         return &state->callstack->elements;
-    } else if (state->current_obj != NULL) {
-        return &state->current_obj;
+    } else if (state->current_table != NULL) {
+        return &state->current_table;
     } else {
         return &elements;
     }
@@ -212,12 +212,12 @@ void statePushResultRef(struct element *el)
 }
 
 
-void statePushResultArr(struct element_table *values)
+void statePushResultTable(struct element_table *values)
 {
     struct result *node = malloc_(sizeof(struct result));
     *node = (struct result) {
         .value.values = values,
-        .type = T_Array,
+        .type = T_Table,
         .line_n = state->line_n,
     };
 
@@ -346,8 +346,8 @@ void resultFree(struct result *node)
         case T_String:
             free(node->value.string);
             break;
-        case T_Array:
-            if (state->current_obj != node->value.values) {
+        case T_Table:
+            if (state->current_table != node->value.values) {
                 elementsTableFree(node->value.values, 0);
                 free(node->value.values);
             }
@@ -385,8 +385,8 @@ struct element *stateElementGet(const char *key, const char *file)
 {
     struct element *el = NULL;
 
-    if (state->current_obj != NULL) {
-        el = elementGet(key, state->current_obj, NULL);
+    if (state->current_table != NULL) {
+        el = elementGet(key, state->current_table, NULL);
     }
 
     if (el == NULL && state->callstack != NULL) {
@@ -411,7 +411,7 @@ void stateElementsFree(size_t scope)
 }
 
 
-void stateCallstackPush(struct element_table *args, struct element_table *obj)
+void stateCallstackPush(struct element_table *args, struct element_table *table)
 {
     struct call *node;
 
@@ -421,7 +421,7 @@ void stateCallstackPush(struct element_table *args, struct element_table *obj)
 
     node = malloc_(sizeof(struct call));
     node->elements = args;
-    node->object = obj;
+    node->table = table;
     node->prev = state->callstack;
     state->callstack = node;
 

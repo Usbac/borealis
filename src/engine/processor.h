@@ -7,9 +7,9 @@
  * Executes the given function.
  * @param func the function.
  * @param args the arguments.
- * @param obj the function's object.
+ * @param table the function's table.
  */
-void funcExec(struct function *func, struct result_list *args, struct element_table *obj);
+void funcExec(struct function *func, struct result_list *args, struct element_table *table);
 
 /**
  * Evaluates the given node.

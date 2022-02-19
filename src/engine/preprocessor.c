@@ -12,7 +12,7 @@ static bool isExpression(const struct token *node)
 {
     return ((node->type == T_Operator && node->opcode != OP_Comma) ||
         (node->type == T_String || node->type == T_Number ||
-        node->type == T_Identifier || node->type == T_Array ||
+        node->type == T_Identifier || node->type == T_Table ||
         node->type == T_Arguments || node->type == T_Index ||
         node->type == T_Null || node->opcode == OP_Import ||
         node->opcode == OP_Closure || node->opcode == OP_Null_coalesce ||
@@ -165,7 +165,7 @@ static void prevalidateOpEqual(struct token *node)
 }
 
 
-static bool isPossibleObj(struct token *node)
+static bool isPossibleTable(struct token *node)
 {
     return node->type == T_Identifier ||
         node->type == T_Arguments || node->type == T_Index ||
@@ -180,7 +180,7 @@ static void prevalidateDot(struct token *node)
         errorF(node->line_n, E_TOKEN, node->value);
     } else if (node->ls->type != T_Identifier) {
         errorF(node->ls->line_n, E_TOKEN, node->ls->value);
-    } else if (!isPossibleObj(node->rs)) {
+    } else if (!isPossibleTable(node->rs)) {
         errorF(node->rs->line_n, E_TOKEN, node->rs->value);
     }
 }
@@ -201,12 +201,12 @@ static void prevalidateReference(struct token *node)
 static void prevalidateForeach(struct token *node)
 {
     struct token *foreach = node->rs;
-    struct token *arr = foreach->rs;
+    struct token *table = foreach->rs;
 
     if (node->rs == NULL || node->ls == NULL) {
         errorF(node->line_n, E_TOKEN, node->value);
-    } else if (!isExpression(arr)) {
-        errorF(arr->line_n, E_TOKEN, foreach->rs->value);
+    } else if (!isExpression(table)) {
+        errorF(table->line_n, E_TOKEN, foreach->rs->value);
     }
 
     if (foreach->ls->opcode != OP_Colon) {
@@ -386,7 +386,7 @@ static void prevalidateSpread(struct token *node)
 {
     if (node->ls == NULL || node->rs != NULL) {
         errorF(node->line_n, E_TOKEN, node->value);
-    } else if (!isElement(node->ls) && node->ls->type != T_Array) {
+    } else if (!isElement(node->ls) && node->ls->type != T_Table) {
         errorF(node->ls->line_n, E_TOKEN, node->ls->value);
     }
 }
@@ -454,7 +454,7 @@ static void prevalidateNode(struct token *node, struct pre_state *pre_state)
         case OP_Bang: prevalidateBang(node); break;
         case OP_Spread:
             if (pre_state->current_type == T_Arguments ||
-                pre_state->current_type == T_Array) {
+                pre_state->current_type == T_Table) {
                 prevalidateSpread(node);
             } else {
                 errorF(node->line_n, E_TOKEN, node->value);

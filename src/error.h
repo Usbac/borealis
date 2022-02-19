@@ -25,7 +25,7 @@
 #define E_UNDEFINED RUNTIME_ERROR("'%s' is not defined")
 #define E_NON_CALLABLE RUNTIME_ERROR("Cannot call a non-function value")
 #define E_INDEX_MULTI_STMT RUNTIME_ERROR("Cannot define multiple statements in an index")
-#define E_PUSH_ELEMENT RUNTIME_ERROR("Cannot make a push operation to a non-array element")
+#define E_PUSH_ELEMENT RUNTIME_ERROR("Cannot make a push operation to a non-table element")
 #define E_INDEX RUNTIME_ERROR("Cannot access the index of a %s")
 #define E_NON_TABLE RUNTIME_ERROR("Cannot access the property of a %s")
 #define E_REDECLARE RUNTIME_ERROR("Identifier '%s' already in use")
@@ -36,7 +36,7 @@
 #define E_RECURSIVE_FILE RUNTIME_ERROR("Cannot import a file recursively '%s'")
 #define E_THIS RUNTIME_ERROR("No table context for 'this'")
 #define E_NULL_REFERENCE RUNTIME_ERROR("Cannot reference a non-existent element")
-#define E_SPREAD RUNTIME_ERROR("Expected spread argument to be an array, given %s")
+#define E_SPREAD RUNTIME_ERROR("Expected spread argument to be a table, given %s")
 
 /**
  * Prints an error message in the standard output and exits the program.

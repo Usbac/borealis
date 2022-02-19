@@ -87,7 +87,7 @@ static bool isNumberSign(const struct token *last, const struct token *node)
         last->type != T_String && last->type != T_Number &&
         last->type != T_Identifier && last->type != T_Parameters &&
         last->type != T_Index && last->type != T_Null &&
-        last->type != T_Array && last->opcode != OP_Closed_parenthesis &&
+        last->type != T_Table && last->opcode != OP_Closed_parenthesis &&
         last->opcode != OP_Decrement_pre && last->opcode != OP_Decrement_pos &&
         last->opcode != OP_Increment_pre && last->opcode != OP_Increment_pos &&
         last->type != T_Arguments;
@@ -162,7 +162,7 @@ void lexerInit(void)
     addReservedToken("const", OP_Constant, 1, false, false);
     addReservedToken("string", OP_Type_string, 2, false, false);
     addReservedToken("number", OP_Type_number, 2, false, false);
-    addReservedToken("array", OP_Type_array, 2, false, false);
+    addReservedToken("table", OP_Type_table, 2, false, false);
     addReservedToken("function", OP_Type_function, 2, false, false);
     addReservedToken("any", OP_Definition, 2, true, false);
     addReservedToken("==", OP_Compare, 7, false, true);
@@ -368,7 +368,7 @@ bool isOperator(enum OPCODE opcode)
 bool isDefKeyword(enum OPCODE opcode)
 {
     return opcode == OP_Definition || opcode == OP_Type_string ||
-        opcode == OP_Type_number || opcode == OP_Type_array ||
+        opcode == OP_Type_number || opcode == OP_Type_table ||
         opcode == OP_Type_function;
 }
 
@@ -376,7 +376,7 @@ bool isDefKeyword(enum OPCODE opcode)
 bool isPartial(enum TYPE type)
 {
     return type == T_Chunk || type == T_Parameters ||
-        type == T_Index || type == T_Array ||
+        type == T_Index || type == T_Table ||
         type == T_Arguments;
 }
 
@@ -384,7 +384,7 @@ bool isPartial(enum TYPE type)
 static bool isIndex(const struct token_list *list)
 {
     return list->last != NULL &&
-        (list->last->type == T_Array || list->last->type == T_Identifier ||
+        (list->last->type == T_Table || list->last->type == T_Identifier ||
         list->last->type == T_String || list->last->type == T_Number ||
         list->last->type == T_Arguments || list->last->type == T_Index ||
         list->last->type == T_Null || list->last->opcode == OP_Closed_parenthesis);
@@ -642,7 +642,7 @@ static void processChunk(char **token,
 }
 
 
-static void processIndexArray(char **token,
+static void processIndexTable(char **token,
                               struct token_list *list,
                               const char *str,
                               size_t len,
@@ -650,7 +650,7 @@ static void processIndexArray(char **token,
                               size_t *line_n)
 {
     size_t ori_line_n = *line_n;
-    enum TYPE type = isIndex(list) ? T_Index : T_Array;
+    enum TYPE type = isIndex(list) ? T_Index : T_Table;
 
     processScope(token, str, len, i, line_n, '[', ']');
     tokenListPush(list, *token, type, OP_None, ori_line_n);
@@ -749,7 +749,7 @@ static void processChars(char **token,
     } else if (str[*i] == '{') {
         processChunk(token, list, str, len, i, line_n);
     } else if (str[*i] == '[') {
-        processIndexArray(token, list, str, len, i, line_n);
+        processIndexTable(token, list, str, len, i, line_n);
     } else if (inParameterList(str[*i], list)) {
         processParameters(token, list, str, len, i, line_n);
     } else {
@@ -834,7 +834,7 @@ struct token_list *tokenizeJson(const char *code, bool *error)
                 *error = true;
             }
 
-            tokenListPush(list, token, T_Array, OP_None, line_n);
+            tokenListPush(list, token, T_Table, OP_None, line_n);
             strEmpty(&token);
             i--;
         } else {

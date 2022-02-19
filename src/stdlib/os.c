@@ -124,7 +124,7 @@ void stdMakeDir(struct result_list *args)
 
 void stdGetFiles(struct result_list *args)
 {
-    struct element_table *arr;
+    struct element_table *table;
     char *path = getValueStr(args->first);
     DIR *dir = opendir(path);
     struct dirent *ent;
@@ -134,7 +134,7 @@ void stdGetFiles(struct result_list *args)
         goto end;
     }
 
-    arr = elementTableInit();
+    table = elementTableInit();
     while((ent = readdir(dir))) {
         struct element *el;
         char *key;
@@ -144,14 +144,14 @@ void stdGetFiles(struct result_list *args)
             continue;
         }
 
-        key = strFromSizet(arr->next_index);
+        key = strFromSizet(table->next_index);
         el = elementInit(key, NULL, 0, T_String);
         el->value.string = strDup(ent->d_name);
-        elementTablePush(&arr, el);
+        elementTablePush(&table, el);
         free(key);
     }
 
-    statePushResultArr(arr);
+    statePushResultTable(table);
     closedir(dir);
     end: free(path);
 }
@@ -248,7 +248,7 @@ void stdGetUser(struct result_list *args)
         el->value.string = strDup(user->pw_shell);
         elementTablePush(&result, el);
 
-        statePushResultArr(result);
+        statePushResultTable(result);
     }
 
     free(user_str);
@@ -280,7 +280,7 @@ void stdGetGroup(struct result_list *args)
         el->value.number = group->gr_gid;
         elementTablePush(&result, el);
 
-        el = elementInit("members", NULL, 0, T_Array);
+        el = elementInit("members", NULL, 0, T_Table);
         elementTablePush(&result, el);
         for (size_t i = 0; group->gr_mem[i] != NULL; i++) {
             char *user_name = strFromSizet(i);
@@ -291,7 +291,7 @@ void stdGetGroup(struct result_list *args)
             free(user_name);
         }
 
-        statePushResultArr(result);
+        statePushResultTable(result);
     }
 
     free(group_str);

@@ -245,7 +245,7 @@ static char *getNodeCodeStr(enum TYPE type)
 {
     switch (type) {
         case T_Index:
-        case T_Array: return "[";
+        case T_Table: return "[";
         case T_Arguments:
         case T_Parameters: return "(";
         default: return "{";

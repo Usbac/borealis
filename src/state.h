@@ -25,7 +25,7 @@ struct import {
 
 struct call {
     struct element_table *elements;
-    struct element_table *object;
+    struct element_table *table;
     struct call *prev;
 };
 
@@ -38,7 +38,7 @@ struct state {
     struct call *callstack;
     struct result_list *stack;
     struct context *context_head;
-    struct element_table *current_obj;
+    struct element_table *current_table;
     jmp_buf *jmp_buffer;
     bool null_coalescing;
     bool returning;
@@ -149,10 +149,10 @@ void statePushResultRef(struct element *el);
 void statePushResultEl(struct element *el);
 
 /**
- * Pushes a new result of type array into the result list.
- * @param values the array values.
+ * Pushes a new result of type table into the result list.
+ * @param values the table values.
  */
-void statePushResultArr(struct element_table *values);
+void statePushResultTable(struct element_table *values);
 
 /**
  * Pushes a new result of type function into the result list.
@@ -207,7 +207,7 @@ void resultListFree(struct result_list *list);
 /**
  * Declares the given element.
  * It will be declared in the first valid table:
- * current object -> callstack -> global.
+ * current table -> callstack -> global.
  * @param el the element.
  */
 void stateElementDeclare(struct element **el);
@@ -232,9 +232,9 @@ void stateElementsFree(size_t scope);
 /**
  * Pushes a new call into the callstack.
  * @param args the calling arguments.
- * @param obj the function's object
+ * @param table the function's table.
  */
-void stateCallstackPush(struct element_table *args, struct element_table *obj);
+void stateCallstackPush(struct element_table *args, struct element_table *table);
 
 /**
  * Pops a call from the callstack.

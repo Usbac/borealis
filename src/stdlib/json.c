@@ -19,14 +19,14 @@ static char *strAddQuotes(char *str)
 
 
 static void elementTableToJson(char **result,
-                               struct element_table *obj,
+                               struct element_table *table,
                                bool as_obj)
 {
     bool prev = false;
 
     strAppendC(result, as_obj ? '{' : '[');
 
-    for (struct element_list *i = obj->first; i != NULL; i = i->next) {
+    for (struct element_list *i = table->first; i != NULL; i = i->next) {
         struct element *el = getTrueElement(i->ptr);
         char *aux = NULL;
 
@@ -58,7 +58,7 @@ static void elementTableToJson(char **result,
                 aux = getUnionStr(el->type, el->value);
                 strAppend(result, aux);
                 break;
-            case T_Array:
+            case T_Table:
                 elementTableToJson(result, el->value.values, true);
                 break;
             case T_Null: strAppend(result, TYPEOF_NULL); break;
@@ -87,9 +87,9 @@ void stdJsonStringify(struct result_list *args)
             break;
         case T_Number: result = strFromD(getValueD(arg)); break;
         case T_Function: result = getValueStr(arg); break;
-        case T_Array:
+        case T_Table:
             result = strInit();
-            elementTableToJson(&result, getValueArr(arg), true);
+            elementTableToJson(&result, getValueTable(arg), true);
             break;
         case T_Null: result = strDup(TYPEOF_NULL); break;
         default: result = strInit(); break;
@@ -109,7 +109,7 @@ static struct token_list *preprocessJson(char *code)
     }
 
     for (struct token *i = tokens->first; i != NULL; i = i->next) {
-        if (i->type == T_Chunk || i->type == T_Array) {
+        if (i->type == T_Chunk || i->type == T_Table) {
             i->body = preprocessJson(i->value);
             if (i->body == NULL) {
                 goto end_error;
@@ -129,8 +129,8 @@ static bool isValidJsonVal(struct token *token)
 {
     return token->type == T_String || token->type == T_Number ||
         token->type == T_Null || token->type == T_Chunk ||
-        token->type == T_Array || (token->type == T_Identifier &&
-        (!strcmp(token->value, "true") || !strcmp(token->value, "false")));
+           token->type == T_Table || (token->type == T_Identifier &&
+                                      (!strcmp(token->value, "true") || !strcmp(token->value, "false")));
 }
 
 
@@ -142,7 +142,7 @@ static struct element *getJsonEl(char *key, struct token *node, bool *error)
     switch (node->type) {
         case T_String: el->value.string = strDup(node->value); break;
         case T_Number: el->value.number = strToD(node->value); break;
-        case T_Array: el->value.values = parseObjJson(node->body, error); break;
+        case T_Table: el->value.values = parseObjJson(node->body, error); break;
         case T_Identifier:
             el->type = T_Number;
             el->value.number = !strcmp(node->value, "true");
@@ -157,7 +157,7 @@ static struct element *getJsonEl(char *key, struct token *node, bool *error)
 
 struct element_table *parseArrjJson(struct token_list *list, bool *error)
 {
-    struct element_table *arr = elementTableInit();
+    struct element_table *table = elementTableInit();
 
     for (struct token *ite = list->first; ite != NULL; ite = ite->next) {
         char *key;
@@ -177,18 +177,18 @@ struct element_table *parseArrjJson(struct token_list *list, bool *error)
             break;
         }
 
-        key = strFromSizet(arr->next_index++);
-        elementTablePush(&arr, getJsonEl(key, ite, error));
+        key = strFromSizet(table->next_index++);
+        elementTablePush(&table, getJsonEl(key, ite, error));
         free(key);
     }
 
-    return arr;
+    return table;
 }
 
 
 struct element_table *parseObjJson(struct token_list *list, bool *error)
 {
-    struct element_table *obj = elementTableInit();
+    struct element_table *table = elementTableInit();
 
     for (struct token *i = list->first; i != NULL; i = i->next->next->next) {
         if (i->opcode == OP_Stmt_sep) {
@@ -208,10 +208,10 @@ struct element_table *parseObjJson(struct token_list *list, bool *error)
             break;
         }
 
-        elementTablePush(&obj, getJsonEl(i->value, i->next->next, error));
+        elementTablePush(&table, getJsonEl(i->value, i->next->next, error));
     }
 
-    return obj;
+    return table;
 }
 
 
@@ -231,7 +231,7 @@ static struct result *jsonParse(char *str, bool *error)
     };
 
     switch (list->first->type) {
-        case T_Array:
+        case T_Table:
             result->value.values = parseObjJson(list->first->body, error);
             break;
         case T_String:

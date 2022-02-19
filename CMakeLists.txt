@@ -23,7 +23,7 @@ add_executable(borealis
         src/stdlib/string.c src/stdlib/string.h
         src/stdlib/os.c src/stdlib/os.h
         src/stdlib/general.c src/stdlib/general.h
-        src/stdlib/array.c src/stdlib/array.h
+        src/stdlib/table.c src/stdlib/table.h
         src/stdlib/number.c src/stdlib/number.h
         src/stdlib/file.c src/stdlib/file.h
         src/stdlib/json.c src/stdlib/json.h

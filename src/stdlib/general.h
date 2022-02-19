@@ -18,9 +18,9 @@ void stdToNumber(struct result_list *args);
 void stdToBool(struct result_list *args);
 
 /**
- * Returns the given value as an array.
+ * Returns the given value as a table.
  */
-void stdToArray(struct result_list *args);
+void stdToTable(struct result_list *args);
 
 /**
  * Sleeps the given time in seconds.

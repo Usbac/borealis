@@ -6,13 +6,13 @@
 
 #define TYPEOF_STRING "string"
 #define TYPEOF_NUMBER "number"
-#define TYPEOF_ARRAY "array"
+#define TYPEOF_TABLE "table"
 #define TYPEOF_FUNCTION "function"
 #define TYPEOF_NULL "null"
 
 #define RETURN_DOUBLE_FROM_VALUE(type, value) {\
     switch (type) {\
-        case T_Array:\
+        case T_Table:\
         case T_Function: return 1;\
         case T_Null: return 0;\
         case T_Number: return value.number;\
@@ -51,11 +51,11 @@ double getValueD(struct result *node);
 struct element *getValueEl(const struct result *node);
 
 /**
- * Returns the value of the given node as an array.
+ * Returns the value of the given node as a table.
  * @param node the node.
- * @return the value of the given node as an array.
+ * @return the value of the given node as a table.
  */
-struct element_table *getValueArr(const struct result *node);
+struct element_table *getValueTable(const struct result *node);
 
 /**
  * Returns the value of the given node as a function.
@@ -145,11 +145,11 @@ void mapResultToElement(struct element *el, struct result *node);
 /**
  * Returns a partial backup of the current state
  * after freeing some values of the original.
- * @param obj the current object.
+ * @param table the current table.
  * @param file the new file for the current state.
  * @return the copy of the current state.
  */
-struct state *saveState(struct element_table *obj, char *file);
+struct state *saveState(struct element_table *table, char *file);
 
 /**
  * Partially restores the current state based on the given one.

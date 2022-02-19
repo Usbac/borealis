@@ -14,7 +14,7 @@ enum TYPE {
     T_Number, T_String,
     T_Keyword, T_Operator,
     T_Chunk, T_Parameters,
-    T_Index, T_Array,
+    T_Index, T_Table,
     T_Arguments, T_Reference,
     T_Function,
 };
@@ -46,7 +46,7 @@ enum OPCODE {
     OP_Case, OP_Pow,
     OP_This,
     OP_Dot_safe, OP_Type_string,
-    OP_Type_number, OP_Type_array,
+    OP_Type_number, OP_Type_table,
     OP_Type_function,
     OP_Constant, OP_Increment_pre,
     OP_Increment_pos, OP_Decrement_pre,

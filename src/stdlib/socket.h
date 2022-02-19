@@ -2,7 +2,7 @@
 #define BOREALIS_SOCKET_H
 
 #include "../error.h"
-#define E_INVALID_SOCKET RUNTIME_ERROR("Invalid socket object given")
+#define E_INVALID_SOCKET RUNTIME_ERROR("Invalid socket table given")
 
 /**
  * Returns a new socket.

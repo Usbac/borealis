@@ -13,7 +13,7 @@
 #include "stdlib/general.h"
 #include "stdlib/os.h"
 #include "stdlib/string.h"
-#include "stdlib/array.h"
+#include "stdlib/table.h"
 #include "stdlib/number.h"
 #include "stdlib/file.h"
 #include "stdlib/json.h"
@@ -46,7 +46,7 @@
  * Formats for the standard function parameters:
  * s - string
  * d - number
- * a - array
+ * t - table
  * f - function
  * v - any
  * * - Takes any number of parameters of any type
@@ -69,7 +69,7 @@ static size_t getStrParamsNumber(char *str)
 
 static struct element *declareModule(const char *key)
 {
-    struct element *el = elementInit(key, NULL, 0, T_Array);
+    struct element *el = elementInit(key, NULL, 0, T_Table);
     el->constant = true;
     stateElementDeclare(&el);
 
@@ -131,8 +131,8 @@ static void initConstants(struct element_table *args, const char *cwd, const cha
     declareModuleConst(NULL, "_START_DIR", start_dir_val, T_String);
     declareModuleConst(NULL, "_START_FILE", start_file_val, T_String);
     declareModuleConst(NULL, "_VERSION", version_val, T_String);
-    declareModuleConst(NULL, "_ARGS", args_val, T_Array);
-    declareModuleConst(NULL, "_GLOBALS", globals_val, T_Array);
+    declareModuleConst(NULL, "_ARGS", args_val, T_Table);
+    declareModuleConst(NULL, "_GLOBALS", globals_val, T_Table);
     declareModuleConst(NULL, STATE_FILE_KEY, file_val, T_String);
 }
 
@@ -142,7 +142,7 @@ static void initFunctions(void)
     struct element *io = declareModule("Io");
     struct element *os = declareModule("Os");
     struct element *str = declareModule("String");
-    struct element *arr = declareModule("Array");
+    struct element *tab = declareModule("Table");
     struct element *num = declareModule("Number");
     struct element *file = declareModule("File");
     struct element *json = declareModule("Json");
@@ -215,7 +215,7 @@ static void initFunctions(void)
     declareModuleFunc(str, "compare", stdCompare, "s,s");
     declareModuleFunc(str, "compareI", stdCompareI, "s,s");
     declareModuleFunc(str, "containsChars", stdContainsChars, "s,s");
-    declareModuleFunc(str, "interpolate", stdInterpolate, "s,a");
+    declareModuleFunc(str, "interpolate", stdInterpolate, "s,t");
     declareModuleFunc(str, "sprintf", stdSprintf, "s,*");
     declareModuleFunc(str, "padStart", stdPadStart, "s,d|s");
     declareModuleFunc(str, "padEnd", stdPadEnd, "s,d|s");
@@ -227,27 +227,27 @@ static void initFunctions(void)
     declareModuleFunc(str, "isLower", stdIsLower, "s");
     declareModuleFunc(str, "capitalize", stdCapitalize, "s");
     declareModuleFunc(str, "fromCharCodes", stdFromCharCodes, "*");
-    /* array */
-    declareModuleFunc(arr, "get", stdGet, "a,s");
-    declareModuleFunc(arr, "getSize", stdGetSize, "a");
-    declareModuleFunc(arr, "push", stdPush, "a,v");
-    declareModuleFunc(arr, "prepend", stdPrepend, "a,v");
-    declareModuleFunc(arr, "pop", stdPop, "a");
-    declareModuleFunc(arr, "shift", stdShift, "a");
-    declareModuleFunc(arr, "getKeys", stdGetKeys, "a");
-    declareModuleFunc(arr, "hasKey", stdHasKey, "a,s");
-    declareModuleFunc(arr, "join", stdJoin, "a|s");
-    declareModuleFunc(arr, "has", stdHas, "a,v");
-    declareModuleFunc(arr, "reverse", stdReverse, "a");
-    declareModuleFunc(arr, "range", stdRange, "d,d|d");
-    declareModuleFunc(arr, "sort", stdSort, "a|f");
-    declareModuleFunc(arr, "column", stdColumn, "a,s");
-    declareModuleFunc(arr, "map", stdMap, "a,f");
-    declareModuleFunc(arr, "filter", stdFilter, "a,f");
-    declareModuleFunc(arr, "reduce", stdReduce, "a,f|v");
-    declareModuleFunc(arr, "some", stdSome, "a,f");
-    declareModuleFunc(arr, "merge", stdMerge, "a,*");
-    declareModuleFunc(arr, "fill", stdFill, "d,d,v");
+    /* table */
+    declareModuleFunc(tab, "get", stdGet, "t,s");
+    declareModuleFunc(tab, "getSize", stdGetSize, "t");
+    declareModuleFunc(tab, "push", stdPush, "t,v");
+    declareModuleFunc(tab, "prepend", stdPrepend, "t,v");
+    declareModuleFunc(tab, "pop", stdPop, "t");
+    declareModuleFunc(tab, "shift", stdShift, "t");
+    declareModuleFunc(tab, "getKeys", stdGetKeys, "t");
+    declareModuleFunc(tab, "hasKey", stdHasKey, "t,s");
+    declareModuleFunc(tab, "join", stdJoin, "t|s");
+    declareModuleFunc(tab, "has", stdHas, "t,v");
+    declareModuleFunc(tab, "reverse", stdReverse, "t");
+    declareModuleFunc(tab, "range", stdRange, "d,d|d");
+    declareModuleFunc(tab, "sort", stdSort, "t|f");
+    declareModuleFunc(tab, "column", stdColumn, "t,s");
+    declareModuleFunc(tab, "map", stdMap, "t,f");
+    declareModuleFunc(tab, "filter", stdFilter, "t,f");
+    declareModuleFunc(tab, "reduce", stdReduce, "t,f|v");
+    declareModuleFunc(tab, "some", stdSome, "t,f");
+    declareModuleFunc(tab, "merge", stdMerge, "t,*");
+    declareModuleFunc(tab, "fill", stdFill, "d,d,v");
     /* number */
     declareModuleFunc(num, "min", stdMin, "*");
     declareModuleFunc(num, "max", stdMax, "*");
@@ -311,7 +311,7 @@ static void initFunctions(void)
     declareModuleFunc(date, "now", stdDateNow, "");
     declareModuleFunc(date, "toString", stdDateToString, "s,d");
     declareModuleFunc(date, "fromString", stdFromString, "s");
-    declareModuleFunc(date, "toObject", stdDateToObject, "d");
+    declareModuleFunc(date, "toTable", stdDateToTable, "d");
     declareModuleFunc(date, "getGMTOffset", stdGetGmtOffset, "");
     /* bit */
     declareModuleFunc(bit, "and", stdAnd, "d,d");
@@ -370,7 +370,7 @@ static void initFunctions(void)
     declareModuleFunc(NULL, "toString", stdToString, "v");
     declareModuleFunc(NULL, "toNumber", stdToNumber, "v|d");
     declareModuleFunc(NULL, "toBool", stdToBool, "v");
-    declareModuleFunc(NULL, "toArray", stdToArray, "v");
+    declareModuleFunc(NULL, "toTable", stdToTable, "v");
     declareModuleFunc(NULL, "sleep", stdSleep, "d");
     declareModuleFunc(NULL, "assert", stdAssert, "v|s");
     declareModuleFunc(NULL, "exit", stdExit, "|d");
@@ -422,8 +422,8 @@ static void validateStdArgs(struct function *func, struct result_list *args)
 
         if (params[i] == 's' && type != T_String) {
             wrong_type = TYPEOF_STRING;
-        } else if (params[i] == 'a' && type != T_Array) {
-            wrong_type = TYPEOF_ARRAY;
+        } else if (params[i] == 'a' && type != T_Table) {
+            wrong_type = TYPEOF_TABLE;
         } else if (params[i] == 'f' && type != T_Function) {
             wrong_type = TYPEOF_FUNCTION;
         } else if (params[i] == 'd' && type != T_Number) {

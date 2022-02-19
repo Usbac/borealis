@@ -65,21 +65,21 @@ void stdFromString(struct result_list *args)
 }
 
 
-void stdDateToObject(struct result_list *args)
+void stdDateToTable(struct result_list *args)
 {
     time_t secs = getValueD(args->first);
     struct tm *time = localtime(&secs);
-    struct element_table *obj = elementTableInit();
+    struct element_table *table = elementTableInit();
 
-    elementTablePush(&obj, getTimePropEl("seconds", time->tm_sec));
-    elementTablePush(&obj, getTimePropEl("minutes", time->tm_min));
-    elementTablePush(&obj, getTimePropEl("hours", time->tm_hour));
-    elementTablePush(&obj, getTimePropEl("day", time->tm_mday));
-    elementTablePush(&obj, getTimePropEl("month", time->tm_mon + 1));
-    elementTablePush(&obj, getTimePropEl("year", time->tm_year + 1900));
-    elementTablePush(&obj, getTimePropEl("yday", time->tm_yday + 1));
-    elementTablePush(&obj, getTimePropEl("wday", time->tm_wday + 1));
-    statePushResultArr(obj);
+    elementTablePush(&table, getTimePropEl("seconds", time->tm_sec));
+    elementTablePush(&table, getTimePropEl("minutes", time->tm_min));
+    elementTablePush(&table, getTimePropEl("hours", time->tm_hour));
+    elementTablePush(&table, getTimePropEl("day", time->tm_mday));
+    elementTablePush(&table, getTimePropEl("month", time->tm_mon + 1));
+    elementTablePush(&table, getTimePropEl("year", time->tm_year + 1900));
+    elementTablePush(&table, getTimePropEl("yday", time->tm_yday + 1));
+    elementTablePush(&table, getTimePropEl("wday", time->tm_wday + 1));
+    statePushResultTable(table);
 }
 
 

@@ -42,7 +42,7 @@ void stdUnlink(struct result_list *args);
 void stdMakeDir(struct result_list *args);
 
 /**
- * Returns an array with all the files in the given directory.
+ * Returns a table with all the files in the given directory.
  */
 void stdGetFiles(struct result_list *args);
 
@@ -57,12 +57,12 @@ void stdChmod(struct result_list *args);
 void stdChown(struct result_list *args);
 
 /**
- * Returns an object with information about the given system user.
+ * Returns a table with information about the given system user.
  */
 void stdGetUser(struct result_list *args);
 
 /**
- * Returns and object with information about the given system group.
+ * Returns a table with information about the given system group.
  */
 void stdGetGroup(struct result_list *args);
 
