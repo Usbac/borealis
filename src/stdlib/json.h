@@ -7,7 +7,7 @@
  * @param error the error status.
  * @return the new table.
  */
-struct element_table *parseArrjJson(struct token_list *list, bool *error);
+struct element_table *parseArrJson(struct token_list *list, bool *error);
 
 /**
  * Returns a new table from the given json.

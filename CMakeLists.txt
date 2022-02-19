@@ -3,6 +3,8 @@ project(borealis)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 
 add_executable(borealis

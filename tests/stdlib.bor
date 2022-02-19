@@ -158,11 +158,12 @@ test.assert(Number.format(1850320.45, ".", ","), "1.850.320,45", "Number.format 
 
 printLine("\nStdlib Json");
 
-any json = '{"name":"alex","age":23,"tab":{}}';
+any json = '{"name":"alex","age":23,"tab":{},"arr":[1]}';
 test.assert(Json.parse(json), [
     'name' = 'alex',
     'age' = 23,
     'tab' = [],
+    'arr' = [ 1 ],
 ], "Json.parse should return the value of the given json string");
 test.assert(Json.parse('asd'), null, "Json.parse should return null when the given json representation is not valid");
 

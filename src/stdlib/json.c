@@ -142,7 +142,11 @@ static struct element *getJsonEl(char *key, struct token *node, bool *error)
     switch (node->type) {
         case T_String: el->value.string = strDup(node->value); break;
         case T_Number: el->value.number = strToD(node->value); break;
-        case T_Table: el->value.values = parseObjJson(node->body, error); break;
+        case T_Chunk:
+            el->type = T_Table;
+            el->value.values = parseObjJson(node->body, error); break;
+        case T_Table:
+            el->value.values = parseArrJson(node->body, error); break;
         case T_Identifier:
             el->type = T_Number;
             el->value.number = !strcmp(node->value, "true");
@@ -155,7 +159,7 @@ static struct element *getJsonEl(char *key, struct token *node, bool *error)
 }
 
 
-struct element_table *parseArrjJson(struct token_list *list, bool *error)
+struct element_table *parseArrJson(struct token_list *list, bool *error)
 {
     struct element_table *table = elementTableInit();
 
@@ -232,6 +236,10 @@ static struct result *jsonParse(char *str, bool *error)
 
     switch (list->first->type) {
         case T_Table:
+            result->value.values = parseArrJson(list->first->body, error);
+            break;
+        case T_Chunk:
+            result->type = T_Table;
             result->value.values = parseObjJson(list->first->body, error);
             break;
         case T_String:
