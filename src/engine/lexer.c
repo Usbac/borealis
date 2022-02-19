@@ -163,7 +163,6 @@ void lexerInit(void)
     addReservedToken("string", OP_Type_string, 2, false, false);
     addReservedToken("number", OP_Type_number, 2, false, false);
     addReservedToken("array", OP_Type_array, 2, false, false);
-    addReservedToken("object", OP_Type_object, 2, false, false);
     addReservedToken("function", OP_Type_function, 2, false, false);
     addReservedToken("any", OP_Definition, 2, true, false);
     addReservedToken("==", OP_Compare, 7, false, true);
@@ -180,7 +179,6 @@ void lexerInit(void)
     addReservedToken("else", OP_Else, 13, false, false);
     addReservedToken("break", OP_Break, 13, false, false);
     addReservedToken("continue", OP_Continue, 13, false, false);
-    addReservedToken("obj", OP_Object, 14, false, false);
     addReservedToken(".", OP_Dot, 15, false, true);
     addReservedToken("?.", OP_Dot_safe, 15, false, true);
     addReservedToken(":", OP_Colon, 15, false, true);
@@ -351,7 +349,7 @@ bool isKeyword(enum OPCODE opcode)
         opcode == OP_Else || opcode == OP_While ||
         opcode == OP_Foreach || opcode == OP_Constant ||
         opcode == OP_Import || opcode == OP_Case ||
-        opcode == OP_Object || opcode == OP_This;
+        opcode == OP_This;
 }
 
 
@@ -371,7 +369,7 @@ bool isDefKeyword(enum OPCODE opcode)
 {
     return opcode == OP_Definition || opcode == OP_Type_string ||
         opcode == OP_Type_number || opcode == OP_Type_array ||
-        opcode == OP_Type_object || opcode == OP_Type_function;
+        opcode == OP_Type_function;
 }
 
 

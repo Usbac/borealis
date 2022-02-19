@@ -187,7 +187,6 @@ struct element *elementInit(const char *key,
     };
 
     switch (type) {
-        case T_Object:
         case T_Array: el->value.values = elementTableInit(); break;
         case T_Number: el->value.number = 0; break;
         case T_Function: el->value.function = functionInit(); break;
@@ -221,7 +220,6 @@ void elementFreeValues(struct element **el)
     switch ((*el)->type) {
         case T_Reference: (*el)->value.reference = NULL; break;
         case T_Number: (*el)->value.number = 0; break;
-        case T_Object:
         case T_Array:
             elementsTableFree((*el)->value.values, 0);
             FREE_AND_NULL((*el)->value.values);
@@ -243,7 +241,6 @@ union VALUE valueDup(union VALUE val, enum TYPE type)
     switch (type) {
         case T_Reference: new.reference = val.reference; break;
         case T_Number: new.number = val.number; break;
-        case T_Object:
         case T_Array: new.values = elementTableDup(val.values); break;
         case T_Function: new.function = functionDup(val.function); break;
         case T_String: new.string = strDup(val.string); break;

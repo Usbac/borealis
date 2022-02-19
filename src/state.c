@@ -225,19 +225,6 @@ void statePushResultArr(struct element_table *values)
 }
 
 
-void statePushResultObj(struct element_table *values)
-{
-    struct result *node = malloc_(sizeof(struct result));
-    *node = (struct result) {
-        .value.values = values,
-        .type = T_Object,
-        .line_n = state->line_n,
-    };
-
-    statePushResult(state->stack, node);
-}
-
-
 void statePushResultFunc(struct function *func)
 {
     struct result *node = malloc_(sizeof(struct result));
@@ -360,7 +347,6 @@ void resultFree(struct result *node)
             free(node->value.string);
             break;
         case T_Array:
-        case T_Object:
             if (state->current_obj != node->value.values) {
                 elementsTableFree(node->value.values, 0);
                 free(node->value.values);

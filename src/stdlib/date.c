@@ -79,7 +79,7 @@ void stdDateToObject(struct result_list *args)
     elementTablePush(&obj, getTimePropEl("year", time->tm_year + 1900));
     elementTablePush(&obj, getTimePropEl("yday", time->tm_yday + 1));
     elementTablePush(&obj, getTimePropEl("wday", time->tm_wday + 1));
-    statePushResultObj(obj);
+    statePushResultArr(obj);
 }
 
 

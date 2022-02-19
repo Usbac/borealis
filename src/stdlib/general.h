@@ -18,11 +18,6 @@ void stdToNumber(struct result_list *args);
 void stdToBool(struct result_list *args);
 
 /**
- * Returns the given value as an object.
- */
-void stdToObject(struct result_list *args);
-
-/**
  * Returns the given value as an array.
  */
 void stdToArray(struct result_list *args);

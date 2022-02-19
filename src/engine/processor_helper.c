@@ -25,7 +25,6 @@ void mapTypeVal(const struct result *node, enum TYPE *type, union VALUE *value)
 char *getUnionStr(enum TYPE type, union VALUE value)
 {
     switch (type) {
-        case T_Object: return strDup("["TYPEOF_OBJECT"]");
         case T_Array: return strDup("["TYPEOF_ARRAY"]");
         case T_Function: return strDup("["TYPEOF_FUNCTION"]");
         case T_Number: return strFromD(value.number);
@@ -60,16 +59,6 @@ struct element_table *getValueArr(const struct result *node)
     mapTypeVal(node, &type, &value);
 
     return type == T_Array ? value.values : NULL;
-}
-
-
-struct element_table *getValueObj(const struct result *node)
-{
-    enum TYPE type;
-    union VALUE value;
-    mapTypeVal(node, &type, &value);
-
-    return type == T_Object ? value.values : NULL;
 }
 
 
@@ -130,7 +119,7 @@ bool isEmptyReturn(const struct token *node)
 {
     return node->prev == NULL || node->prev->opcode == OP_Stmt_sep ||
         (node->prev->type == T_Chunk && (node->prev->prev == NULL ||
-        (node->prev->prev->type != T_Parameters && node->prev->prev->opcode != OP_Object)));
+        node->prev->prev->type != T_Parameters));
 }
 
 
@@ -170,7 +159,6 @@ static bool compareElementTables(struct element_table *a,
                     return false;
                 }
                 break;
-            case T_Object:
             case T_Array:
                 if (!compareElementTables(a_el->value.values,
                     b_el->value.values)) {
@@ -207,8 +195,7 @@ bool compareResults(struct result *a, struct result *b)
     }
 
     switch (a_type) {
-        case T_Array:
-        case T_Object: return compareElementTables(a_val.values, b_val.values);
+        case T_Array: return compareElementTables(a_val.values, b_val.values);
         case T_Number: return compareNumbers(a_val.number, b_val.number);
         case T_String: return !strcmp(a_val.string, b_val.string);
         default: return true;
@@ -228,7 +215,6 @@ enum TYPE getResultType(struct result *node)
         case T_String:
         case T_Number:
         case T_Array:
-        case T_Object:
         case T_Function:
         case T_Null: return node->type;
         default:
@@ -244,7 +230,6 @@ char *getElementTypeAsStr(enum TYPE type)
         case T_String: return TYPEOF_STRING;
         case T_Number: return TYPEOF_NUMBER;
         case T_Array: return TYPEOF_ARRAY;
-        case T_Object: return TYPEOF_OBJECT;
         case T_Function: return TYPEOF_FUNCTION;
         default: return TYPEOF_NULL;
     }
@@ -445,7 +430,6 @@ enum TYPE getOpcodeType(enum OPCODE opcode)
         case OP_Type_string: return T_String;
         case OP_Type_number: return T_Number;
         case OP_Type_array: return T_Array;
-        case OP_Type_object: return T_Object;
         case OP_Type_function: return T_Function;
         default: return T_Null;
     }

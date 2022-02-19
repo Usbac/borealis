@@ -48,7 +48,6 @@
  * d - number
  * a - array
  * f - function
- * o - object
  * v - any
  * * - Takes any number of parameters of any type
  * , - Indicates a new parameter
@@ -70,7 +69,7 @@ static size_t getStrParamsNumber(char *str)
 
 static struct element *declareModule(const char *key)
 {
-    struct element *el = elementInit(key, NULL, 0, T_Object);
+    struct element *el = elementInit(key, NULL, 0, T_Array);
     el->constant = true;
     stateElementDeclare(&el);
 
@@ -371,7 +370,6 @@ static void initFunctions(void)
     declareModuleFunc(NULL, "toString", stdToString, "v");
     declareModuleFunc(NULL, "toNumber", stdToNumber, "v|d");
     declareModuleFunc(NULL, "toBool", stdToBool, "v");
-    declareModuleFunc(NULL, "toObject", stdToObject, "v");
     declareModuleFunc(NULL, "toArray", stdToArray, "v");
     declareModuleFunc(NULL, "sleep", stdSleep, "d");
     declareModuleFunc(NULL, "assert", stdAssert, "v|s");
@@ -430,8 +428,6 @@ static void validateStdArgs(struct function *func, struct result_list *args)
             wrong_type = TYPEOF_FUNCTION;
         } else if (params[i] == 'd' && type != T_Number) {
             wrong_type = TYPEOF_NUMBER;
-        } else if (params[i] == 'o' && type != T_Object) {
-            wrong_type = TYPEOF_OBJECT;
         }
 
         if (wrong_type != NULL) {

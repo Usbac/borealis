@@ -248,7 +248,7 @@ void stdGetUser(struct result_list *args)
         el->value.string = strDup(user->pw_shell);
         elementTablePush(&result, el);
 
-        statePushResultObj(result);
+        statePushResultArr(result);
     }
 
     free(user_str);
@@ -291,7 +291,7 @@ void stdGetGroup(struct result_list *args)
             free(user_name);
         }
 
-        statePushResultObj(result);
+        statePushResultArr(result);
     }
 
     free(group_str);

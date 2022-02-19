@@ -57,31 +57,14 @@ void stdToBool(struct result_list *args)
 }
 
 
-void stdToObject(struct result_list *args)
-{
-    enum TYPE type = getResultType(args->first);
-    struct element_table *obj;
-
-    switch (type) {
-        case T_Array: obj = elementTableDup(getValueArr(args->first)); break;
-        case T_Object: obj = elementTableDup(getValueObj(args->first)); break;
-        default: obj = elementTableInit();
-    }
-
-    statePushResultObj(obj);
-}
-
-
 void stdToArray(struct result_list *args)
 {
     enum TYPE type = getResultType(args->first);
     struct element_table *arr;
 
-    switch (type) {
-        case T_Array: arr = elementTableDup(getValueArr(args->first)); break;
-        case T_Object: arr = elementTableDup(getValueObj(args->first)); break;
-        default: arr = elementTableInit();
-    }
+    arr = type == T_Array ?
+        elementTableDup(getValueArr(args->first)) :
+        elementTableInit();
 
     statePushResultArr(arr);
 }
@@ -135,11 +118,8 @@ void stdIsEmpty(struct result_list *args)
         case T_Number:
             result = getValueD(args->first) == 0;
             break;
-        case T_Object:
         case T_Array:
-            table = type == T_Array ?
-                getValueArr(args->first) :
-                getValueObj(args->first);
+            table = getValueArr(args->first);
             result = true;
 
             for (struct element_list *i = table->first; i != NULL; i = i->next) {

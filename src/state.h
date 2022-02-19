@@ -155,12 +155,6 @@ void statePushResultEl(struct element *el);
 void statePushResultArr(struct element_table *values);
 
 /**
- * Pushes a new result of type object into the result list.
- * @param values the object values.
- */
-void statePushResultObj(struct element_table *values);
-
-/**
  * Pushes a new result of type function into the result list.
  * @param func the function.
  */

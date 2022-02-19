@@ -64,8 +64,8 @@ void bytecodePush(struct token_list *list, struct token *node)
         return;
     }
 
-    if (node->opcode == OP_Closure || node->opcode == OP_Object ||
-        node->opcode == OP_Foreach || isDefKeyword(node->opcode)) {
+    if (node->opcode == OP_Closure || node->opcode == OP_Foreach ||
+        isDefKeyword(node->opcode)) {
         bytecodePushToken(list, tokenDup(node));
         added = true;
     }

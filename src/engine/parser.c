@@ -103,9 +103,9 @@ static bool isUnaryExpr(struct token *node)
     return node->type == T_Index || node->opcode == OP_Negation ||
         node->opcode == OP_Negative || node->opcode == OP_Positive ||
         node->opcode == OP_Import || node->type == T_Arguments ||
-        node->opcode == OP_Reference || node->opcode == OP_Object ||
         node->opcode == OP_Increment_pre || node->opcode == OP_Increment_pos ||
-        node->opcode == OP_Decrement_pre || node->opcode == OP_Decrement_pos;
+        node->opcode == OP_Decrement_pre || node->opcode == OP_Decrement_pos ||
+        node->opcode == OP_Reference;
 }
 
 
@@ -152,16 +152,9 @@ static bool isClosureChunk(struct token *node)
 }
 
 
-static bool isObjChunk(struct token *node)
-{
-    return node->type == T_Chunk &&
-        node->prev != NULL && node->prev->opcode == OP_Object;
-}
-
-
 static bool isEndChunk(struct token *node)
 {
-    return node->type == T_Chunk && !isClosureChunk(node) && !isObjChunk(node);
+    return node->type == T_Chunk && !isClosureChunk(node);
 }
 
 

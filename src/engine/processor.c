@@ -479,27 +479,6 @@ static void evalReturn(struct token *node)
 }
 
 
-static void evalObject(struct token **node)
-{
-    struct element_table *aux_current_obj = state->current_obj;
-    struct result_list *aux_stack = resultListDup(state->stack);
-    struct element_table *obj = elementTableInit();
-
-    resultListFree(state->stack);
-    state->stack = resultListInit();
-    state->current_obj = obj;
-
-    evalBytecode((*node)->next->body);
-
-    resultListFree(state->stack);
-    state->stack = aux_stack;
-    state->current_obj = aux_current_obj;
-
-    statePushResultObj(obj);
-    *node = (*node)->next;
-}
-
-
 static void evalImport(void)
 {
     struct result *returned = NULL, *val = statePopResult();
@@ -870,7 +849,7 @@ static void evalThis(struct token *node)
         errorF(node->line_n, E_THIS);
     }
 
-    statePushResultObj(state->current_obj);
+    statePushResultArr(state->current_obj);
 }
 
 
@@ -907,8 +886,6 @@ static void evalIndex(struct token *node)
     type = getResultType(val);
     el = type == T_Array ?
         getValueArr(val) :
-        type == T_Object ?
-        getValueObj(val) :
         NULL;
 
     if (node->body->first == NULL) {
@@ -931,7 +908,7 @@ static void evalIndex(struct token *node)
     if (el == NULL && state->null_coalescing) {
         statePushResultNull();
         goto end;
-    } else if (el == NULL || (type != T_Array && type != T_Object)) {
+    } else if (el == NULL || type != T_Array) {
         errorF(node->line_n, E_INDEX, getElementTypeAsStr(type));
     }
 
@@ -945,7 +922,7 @@ static void evalIndex(struct token *node)
     } else if (prop == NULL) {
         statePushResultNull();
     } else {
-        if ((val->type == T_Array || val->type == T_Object) &&
+        if (val->type == T_Array &&
             val->value.values != state->current_obj) {
             statePushResult(state->stack, getResultFromElement(prop));
         } else {
@@ -1087,17 +1064,17 @@ static void evalProp(struct token **node)
     struct result *obj_val = statePopResultSafe();
     enum TYPE obj_type = getResultType(obj_val);
     char *prop_key = strDup(prop->value.string);
-    struct element_table *obj = getValueObj(obj_val);
+    struct element_table *obj = getValueArr(obj_val);
     struct element *el;
     bool safe = (*node)->opcode == OP_Dot_safe;
 
-    if (obj_type != T_Object) {
+    if (obj_type != T_Array) {
         if (obj_type == T_Null && (state->null_coalescing || safe)) {
             statePushResultNull();
             goto end;
         }
 
-        errorF(obj_val->line_n, E_NON_OBJECT, getElementTypeAsStr(obj_type));
+        errorF(obj_val->line_n, E_NON_TABLE, getElementTypeAsStr(obj_type));
     }
 
     el = elementGet(prop_key, obj, NULL);
@@ -1109,7 +1086,7 @@ static void evalProp(struct token **node)
     } else if (el == NULL) {
         statePushResultNull();
     } else {
-        if (obj_val->type == T_Object && obj_val->value.values != state->current_obj) {
+        if (obj_val->type == T_Array && obj_val->value.values != state->current_obj) {
             statePushResult(state->stack, getResultFromElement(el));
         } else {
             statePushResultEl(el);
@@ -1192,7 +1169,6 @@ void evalNode(struct token **node)
                 case OP_Foreach: evalForeach(node); break;
                 case OP_Break: evalBreak(node); break;
                 case OP_Continue: evalContinue(node); break;
-                case OP_Object: evalObject(node); break;
                 case OP_Import: evalImport(); break;
                 case OP_This: evalThis(*node); break;
                 case OP_Constant: evalElementModifier(*node); break;

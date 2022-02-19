@@ -7,14 +7,12 @@
 #define TYPEOF_STRING "string"
 #define TYPEOF_NUMBER "number"
 #define TYPEOF_ARRAY "array"
-#define TYPEOF_OBJECT "object"
 #define TYPEOF_FUNCTION "function"
 #define TYPEOF_NULL "null"
 
 #define RETURN_DOUBLE_FROM_VALUE(type, value) {\
     switch (type) {\
         case T_Array:\
-        case T_Object:\
         case T_Function: return 1;\
         case T_Null: return 0;\
         case T_Number: return value.number;\
@@ -58,13 +56,6 @@ struct element *getValueEl(const struct result *node);
  * @return the value of the given node as an array.
  */
 struct element_table *getValueArr(const struct result *node);
-
-/**
- * Returns the value of the given node as an object.
- * @param node the node.
- * @return the value of the given node as an object.
- */
-struct element_table *getValueObj(const struct result *node);
 
 /**
  * Returns the value of the given node as a function.

@@ -322,7 +322,7 @@ void stdColumn(struct result_list *args)
         struct element *src = getTrueElement(ite->ptr);
         struct element *column;
 
-        if (src->unset || (src->type != T_Array && src->type != T_Object)) {
+        if (src->unset || src->type != T_Array) {
             continue;
         }
 

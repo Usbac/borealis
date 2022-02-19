@@ -59,9 +59,7 @@ static void elementTableToJson(char **result,
                 strAppend(result, aux);
                 break;
             case T_Array:
-            case T_Object:
-                elementTableToJson(result, el->value.values,
-                    el->type == T_Object);
+                elementTableToJson(result, el->value.values, true);
                 break;
             case T_Null: strAppend(result, TYPEOF_NULL); break;
             default: break;
@@ -90,11 +88,8 @@ void stdJsonStringify(struct result_list *args)
         case T_Number: result = strFromD(getValueD(arg)); break;
         case T_Function: result = getValueStr(arg); break;
         case T_Array:
-        case T_Object:
             result = strInit();
-            elementTableToJson(&result,
-                type == T_Object ? getValueObj(arg) : getValueArr(arg),
-                type == T_Object);
+            elementTableToJson(&result, getValueArr(arg), true);
             break;
         case T_Null: result = strDup(TYPEOF_NULL); break;
         default: result = strInit(); break;
@@ -147,15 +142,12 @@ static struct element *getJsonEl(char *key, struct token *node, bool *error)
     switch (node->type) {
         case T_String: el->value.string = strDup(node->value); break;
         case T_Number: el->value.number = strToD(node->value); break;
-        case T_Array: el->value.values = parseArrjJson(node->body, error); break;
+        case T_Array: el->value.values = parseObjJson(node->body, error); break;
         case T_Identifier:
             el->type = T_Number;
             el->value.number = !strcmp(node->value, "true");
             break;
         case T_Null: el->value.string = NULL; break;
-        case T_Chunk:
-            el->type = T_Object;
-            el->value.values = parseObjJson(node->body, error); break;
         default: break;
     }
 
@@ -240,11 +232,7 @@ static struct result *jsonParse(char *str, bool *error)
 
     switch (list->first->type) {
         case T_Array:
-        case T_Chunk:
-            result->type = list->first->type == T_Array ? T_Array : T_Object;
-            result->value.values = list->first->type == T_Array ?
-                parseArrjJson(list->first->body, error) :
-                parseObjJson(list->first->body, error);
+            result->value.values = parseObjJson(list->first->body, error);
             break;
         case T_String:
             result->value.string = strDup(list->first->value);

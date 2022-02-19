@@ -61,7 +61,6 @@ char *getResultStr(enum TYPE type, union VALUE val)
             break;
         case T_Function: str_val = strDup(TYPEOF_FUNCTION); break;
         case T_Array:
-        case T_Object:
             table = getElementTableStr(val.values);
             str_val = strInit();
             strAppendC(&str_val, type == T_Array ? '[' : '{');

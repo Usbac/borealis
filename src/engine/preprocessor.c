@@ -16,7 +16,7 @@ static bool isExpression(const struct token *node)
         node->type == T_Arguments || node->type == T_Index ||
         node->type == T_Null || node->opcode == OP_Import ||
         node->opcode == OP_Closure || node->opcode == OP_Null_coalesce ||
-        node->opcode == OP_This || node->opcode == OP_Object));
+        node->opcode == OP_This));
 }
 
 
@@ -167,7 +167,7 @@ static void prevalidateOpEqual(struct token *node)
 
 static bool isPossibleObj(struct token *node)
 {
-    return node->opcode == OP_Object || node->type == T_Identifier ||
+    return node->type == T_Identifier ||
         node->type == T_Arguments || node->type == T_Index ||
         node->opcode == OP_Dot || node->opcode == OP_Dot_safe ||
         node->opcode == OP_This;
@@ -416,27 +416,6 @@ static bool isStmt(struct token *node)
 }
 
 
-static bool preprocessObj(struct token *node, struct pre_state *pre_state)
-{
-    enum TYPE aux_type;
-
-    if (node->opcode != OP_Object) {
-        return false;
-    }
-
-    if (node->rs != NULL || node->ls == NULL || node->ls->type != T_Chunk) {
-        errorF(node->line_n, E_TOKEN, node->value);
-    }
-
-    aux_type = pre_state->current_type;
-    pre_state->current_type = T_Object;
-    preprocessTokenList(node->ls->body, pre_state);
-    pre_state->current_type = aux_type;
-
-    return true;
-}
-
-
 static void prevalidateNode(struct token *node, struct pre_state *pre_state)
 {
     if (isDefKeyword(node->opcode)) {
@@ -497,13 +476,11 @@ static void preprocessNode(struct token *node, struct pre_state *pre_state)
         return;
     }
 
-    if (pre_state->current_type != T_Chunk &&
-        pre_state->current_type != T_Object &&
-        isStmt(node)) {
+    if (pre_state->current_type != T_Chunk && isStmt(node)) {
         errorF(node->line_n, E_TOKEN, node->value);
     }
 
-    if (preprocessFuncDef(node, pre_state) || preprocessObj(node, pre_state)) {
+    if (preprocessFuncDef(node, pre_state)) {
         return;
     }
 

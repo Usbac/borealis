@@ -80,13 +80,13 @@ void stdNew(struct result_list *args)
     prop->value.number = domain;
     elementTablePush(&result, prop);
 
-    statePushResultObj(result);
+    statePushResultArr(result);
 }
 
 
 void stdSend(struct result_list *args)
 {
-    SOCKET sock = (int) getSocketProp(getValueObj(args->first), "_SOCK");
+    SOCKET sock = (int) getSocketProp(getValueArr(args->first), "_SOCK");
     char *msg = getValueStr(args->first->next);
     const int FLAGS = args->first->next->next != NULL ?
         (int) getValueD(args->first->next->next) : 0;
@@ -105,7 +105,7 @@ void stdRecv(struct result_list *args)
 {
     const int FLAGS = args->first->next->next != NULL ?
         (int) getValueD(args->first->next->next) : 0;
-    SOCKET sock = (int) getSocketProp(getValueObj(args->first), "_SOCK");
+    SOCKET sock = (int) getSocketProp(getValueArr(args->first), "_SOCK");
     const int RES_SIZE = (int) getValueD(args->first->next);
     char *res = calloc_(1, RES_SIZE + 1);
     ssize_t bytes = recv(sock, res, RES_SIZE, FLAGS);
@@ -122,7 +122,7 @@ void stdRecv(struct result_list *args)
 
 void stdBind(struct result_list *args)
 {
-    struct element_table *sock = getValueObj(args->first);
+    struct element_table *sock = getValueArr(args->first);
     char *host = getValueStr(args->first->next);
     const int SOCK = getSocketProp(sock, "_SOCK");
     struct sockaddr_in addr;
@@ -146,7 +146,7 @@ void stdBind(struct result_list *args)
 
 void stdListen(struct result_list *args)
 {
-    const int SOCK = getSocketProp(getValueObj(args->first), "_SOCK");
+    const int SOCK = getSocketProp(getValueArr(args->first), "_SOCK");
     int result = listen(SOCK, (int) getValueD(args->first->next));
 
     if (result == SOCKET_ERROR) {
@@ -159,7 +159,7 @@ void stdListen(struct result_list *args)
 
 void stdAccept(struct result_list *args)
 {
-    struct element_table *result, *sock = getValueObj(args->first);
+    struct element_table *result, *sock = getValueArr(args->first);
     struct element *prop;
     int accept_result = accept(getSocketProp(sock, "_SOCK"), NULL, NULL);
 
@@ -178,7 +178,7 @@ void stdAccept(struct result_list *args)
     prop->value.number = getSocketProp(sock, "_DOMAIN");
     elementTablePush(&result, prop);
 
-    statePushResultObj(result);
+    statePushResultArr(result);
 }
 
 
@@ -187,7 +187,7 @@ void stdClose(struct result_list *args)
 #if defined(_WIN32) || defined(WIN32)
     WSACleanup();
 #endif
-    if (closesocket(getSocketProp(getValueObj(args->first), "_SOCK")) == SOCKET_ERROR) {
+    if (closesocket(getSocketProp(getValueArr(args->first), "_SOCK")) == SOCKET_ERROR) {
         setLastError(errno);
     }
 }
@@ -196,7 +196,7 @@ void stdClose(struct result_list *args)
 void stdShutdown(struct result_list *args)
 {
     int how = args->first->next != NULL ? (int) getValueD(args->first->next) : 2;
-    int result = shutdown(getSocketProp(getValueObj(args->first), "_SOCK"), how);
+    int result = shutdown(getSocketProp(getValueArr(args->first), "_SOCK"), how);
 
     if (result == SOCKET_ERROR) {
         setLastError(errno);
@@ -220,7 +220,7 @@ void stdHtonl(struct result_list *args)
 
 void stdSetOption(struct result_list *args)
 {
-    SOCKET sock = getSocketProp(getValueObj(args->first), "_SOCK");
+    SOCKET sock = getSocketProp(getValueArr(args->first), "_SOCK");
     int opt = (int) getValueD(args->first->next);
     int val = (int) getValueD(args->first->next->next);
     int result = SOCKET_ERROR;
@@ -247,7 +247,7 @@ void stdSetOption(struct result_list *args)
 
 void stdGetOption(struct result_list *args)
 {
-    SOCKET sock = getSocketProp(getValueObj(args->first), "_SOCK");
+    SOCKET sock = getSocketProp(getValueArr(args->first), "_SOCK");
     int opt = (int) getValueD(args->first->next);
     int val = 0;
     socklen_t len = sizeof(val);
