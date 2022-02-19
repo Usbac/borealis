@@ -1,11 +1,8 @@
-return obj {
-    pub any errors = 0;
-
-    pub any total = 0;
-
-    const any ERROR_PAD = 14;
-
-    pub any assert = f(val, expected, text = '') {
+return [
+    'errors'    = 0,
+    'total'     = 0,
+    'ERROR_PAD' = 14,
+    'assert'    = f(val, expected, text = '') {
         any icon = '✓';
         any color = "\x1b[32m ";
         any reset = "\x1b[0m ";
@@ -26,5 +23,5 @@ return obj {
             Io.printV(val);
             printLine();
         }
-    };
-};
+    },
+];

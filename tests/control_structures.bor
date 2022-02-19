@@ -50,20 +50,20 @@ test.assert(i, 10, "loop should go to next iteration after a 'continue' statemen
 
 # FOREACH
 
-any arr = [ 1,2,3,4 ];
+any tab = [ 1,2,3,4 ];
 any result = [];
 foreach ([ 1,2,3,4 ], key: val) {
     result[key] = val;
 }
 
-test.assert(result, arr, "foreach loop should iterate correctly with keys and values");
+test.assert(result, tab, "foreach loop should iterate correctly with keys and values");
 
 result = [];
 foreach ([ 1,2,3,4 ], val) {
     result[] = val;
 }
 
-test.assert(result, arr, "foreach loop should iterate correctly with only values");
+test.assert(result, tab, "foreach loop should iterate correctly with only values");
 
 foreach ([], val) {
     test.assert(false, true, "should not enter in the foreach of an empty element");

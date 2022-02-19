@@ -18,7 +18,7 @@ test.assert(String.indexOf("hello world", "world"), 6, "String.indexOf should re
 test.assert(String.lastIndexOf("hello world", "o"), 7, "String.lastIndexOf should return the last position of the substring in the string");
 test.assert(String.indexOf("hello world", "worldd"), -1, "String.indexOf should return -1 if the substring is not in the string");
 test.assert(String.lastIndexOf("hello world", "oo"), -1, "String.lastIndexOf should return -1 if the substring is not in the string");
-test.assert(String.split("hello world how are you", " "), [ "hello", "world", "how", "are", "you"], "String.split should split the string into an array by the given delimiter");
+test.assert(String.split("hello world how are you", " "), [ "hello", "world", "how", "are", "you"], "String.split should split the string into a table by the given delimiter");
 test.assert(String.endsWith("how are you?", "you?"), true, "String.endsWith should return true when the string ends with the substring");
 test.assert(String.startsWith("how are you?", "how "), true, "String.startsWith should return true when the string starts with the substring");
 test.assert(String.getChar("abcdefghi", 6), "g", "String.getChar should return the char at the given position");
@@ -33,7 +33,7 @@ test.assert(String.compare("hello there?", "hello there??"), false, "String.comp
 test.assert(String.compareI("hello THERE?", "hello there?"), true, "String.compareI should return true when both strings are equal (case insensitive)");
 test.assert(String.compareI("Hello THERe?", "hello there??"), false, "String.compareI should return false when both strings are different (case insensitive)");
 test.assert(String.containsChars("longyearbyen", "aeyo"), true, "String.containsChars should return true when all the characters appear in the string");
-test.assert(String.interpolate("today {name} will be {age} years old", [ 'name' = 'alex', 'age' = 23 ]), "today alex will be 23 years old", "String.interpolate should interpolate the array values in the string");
+test.assert(String.interpolate("today {name} will be {age} years old", [ 'name' = 'alex', 'age' = 23 ]), "today alex will be 23 years old", "String.interpolate should interpolate the table values in the string");
 test.assert(String.sprintf("hey %s you have %d days", "alex", "365"), "hey alex you have 365 days", "String.sprintf should format the values in the string");
 test.assert(String.padStart("key => val", 15, "-"), "-----key => val", "String.padStart should add leading characters to comply with the given length");
 test.assert(String.padEnd("key => val", 15, "-"), "key => val-----", "String.padEnd should add trailing characters to comply with the given length");
@@ -44,52 +44,52 @@ test.assert(String.isLower("what are you doing here?"), true, "String.isLower sh
 test.assert(String.capitalize("welcome back"), "Welcome back", "String.capitalize should return the string capitalized");
 test.assert(String.fromCharCodes(2023, 65, 61), "ߧA=", "String.fromCharCodes should return a string created from the specified sequence of UTF-8 code units");
 
-# Array
+# Table
 
-printLine("\nStdlib Array");
+printLine("\nStdlib Table");
 
-test.assert(Array.get([ 'name' = 'a', 'age' = 23 ], 'age'), 23, "Array.get should return the value with the given key in the array");
-test.assert(Array.get([ 'name' = 'a', 'age' = 23 ], 'city'), null, "Array.get should return null when the key doesn't exists in the array");
-test.assert(Array.getSize([ 'name' = 'a', 'age' = 23, 'city' = 'Longyearbyen' ]), 3, "Array.getSize should return the number of elements in the array");
+test.assert(Table.get([ 'name' = 'a', 'age' = 23 ], 'age'), 23, "Table.get should return the value with the given key in the table");
+test.assert(Table.get([ 'name' = 'a', 'age' = 23 ], 'city'), null, "Table.get should return null when the key doesn't exists in the table");
+test.assert(Table.getSize([ 'name' = 'a', 'age' = 23, 'city' = 'Longyearbyen' ]), 3, "Table.getSize should return the number of elements in the table");
 
-any arr = [ 1 ];
-Array.push(arr, [ 2 ]);
-test.assert(arr, [ 1, [ 2 ] ], "Array.push should push the given value in the array");
+any tab = [ 1 ];
+Table.push(tab, [ 2 ]);
+test.assert(tab, [ 1, [ 2 ] ], "Table.push should push the given value in the table");
 
-Array.prepend(arr, "you");
-test.assert(arr, [ '2' = 'you', '0' = 1, '1' = [ 2 ] ], "Array.prepend should prepend the given value in the array");
+Table.prepend(tab, "you");
+test.assert(tab, [ '2' = 'you', '0' = 1, '1' = [ 2 ] ], "Table.prepend should prepend the given value in the table");
 
-any pop = Array.pop(arr);
-test.assert(pop, [ 2 ], "Array.pop should return the last item in the array");
-test.assert(arr, [ '2' = 'you', '0' = 1 ], "Array.pop should remove the last item in the array");
+any pop = Table.pop(tab);
+test.assert(pop, [ 2 ], "Table.pop should return the last item in the table");
+test.assert(tab, [ '2' = 'you', '0' = 1 ], "Table.pop should remove the last item in the table");
 
-any shift = Array.shift(arr);
-test.assert(shift, 'you', "Array.shift should return the first item in the array");
-test.assert(arr, [ '0' = 1 ], "Array.shift should remove the first item in the array");
+any shift = Table.shift(tab);
+test.assert(shift, 'you', "Table.shift should return the first item in the table");
+test.assert(tab, [ '0' = 1 ], "Table.shift should remove the first item in the table");
 
-test.assert(Array.getKeys([ 'name' = 'asd', 'age' = 123, 'city' = 'NY']), [ 'name', 'age', 'city' ], "Array.getKeys should return the array keys");
-test.assert(Array.hasKey([ 'name' = 'asd', 'age' = 123, 'city' = 'NY'], 'age'), true, "Array.hasKey should return true when the key exists");
-test.assert(Array.hasKey([ 'name' = 'asd', 'age' = 123, 'city' = 'NY'], 'width'), false, "Array.hasKey should return false when the key does not exists");
-test.assert(Array.join([ 'hello', 'world', 'again' ]), "helloworldagain", "Array.join should return the given string joined");
-test.assert(Array.join([ 'hello', 'world', 'again' ], " "), "hello world again", "Array.join should return the given string joined by the given glue");
-test.assert(Array.has([ 'name' = 'asd', 'age' = 123, 'city' = [ 0 ] ], [ 0 ]), true, "Array.has should return true when the value exists");
+test.assert(Table.getKeys([ 'name' = 'asd', 'age' = 123, 'city' = 'NY']), [ 'name', 'age', 'city' ], "Table.getKeys should return the table keys");
+test.assert(Table.hasKey([ 'name' = 'asd', 'age' = 123, 'city' = 'NY'], 'age'), true, "Table.hasKey should return true when the key exists");
+test.assert(Table.hasKey([ 'name' = 'asd', 'age' = 123, 'city' = 'NY'], 'width'), false, "Table.hasKey should return false when the key does not exists");
+test.assert(Table.join([ 'hello', 'world', 'again' ]), "helloworldagain", "Table.join should return the given string joined");
+test.assert(Table.join([ 'hello', 'world', 'again' ], " "), "hello world again", "Table.join should return the given string joined by the given glue");
+test.assert(Table.has([ 'name' = 'asd', 'age' = 123, 'city' = [ 0 ] ], [ 0 ]), true, "Table.has should return true when the value exists");
 
 any reversed = [ 'name' = 'asd', 'age' = 123, 'city' = [ 0 ] ];
-Array.reverse(reversed);
-test.assert(reversed, [ 'city' = [ 0 ], 'age' = 123, 'name' = 'asd' ], "Array.reverse should reverse the array");
+Table.reverse(reversed);
+test.assert(reversed, [ 'city' = [ 0 ], 'age' = 123, 'name' = 'asd' ], "Table.reverse should reverse the table");
 
-test.assert(Array.range(0, 5), [ 0,1,2,3,4,5 ], "Array.range should return an array with the given range");
-test.assert(Array.range(0, 5, 2), [ 0,2,4 ], "Array.range should return an array with the given range and steps");
+test.assert(Table.range(0, 5), [ 0,1,2,3,4,5 ], "Table.range should return an table with the given range");
+test.assert(Table.range(0, 5, 2), [ 0,2,4 ], "Table.range should return an table with the given range and steps");
 
-arr = [ 6,2,7,3,6,7,9,0,1,2,3 ];
-Array.sort(arr);
+tab = [ 6,2,7,3,6,7,9,0,1,2,3 ];
+Table.sort(tab);
 any sorted = [];
-foreach (arr, val) {
+foreach (tab, val) {
     sorted []= val;
 }
-test.assert(sorted, [ 0,1,2,2,3,3,6,6,7,7,9 ], "Array.sort should sort the array");
+test.assert(sorted, [ 0,1,2,2,3,3,6,6,7,7,9 ], "Table.sort should sort the table");
 
-any age_arr = [
+any age_tab = [
     [
         'age' = 23,
     ],
@@ -101,11 +101,11 @@ any age_arr = [
     ],
 ];
 
-Array.sort(age_arr, f(a,b) {
+Table.sort(age_tab, f(a,b) {
     return a['age'] - b['age'];
 });
 
-test.assert(age_arr, [
+test.assert(age_tab, [
     2 = [
         'age' = 15,
     ],
@@ -115,9 +115,9 @@ test.assert(age_arr, [
     0 = [
         'age' = 23,
     ],
-], "Array.sort should sort the array with the given function");
+], "Table.sort should sort the table with the given function");
 
-test.assert(Array.column([
+test.assert(Table.column([
     [
         'name' = 'alex',
         'age' = 23,
@@ -130,17 +130,17 @@ test.assert(Array.column([
         'name' = 'carlos',
         'age' = 32,
     ],
-], 'name'), [ 'alex', 'evan', 'carlos' ], "Array.column should return the values from a single column in the array");
+], 'name'), [ 'alex', 'evan', 'carlos' ], "Table.column should return the values from a single column in the table");
 
-test.assert(Array.map([ 1, 2, 3 ], f(e) { return e + 1; }), [ 2, 3, 4 ], "Array.map should map the given array");
-test.assert(Array.filter([ 1, 2, 3, 4, 5, 6 ], f(e) { return e % 2 == 0; }), [ 1 = 2, 3 = 4, 5 = 6 ], "Array.filter should filter the given array");
-test.assert(Array.reduce([ 1, 2, 3 ], f(acc, el) { return acc + el; }), 6, "Array.reduce should reduce the given array to a single value");
-test.assert(Array.merge([ 'name' = 'a', 'age' = 23 ], [ 'name' = 'b', 'city' = 'NY' ]), [ 'name' = 'b', 'age' = 23, 'city' = 'NY' ], "Array.merge should return a merge of the given arrays");
-test.assert(Array.some([ 1, 2, 3, 4 ], f(e) { return e > 0; }) && !Array.some([ 1, 2, 3, 4 ], f(e) { return e <= 0; }), true, "Array.some should return true whether at least one element passes the test in the given closure");
+test.assert(Table.map([ 1, 2, 3 ], f(e) { return e + 1; }), [ 2, 3, 4 ], "Table.map should map the given table");
+test.assert(Table.filter([ 1, 2, 3, 4, 5, 6 ], f(e) { return e % 2 == 0; }), [ 1 = 2, 3 = 4, 5 = 6 ], "Table.filter should filter the given table");
+test.assert(Table.reduce([ 1, 2, 3 ], f(acc, el) { return acc + el; }), 6, "Table.reduce should reduce the given table to a single value");
+test.assert(Table.merge([ 'name' = 'a', 'age' = 23 ], [ 'name' = 'b', 'city' = 'NY' ]), [ 'name' = 'b', 'age' = 23, 'city' = 'NY' ], "Table.merge should return a merge of the given tables");
+test.assert(Table.some([ 1, 2, 3, 4 ], f(e) { return e > 0; }) && !Table.some([ 1, 2, 3, 4 ], f(e) { return e <= 0; }), true, "Table.some should return true whether at least one element passes the test in the given closure");
 test.assert(
-    Array.fill(0, 3, 2) === [ '0' = 2, '1' = 2, '2' = 2 ] &&
-    Array.fill(5, 6, [ 'a' ]) === [ '5' = [ 'a' ], '6' = [ 'a' ], '7' = [ 'a' ], '8' = [ 'a' ], '9' = [ 'a' ], '10' = [ 'a' ] ]
-, true, "Array.fill should return a filled array");
+    Table.fill(0, 3, 2) === [ '0' = 2, '1' = 2, '2' = 2 ] &&
+    Table.fill(5, 6, [ 'a' ]) === [ '5' = [ 'a' ], '6' = [ 'a' ], '7' = [ 'a' ], '8' = [ 'a' ], '9' = [ 'a' ], '10' = [ 'a' ] ]
+, true, "Table.fill should return a filled table");
 
 # Number
 
@@ -154,31 +154,16 @@ test.assert(Number.isFinite(7), true, "Number.isFinite should return true when t
 test.assert(Number.isFinite(1/0), false, "Number.isFinite should return false when the number is not finite");
 test.assert(Number.format(1850320.45, ".", ","), "1.850.320,45", "Number.format should return the number formatted");
 
-# Object
-
-printLine("\nStdlib Object");
-
-any foo = obj {
-    pub any name = 'alex';
-    pub any age = 23;
-    any password = '1234';
-    pub any arr = [];
-};
-
-test.assert(Object.getKeys(foo), [ 'name', 'age', 'arr' ], "Object.getKeys should return all the public object keys");
-test.assert(Object.getValues(foo), [ 'alex', 23, [] ], "Object.getValues should return all the public object values");
-
 # Json
 
 printLine("\nStdlib Json");
 
-any json = '{"name":"alex","age":23,"arr":[]}';
-test.assert(Json.stringify(foo), json, "Json.stringify should return the json string of the given value");
-test.assert(Json.parse(json), obj {
-    pub any name = 'alex';
-    pub any age = 23;
-    pub any arr = [];
-}, "Json.parse should return the value of the given json string");
+any json = '{"name":"alex","age":23,"tab":{}}';
+test.assert(Json.parse(json), [
+    'name' = 'alex',
+    'age' = 23,
+    'tab' = [],
+], "Json.parse should return the value of the given json string");
 test.assert(Json.parse('asd'), null, "Json.parse should return null when the given json representation is not valid");
 
 test.assert(Json.isValid(json), true, "Json.isValid should return true when the given json representation is valid");
@@ -237,16 +222,16 @@ printLine("\nStdlib Date");
 any date_time = 1617557432 - Date.getGMTOffset();
 test.assert(Date.toString("%Y-%m-%d %H:%M:%S", date_time), "2021-04-04 17:30:32", "Date.toString should return the date string of the given unix timestamp");
 test.assert(Date.fromString("2021-04-04 17:30:32"), date_time, "Date.fromString should return the unix timestamp of the given date string");
-test.assert(Date.toObject(date_time), obj {
-    pub any seconds = 32;
-    pub any minutes = 30;
-    pub any hours = 17;
-    pub any day = 4;
-    pub any month = 4;
-    pub any year = 2021;
-    pub any yday = 94;
-    pub any wday = 1;
-}, "Date.toObject should return and object based on the given unix timestamp");
+test.assert(Date.toTable(date_time), [
+    'seconds' = 32,
+    'minutes' = 30,
+    'hours' = 17,
+    'day' = 4,
+    'month' = 4,
+    'year' = 2021,
+    'yday' = 94,
+    'wday' = 1,
+], "Date.toTable should return a table based on the given unix timestamp");
 
 # Os
 
@@ -268,23 +253,14 @@ if (Os.PLATFORM eq 'windows') {
 
 printLine("\nStdlib General");
 
-test.assert(toString(obj {}), "[object]", "toString should convert the given value to string");
+test.assert(toString([]), "[table]", "toString should convert the given value to string");
 test.assert(toNumber("1.46"), 1.46, "toNumber should convert the given value to number");
 test.assert(toBool("hello"), true, "toBool should convert the given value to a boolean");
-test.assert(toObject([ 'name' = 'alex', 'age' = 23 ]), obj {
-    pub any name = 'alex';
-    pub any age = 23;
-}, "toObject should convert the given vale to an object");
-test.assert(toArray(obj {
-    pub any name = 'alex';
-    pub any age = 23;
-    any another = 1;
-}), [ 'name' = 'alex', 'age' = 23, 'another' = 1 ], "toArray should convert the given vale to an object");
 
 test.assert(!isEmpty(12) && isEmpty(0) &&
 !isEmpty('hello') && isEmpty('') &&
 !isEmpty([ 1 ]) && isEmpty([]) &&
-!isEmpty(obj { any foo = 1; }) && isEmpty(obj {}) &&
+!isEmpty([ 'foo' ]) && isEmpty([]) &&
 isEmpty(null), true, "isEmpty should return true when the given value is blank, false otherwise");
 
 eval('any var_in_eval = true;');

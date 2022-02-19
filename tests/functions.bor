@@ -82,4 +82,4 @@ test.assert(sumArgs(4, 6, 8, 12), '46812', "spread argument should work correctl
 test.assert(getExtra('hello', 'world'), 'helloworld', "spread argument after normal argument should work correctly");
 test.assert(earlyReturn(true), null, "return if should return if condition is true");
 test.assert(earlyReturn(false), "hello", "return if should not return if condition is false");
-test.assert(getArgs(1, ...[ 2, 3 ]), [ 1, 2, 3 ], "spread operator should use the array argument as arguments list");
+test.assert(getArgs(1, ...[ 2, 3 ]), [ 1, 2, 3 ], "spread operator should use the table argument as arguments list");

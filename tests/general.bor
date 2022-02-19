@@ -3,12 +3,10 @@ any test = import "test.bor";
 # GENERAL
 
 any prec() {
-    return obj {
-        pub any foo = 'obj';
-    };
+    return [ 'foo' = 'bar' ];
 }
 
-test.assert((14400 / 60 / 60) ^ ' ' ^ (1 + 1 ^ 1 + 1) ^  ' ' ^ prec().foo, "4 22 obj", "operators precedence should be right");
+test.assert((14400 / 60 / 60) ^ ' ' ^ (1 + 1 ^ 1 + 1) ^  ' ' ^ prec().foo, "4 22 bar", "operators precedence should be right");
 test.assert(true && true, true, "'&&' should be true when both operands are true");
 test.assert(true && false, false, "'&&' should be false when at least one operand is false");
 test.assert(true || false, true, "'||' should be true when at least one operand is true");
@@ -44,15 +42,13 @@ any new_data = [
     'age' = 23,
 ];
 
-test.assert([ 'name' = 'alex', ...new_data ], [ 'name' = 'juan', 'age' = 23 ], "'...' should expand an array inside another array");
+test.assert([ 'name' = 'alex', ...new_data ], [ 'name' = 'juan', 'age' = 23 ], "'...' should expand a table inside another table");
 
 any element = "hello";
 element << String.toUpper;
 test.assert(element, "HELLO", "'<<' should set the element value to the result of the function by using the same element as argument");
 
-any foo = obj {
-    pub any bar = 'hello there';
-};
+any foo = [ 'bar' = 'hello there' ];
 
 test.assert(foo.bar, 'hello there', "'.' should access a property");
 test.assert(first?.second?.third, null, "'?.' should safely access a property");
@@ -101,46 +97,40 @@ test.assert(b, 2, "assignation should work by reference");
 
 string str = 'a' ^ 'a';
 number num = 1 + 1;
-array arr = [];
-object objct = obj {};
+table tab = [];
 function func = f() {};
 const any constant = 1;
 
 test.assert(str, "aa", "string declaration should work");
 test.assert(num, 2, "number declaration should work");
-test.assert(arr, [], "array declaration should work");
-test.assert(objct, obj {}, "object declaration should work");
+test.assert(tab, [], "table declaration should work");
 test.assert(func, f() {}, "function declaration should work");
 test.assert(constant, 1, "constant declaration should work");
 test.assert(1 + 0 /*100*/, 1, "comments should be ignored");
 
-any mod_obj = obj {
-    pub any index = 0;
-
-    pub any increment = f() {
+any mod_tab = [
+    'index' = 0,
+    'increment' = f() {
         this.index++;
-    };
-};
+    },
+];
 
-mod_obj.increment();
-mod_obj.index++;
+mod_tab.increment();
+mod_tab.index++;
 
-test.assert(mod_obj.index, 2, "object property access should work");
+test.assert(mod_tab.index, 2, "table property access should work");
 test.assert("hello"[0], 'h', "index access in string should work correctly");
 test.assert("hello"[123], null, "index access in string should return null when an invalid index is given");
 
-any scoping = obj {
-    pub any item = 'foo';
-
-    pub any bar = f() {
+any scoping = [
+    'item' = 'foo',
+    'bar' = f() {
         return item;
-    };
-};
+    },
+];
 
 any scopingFunc() {
-    any bar = obj {
-        pub any item;
-    };
+    any bar = [ 'item' = '' ];
 
     bar.item = 'bar';
     return bar.item;
@@ -148,9 +138,7 @@ any scopingFunc() {
 
 test.assert(scopingFunc() ^ scoping.bar(), "barfoo", "scope should work correctly");
 
-any foo2 = obj {
-    pub any bar = 0;
-};
+any foo2 = [ 'bar' = 0 ];
 
 foo2.bar += 1;
-test.assert(foo2.bar, 1, "should be possible to access and modify a public property");
+test.assert(foo2.bar, 1, "should be possible to access and modify a property");
