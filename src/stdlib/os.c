@@ -146,7 +146,6 @@ void stdGetFiles(struct result_list *args)
 
         key = strFromSizet(arr->next_index);
         el = elementInit(key, NULL, 0, T_String);
-        el->public = true;
         el->value.string = strDup(ent->d_name);
         elementTablePush(&arr, el);
         free(key);
@@ -227,32 +226,26 @@ void stdGetUser(struct result_list *args)
         struct element_table *result = elementTableInit();
         struct element *el = elementInit("name", NULL, 0, T_String);
         el->value.string = strDup(user->pw_name);
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("password", NULL, 0, T_String);
         el->value.string = strDup(user->pw_passwd);
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("directory", NULL, 0, T_String);
         el->value.string = strDup(user->pw_dir);
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("id", NULL, 0, T_Number);
         el->value.number = user->pw_uid;
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("group_id", NULL, 0, T_Number);
         el->value.number = user->pw_gid;
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("shell", NULL, 0, T_String);
         el->value.string = strDup(user->pw_shell);
-        el->public = true;
         elementTablePush(&result, el);
 
         statePushResultObj(result);
@@ -277,21 +270,17 @@ void stdGetGroup(struct result_list *args)
         struct element_table *result = elementTableInit();
         struct element *el = elementInit("name", NULL, 0, T_String);
         el->value.string = strDup(group->gr_name);
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("password", NULL, 0, T_String);
         el->value.string = strDup(group->gr_passwd);
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("id", NULL, 0, T_Number);
         el->value.number = group->gr_gid;
-        el->public = true;
         elementTablePush(&result, el);
 
         el = elementInit("members", NULL, 0, T_Array);
-        el->public = true;
         elementTablePush(&result, el);
         for (size_t i = 0; group->gr_mem[i] != NULL; i++) {
             char *user_name = strFromSizet(i);

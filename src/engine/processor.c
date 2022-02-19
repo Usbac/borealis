@@ -387,10 +387,6 @@ static void evalForeachIterations(struct token **node,
         i = i->next) {
         struct element *val_el;
 
-        if (!i->ptr->public) {
-            continue;
-        }
-
         if (key != NULL) {
             struct element *key_el;
 
@@ -572,7 +568,6 @@ static struct element *getVariadicArg(const char *key, struct result *arg)
     while (arg != NULL) {
         char *index = strFromSizet(i++);
         struct element *prop = elementInit(index, NULL, 0, T_Null);
-        prop->public = true;
         mapResultToElement(prop, arg);
         elementTablePush(&el->value.values, prop);
 
@@ -722,7 +717,6 @@ static void evalElementModifier(struct token *node)
     struct result *val = statePopResult();
 
     switch (node->opcode) {
-        case OP_Public: val->p_el->public = true; break;
         case OP_Constant: val->p_el->constant = true; break;
         default: break;
     }
@@ -760,7 +754,6 @@ static void evalArrayProp(struct element_table *arr)
     struct result *val = statePopResult();
     char *key = strFromSizet(arr->next_index);
     struct element *prop = elementInit(key, NULL, 0, T_Null);
-    prop->public = true;
     mapResultToElement(prop, val);
     elementTablePush(&arr, prop);
 
@@ -789,7 +782,6 @@ static void evalArrayAssocProp(struct element_table *arr, struct token **node)
     } else {
         struct element *prop = elementInit(key_str, NULL, 0, T_Null);
         mapResultToElement(prop, val);
-        prop->public = true;
         elementTablePush(&arr, prop);
     }
 
@@ -948,7 +940,6 @@ static void evalIndex(struct token *node)
 
     if (prop == NULL && node->next->opcode == OP_Assignation) {
         prop = elementInit(key, NULL, 0, T_Null);
-        prop->public = type == T_Array || state->current_obj != el;
         elementTablePush(&el, prop);
         statePushResultEl(prop);
     } else if (prop == NULL) {
@@ -1113,17 +1104,10 @@ static void evalProp(struct token **node)
 
     if (el == NULL && (*node)->next->opcode == OP_Assignation) {
         el = elementInit(prop_key, NULL, 0, T_Null);
-        el->public = state->current_obj != obj;
         elementTablePush(&obj, el);
         statePushResultEl(el);
     } else if (el == NULL) {
         statePushResultNull();
-    } else if (!el->public && state->current_obj != obj) {
-        if (safe) {
-            statePushResultNull();
-        } else {
-            errorF((*node)->line_n, E_PUBLIC, prop->value);
-        }
     } else {
         if (obj_val->type == T_Object && obj_val->value.values != state->current_obj) {
             statePushResult(state->stack, getResultFromElement(el));
@@ -1211,8 +1195,7 @@ void evalNode(struct token **node)
                 case OP_Object: evalObject(node); break;
                 case OP_Import: evalImport(); break;
                 case OP_This: evalThis(*node); break;
-                case OP_Constant:
-                case OP_Public: evalElementModifier(*node); break;
+                case OP_Constant: evalElementModifier(*node); break;
                 default: break;
             }
             break;

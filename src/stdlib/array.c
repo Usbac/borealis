@@ -59,7 +59,6 @@ void stdPush(struct result_list *args)
     struct element_table *arr = getValueArr(args->first);
     char *key = strFromSizet(arr->next_index);
     struct element *prop = elementInit(key, NULL, 0, T_Null);
-    prop->public = true;
     mapResultToElement(prop, args->first->next);
     elementTablePush(&arr, prop);
 
@@ -72,7 +71,6 @@ void stdPrepend(struct result_list *args)
     struct element_table *arr = getValueArr(args->first);
     char *key = strFromSizet(arr->next_index);
     struct element *prop = elementInit(key, NULL, 0, T_Null);
-    prop->public = true;
     mapResultToElement(prop, args->first->next);
     elementTablePrepend(&arr, prop);
 
@@ -106,7 +104,6 @@ void stdGetKeys(struct result_list *args)
         if (!i->ptr->unset) {
             char *key = strFromSizet(index++);
             struct element *prop = elementInit(key, NULL, 0, T_String);
-            prop->public = true;
             prop->value.string = strDup(i->ptr->key);
             elementTablePush(&keys, prop);
             free(key);
@@ -227,7 +224,6 @@ void stdRange(struct result_list *args)
         char *key_str = strFromInt(key);
         struct element *prop = elementInit(key_str, NULL, 0, T_Number);
         prop->value.number = (double) i;
-        prop->public = true;
         elementTablePush(&arr, prop);
 
         free(key_str);
@@ -558,7 +554,6 @@ void stdFill(struct result_list *args)
         char *key = strFromInt(start++);
         struct result *val = resultDup(args->first->next->next);
         struct element *el = elementInit(key, NULL, 0, T_Null);
-        el->public = true;
         mapResultToElement(el, val);
         elementTablePush(&result, el);
 

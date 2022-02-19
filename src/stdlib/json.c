@@ -30,7 +30,7 @@ static void elementTableToJson(char **result,
         struct element *el = getTrueElement(i->ptr);
         char *aux = NULL;
 
-        if (el->unset || !el->public) {
+        if (el->unset) {
             continue;
         }
 
@@ -143,7 +143,6 @@ static struct element *getJsonEl(char *key, struct token *node, bool *error)
 {
     struct element *el = elementInit(key, NULL, 0, T_Null);
     el->type = node->type;
-    el->public = true;
 
     switch (node->type) {
         case T_String: el->value.string = strDup(node->value); break;

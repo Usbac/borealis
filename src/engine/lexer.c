@@ -158,7 +158,6 @@ void lexerInit(void)
     addReservedToken("&&", OP_And, 6, false, true);
     addReservedToken("||", OP_Or, 5, false, true);
     addReservedToken("...", OP_Spread, 2, false, true);
-    addReservedToken("pub", OP_Public, 0, false, false);
     addReservedToken("return", OP_Return, 0, false, false);
     addReservedToken("const", OP_Constant, 1, false, false);
     addReservedToken("string", OP_Type_string, 2, false, false);
@@ -350,10 +349,9 @@ bool isKeyword(enum OPCODE opcode)
         opcode == OP_Continue || opcode == OP_Return ||
         opcode == OP_Closure || opcode == OP_If ||
         opcode == OP_Else || opcode == OP_While ||
-        opcode == OP_Foreach || opcode == OP_Public ||
+        opcode == OP_Foreach || opcode == OP_Constant ||
         opcode == OP_Import || opcode == OP_Case ||
-        opcode == OP_Object || opcode == OP_This ||
-        opcode == OP_Constant;
+        opcode == OP_Object || opcode == OP_This;
 }
 
 

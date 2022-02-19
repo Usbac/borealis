@@ -16,7 +16,6 @@ struct element *last = NULL;
 static void declareModuleConst(const char *key, int val)
 {
     struct element *el = elementInit(key, NULL, 0, T_Number);
-    el->public = true;
     el->constant = true;
     el->value.number = val;
 
@@ -77,7 +76,6 @@ void initErrorModule(struct element *err)
 {
     module = err;
     last = elementInit("last", NULL, 0, T_Null);
-    last->public = true;
     elementTablePush(&module->value.values, last);
     initErrorConstants();
 }

@@ -274,7 +274,6 @@ void stdSplit(struct result_list *args)
     while (true) {
         struct element *el = elementInit(NULL, NULL, 0, T_String);
         el->key = strFromSizet(arr->next_index);
-        el->public = true;
 
         p = utf8str(&haystack[i], needle);
         if (p == NULL || needle_len == 0) {

@@ -178,7 +178,7 @@ static bool isUnexpectedEnd(struct token *node)
 static bool remainsFunctionNameNode(struct token_list *tree, struct token *node)
 {
     return node->rs != NULL && node->rs->type == T_Parameters &&
-        (node->next == NULL || node->next->opcode == OP_Public) &&
+        node->next == NULL &&
         tree->last != NULL &&
         (tree->last->type == T_Identifier || tree->last->opcode == OP_Dot || tree->last->opcode == OP_Dot_safe);
 }

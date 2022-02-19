@@ -34,7 +34,6 @@
 #define E_INVALID_ITERATOR RUNTIME_ERROR("Invalid value supplied for iterator")
 #define E_READ_FILE RUNTIME_ERROR("Cannot read file '%s'")
 #define E_RECURSIVE_FILE RUNTIME_ERROR("Cannot import a file recursively '%s'")
-#define E_PUBLIC RUNTIME_ERROR("Cannot access private property '%s'")
 #define E_THIS RUNTIME_ERROR("No object context for 'this'")
 #define E_NULL_REFERENCE RUNTIME_ERROR("Cannot reference a non-existent element")
 #define E_SPREAD RUNTIME_ERROR("Expected spread argument to be an array, given %s")

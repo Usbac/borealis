@@ -14,7 +14,6 @@ static struct element *getTimePropEl(char *key, double val)
 {
     struct element *el = elementInit(key, NULL, 0, T_Number);
     el->value.number = val;
-    el->public = true;
     return el;
 }
 

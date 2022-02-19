@@ -84,7 +84,6 @@ static void declareModuleFunc(struct element *module,
                               char *params)
 {
     struct element *el = elementInit(key, NULL, 0, T_Function);
-    el->public = true;
     el->constant = true;
     el->value.function->func_ptr = func;
     el->value.function->func_ptr_params = params;
@@ -105,7 +104,6 @@ static void declareModuleConst(struct element *module,
                                enum TYPE type)
 {
     struct element *el = elementInit(key, NULL, 0, T_Null);
-    el->public = true;
     el->constant = true;
     el->type = type;
     el->value = val;

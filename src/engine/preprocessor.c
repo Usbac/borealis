@@ -242,16 +242,6 @@ static void prevalidateImport(struct token *node)
 }
 
 
-static void prevalidatePublic(struct token *node)
-{
-    if (node->ls == NULL) {
-        errorF(node->line_n, E_TOKEN, node->value);
-    } else if (node->ls->opcode != OP_Constant && !isDefKeyword(node->ls->opcode)) {
-        errorF(node->ls->line_n, E_TOKEN, node->ls->value);
-    }
-}
-
-
 static void prevalidateNegation(struct token *node)
 {
     if (!isExpression(node)) {
@@ -341,9 +331,7 @@ static void prevalidateParams(struct token_list *params)
 }
 
 
-static void declareFunc(struct token *node,
-                        struct pre_state *pre_state,
-                        bool public)
+static void declareFunc(struct token *node, struct pre_state *pre_state)
 {
     enum TYPE aux_type = pre_state->current_type;
     struct element *func;
@@ -362,7 +350,6 @@ static void declareFunc(struct token *node,
     func->value.function->stmts = bytecodeFromList(node->ls->body);
     func->value.function->params_n = getParamsNumber(func->value.function->params);
     func->value.function->return_type = getOpcodeType(node->opcode);
-    func->public = public;
     func->constant = true;
 
     stateElementDeclare(&func);
@@ -408,16 +395,11 @@ static void prevalidateSpread(struct token *node)
 static bool preprocessFuncDef(struct token *node,
                               struct pre_state *pre_state)
 {
-    bool is_public = node->opcode == OP_Public;
-
     if (node->opcode == OP_Closure) {
         prevalidateClosure(node);
         return true;
-    } else if (is_public && node->ls != NULL && isFunction(node->ls)) {
-        declareFunc(node->ls, pre_state, is_public);
-        return true;
     } else if (isFunction(node)) {
-        declareFunc(node, pre_state, false);
+        declareFunc(node, pre_state);
         return true;
     }
 
@@ -473,7 +455,6 @@ static void prevalidateNode(struct token *node, struct pre_state *pre_state)
         case OP_Break:
         case OP_Continue: prevalidateLoopStmt(node); break;
         case OP_Import: prevalidateImport(node); break;
-        case OP_Public: prevalidatePublic(node); break;
         case OP_Negation: prevalidateNegation(node); break;
         case OP_Assignation: prevalidateAssignation(node); break;
         case OP_Dot:

@@ -58,7 +58,6 @@ static struct element *elementDup(struct element *src)
 {
     if (src != NULL) {
         struct element *dest = elementInit(src->key, src->file, src->scope, T_Null);
-        dest->public = src->public;
         dest->constant = src->constant;
         elementDupValues(&dest, src);
 

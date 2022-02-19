@@ -60,7 +60,6 @@ struct element {
     enum TYPE type;
     enum TYPE static_type;
     bool unset;
-    bool public;
     bool constant;
     size_t scope;
     struct element *next;

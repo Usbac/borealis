@@ -40,7 +40,6 @@ enum OPCODE {
     OP_Else, OP_While,
     OP_Foreach, OP_Break,
     OP_Continue, OP_Definition,
-    OP_Concat, OP_Public,
     OP_Import, OP_Bang,
     OP_Spread, OP_Dot,
     OP_Reference, OP_Colon,
@@ -53,6 +52,7 @@ enum OPCODE {
     OP_Increment_pos, OP_Decrement_pre,
     OP_Decrement_pos, OP_Mod,
     OP_Mod_equal, OP_Null_coalesce,
+    OP_Concat,
 };
 
 struct reserved_token {
