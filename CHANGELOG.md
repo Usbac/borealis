@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.4.0 ()
+
+### Changed
+
+- Change all references to arrays to tables.
+
+### Removed
+
+- Remove the `pub` keyword and access modifier functionality.
+
+- Remove the object data type and all its references.
+
 ## v0.3.0 ()
 
 ### Added
