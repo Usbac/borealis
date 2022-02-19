@@ -24,7 +24,6 @@ add_executable(borealis
         src/stdlib/os.c src/stdlib/os.h
         src/stdlib/general.c src/stdlib/general.h
         src/stdlib/array.c src/stdlib/array.h
-        src/stdlib/object.c src/stdlib/object.h
         src/stdlib/number.c src/stdlib/number.h
         src/stdlib/file.c src/stdlib/file.h
         src/stdlib/json.c src/stdlib/json.h

@@ -14,7 +14,6 @@
 #include "stdlib/os.h"
 #include "stdlib/string.h"
 #include "stdlib/array.h"
-#include "stdlib/object.h"
 #include "stdlib/number.h"
 #include "stdlib/file.h"
 #include "stdlib/json.h"
@@ -147,7 +146,6 @@ static void initFunctions(void)
     struct element *os = declareModule("Os");
     struct element *str = declareModule("String");
     struct element *arr = declareModule("Array");
-    struct element *obj = declareModule("Object");
     struct element *num = declareModule("Number");
     struct element *file = declareModule("File");
     struct element *json = declareModule("Json");
@@ -267,9 +265,6 @@ static void initFunctions(void)
     declareModuleConst(num, "MAX", value, T_Number);
     value.number = -DBL_MAX;
     declareModuleConst(num, "MIN", value, T_Number);
-    /* object */
-    declareModuleFunc(obj, "getKeys", stdGetObjectKeys, "o");
-    declareModuleFunc(obj, "getValues", stdGetObjectValues, "o");
     /* file */
 #ifndef SAFE_MODE
     declareModuleFunc(file, "create", stdCreateFile, "s");
