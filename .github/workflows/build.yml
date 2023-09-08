@@ -14,15 +14,24 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: 'Build'
+    - name: Build
       run: make borealis NAME="borealis-linux"
 
-    - name: 'Upload Artifact'
+    - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: borealis-linux
         path: borealis-linux
         retention-days: 30
+
+    - name: Upload artifact to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: borealis-linux
+        asset_name: borealis-linux
+        tag: ${{ github.ref }}
+        overwrite: true
 
   build-macos:
 
