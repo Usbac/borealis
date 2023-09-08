@@ -2,13 +2,11 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+    - 'v*'
 
 jobs:
   build-linux:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -33,8 +31,7 @@ jobs:
         tag: ${{ github.ref }}
         overwrite: true
 
-  build-macos:
-
+  build-mac:
     runs-on: macos-latest
 
     steps:
@@ -49,3 +46,12 @@ jobs:
         name: borealis-mac
         path: borealis-mac
         retention-days: 30
+
+    - name: Upload artifact to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: borealis-mac
+        asset_name: borealis-mac
+        tag: ${{ github.ref }}
+        overwrite: true
