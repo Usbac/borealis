@@ -77,7 +77,7 @@ void stdFormat(struct result_list *args)
     char *thousands_sep = args->first->next != NULL ?
         getValueStr(args->first->next) :
         strDup("");
-    size_t len, new_len;
+    size_t len;
 
     if (args->first->next != NULL && args->first->next->next != NULL) {
         decimals_sep = getValueStr(args->first->next->next);
@@ -89,7 +89,6 @@ void stdFormat(struct result_list *args)
     }
 
     len = strlen(str);
-    new_len = len;
     dot = strstr(str, decimals_sep);
 
     if (dot != NULL) {
@@ -105,7 +104,6 @@ void stdFormat(struct result_list *args)
     for (int i = dot_index - 1; i >= 0; i--) {
         if (i >= 0 && char_n > 0 && char_n % 3 == 0) {
             strPrepend(&tmp, thousands_sep);
-            new_len += strlen(thousands_sep);
         }
 
         strPrependC(&tmp, str[i]);
