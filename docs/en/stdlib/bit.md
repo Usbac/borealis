@@ -1,4 +1,4 @@
-The standard object `Bit` gives you multiple methods related with bit manipulation.
+The standard table `Bit` gives you multiple methods related with bit manipulation.
 
 ## Functions
 

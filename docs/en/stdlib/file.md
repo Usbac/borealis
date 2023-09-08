@@ -1,4 +1,4 @@
-The standard object `File` gives you multiple methods related with files handling.
+The standard table `File` gives you multiple methods related with files handling.
 
 ## Functions
 

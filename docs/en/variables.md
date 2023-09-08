@@ -24,7 +24,7 @@ foo++;
 print(bar); # It will print 11
 ```
 
-References work with elements, object properties and array indices.
+References work with elements and table properties.
 
 ## Declaration
 
@@ -42,15 +42,14 @@ foo = f() { };
 
 ### Static
 
-Static declarations are declarations made with one of the existing data type keywords (`number`, `string`, `array`, `object` or `function`).
+Static declarations are declarations made with one of the existing data type keywords (`number`, `string`, `table` or `function`).
 
 Variables defined this way only can hold values of the specified data type.
 
 ```borealis
 string name = 'alex';
 number age = 23;
-array ids = [ 1, 2, 3 ];
-object foo = obj {};
+table ids = [ 1, 2, 3 ];
 ```
 
 Trying to assign a different type to a static variable will result in an error being thrown.

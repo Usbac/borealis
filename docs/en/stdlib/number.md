@@ -1,8 +1,8 @@
-The standard object `Number` gives you multiple methods related with numbers.
+The standard table `Number` gives you multiple methods related with numbers.
 
-## Constants 
+## Constants
 
-The object also has some useful constants.
+The table also has some useful constants.
 
 | Name   | Description                          |
 |--------|--------------------------------------|

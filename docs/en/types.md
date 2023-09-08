@@ -7,8 +7,7 @@ Scalar types:
 
 Compound types:
 
-* array
-* object
+* table
 * function
 
 And the special types:
@@ -66,15 +65,15 @@ Only if the string is enclosed in double-quotes ("), the following escape sequen
 | \xhh     | Character whose hexadecimal code is hh       |
 | \uhhhh   | Unicode character whose code point is hhhh   |
 
-## Array
+## Table
 
-Arrays are actually an ordered map. A map associates keys to values.
+Tables are actually an ordered map. A map associates a key to a value.
 
-A borealis array can be treated as an array, a hashmap, a dictionary and more.
+A borealis table can be treated as an array, a hashmap, a dictionary, an object and more.
 
-An array can be created with the `[` and `]` tags. Any number or comma-separated `key = value` or `value` can be declared inside.
+A table can be created with the `[` and `]` tags. Any number or comma-separated `key = value` or `value` can be declared inside.
 
-If multiple elements in the array use the same key, only the last one will be used and all the others will be overwritten.
+If multiple elements in the table use the same key, only the last one will be used and all the others will be overwritten.
 
 The comma after the last element is optional.
 
@@ -83,6 +82,17 @@ The comma after the last element is optional.
     'key' = 'value',
     'key2' = 'value2',
     'key3' = 'value3',
+]
+```
+
+The `this` keyword can be used to refer to the table in the current context.
+
+```borealis
+[
+    'name' = 'alex',
+    'printName' = f() {
+        print(this.name); # This will print 'alex'
+    },
 ]
 ```
 
@@ -106,25 +116,36 @@ any foo = [
 ];
 ```
 
-An existing array can be modified by explicitly setting values in it with the key inside brackets.
+An existing table can be modified by explicitly setting values in it with the key inside brackets or after a dot.
 
 ```borealis
 any foo = [];
 foo['name'] = 'alex';
+foo.name = 'alex'; # The same as above
 ```
 
-If there's nothing inside the brackets, the internal next index of the array will be used. It will work like a push.
+If there's nothing inside the brackets, the internal next index of the table will be used. It will work like a push.
 
 ```borealis
 any foo = [ 'a', 'b' ];
 foo[] = 'c';
 ```
 
-The above example will leave the foo array as `'a', 'b', 'c'`.
+The above example will leave the foo table as `'a', 'b', 'c'`.
 
-### Expanding arrays
+### Optional chaining
 
-With the spread operator `...` you can expand an array into another one.
+The safe dot operator (?.) allows you to read the value of a property located deep within a chain of tables without having to check that each reference in the chain is valid.
+
+The safe dot operator is like the dot operator, except that instead of causing an error if a reference is null, the expression short-circuits with a return value of null.
+
+```borealis
+customer?.doesnotexists?.another;
+```
+
+### Expanding tables
+
+With the spread operator `...` you can expand a table into another one.
 
 ```borealis
 any new_data = [
@@ -133,58 +154,6 @@ any new_data = [
 ];
 
 any user = [ 'name' = 'alex', ...new_data ]; # Will return [ 'name' = 'juan', 'age' = 23 ]
-```
-
-## Object
-
-Objects work pretty much like arrays, with the difference that they can have common declarations and statements in its body, and its properties can be private.
-
-They can be created with the syntax `obj { }`.
-
-```borealis
-any customer = obj {
-    any name = 'alex';
-    any age = 23;
-    pub any foo = 'bar';
-};
-```
-
-Object properties are private by default, they can be made public by adding the `pub` keyword before the declaration.
-
-```borealis
-obj {
-    pub any foo;
-};
-```
-
-The `this` keyword can be used to refer to the object in the current context.
-
-```borealis
-obj {
-    any name = 'alex';
-
-    print(this.name); # This will print 'alex'
-}
-```
-
-The dot syntax can be used to access to an object property.
-
-```borealis
-customer.name
-```
-
-If the object property is private, an error will be thrown.
-
-That can be avoided with the safe dot syntax. Which will return null if the property doesn't exists or if it's private.
-
-```borealis
-customer?.name
-```
-
-Object properties can be accessed with the brackets' syntax too.
-
-```borealis
-customer['name']
 ```
 
 ## Function

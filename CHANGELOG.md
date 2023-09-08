@@ -1,18 +1,6 @@
 # Release Notes
 
-## v0.4.0 ()
-
-### Changed
-
-- Change all references to arrays to tables.
-
-### Removed
-
-- Remove the `pub` keyword and access modifier functionality.
-
-- Remove the object data type and all its references.
-
-## v0.3.0 ()
+## v0.3.0 (2023-09-08)
 
 ### Added
 
@@ -25,6 +13,8 @@
 - Add `setOption` and `getOption` functions to the `Socket` standard module.
 
 ### Changed
+
+- Change all references to arrays to tables.
 
 - Change the `public` keyword to `pub`.
 
@@ -39,6 +29,10 @@
 - Remove the `setTimeout` and `getTimeout` functions from the `Socket` standard module.
 
 - Remove the `EADDRINUSE`, `EBADF`, `ENOTSOCK` and `EOPNOTSUPP` constants from the `Socket` standard module.
+
+- Remove the `pub` keyword and access modifier functionality.
+
+- Remove the object data type and all its references.
 
 ## v0.2.0 (2021-09-07)
 

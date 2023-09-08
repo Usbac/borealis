@@ -1,8 +1,8 @@
-The standard object `Os` gives you multiple methods related with the operating system.
+The standard table `Os` gives you multiple methods related with the operating system.
 
 ## Constants
 
-The object also has some useful constants.
+The table also has some useful constants.
 
 | Name     | Type   | Description                                          | Example |
 |----------|--------|------------------------------------------------------|---------|
@@ -122,9 +122,9 @@ Os.makeDir('./pictures');
 
 ### Get files
 
-`getFiles(string path): array`
+`getFiles(string path): table`
 
-Returns an array with all the directories and files in the given path.
+Returns a table with all the directories and files in the given path.
 
 If the directory path is invalid, `false` is returned.
 
@@ -190,13 +190,13 @@ Os.chown('./file.txt', 'alex');
 
 `getUser(string name): any`
 
-Returns an object with information about a user with the given name.
+Returns a table with information about a user with the given name.
 
 If the given user is invalid, `null` is returned.
 
 _On Windows this function always returns `null`._
 
-The object has the following properties:
+The table has the following properties:
 
 | Name      | Type   | Description                                                                                                                        |
 |-----------|--------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -211,14 +211,14 @@ The object has the following properties:
 Os.getUser('root');
 
 /* The above code can return something like this:
- * obj {
- *     pub any name = 'root';
- *     pub any password = 'x';
- *     pub any directory = '/root';
- *     pub any id = 0;
- *     pub any group_id = 0;
- *     pub any shell = '/bin/bash';
- * }
+ * [
+ *    'name' = 'root',
+ *    'password' = 'x',
+ *    'directory' = '/root',
+ *    'id' = 0,
+ *    'group_id' = 0,
+ *    'shell' = '/bin/bash',
+ * ]
  */
 ```
 
@@ -226,31 +226,31 @@ Os.getUser('root');
 
 `getGroup(string name): any`
 
-Returns an object with information about a group with the given name.
+Returns a table with information about a group with the given name.
 
 If the given group is invalid, `null` is returned.
 
 _On Windows this function always returns `null`._
 
-The object has the following properties:
+The table has the following properties:
 
 | Name      | Type   | Description                                  |
 |-----------|--------|----------------------------------------------|
 | name      | string | The group's name.                            |
 | password  | string | The group's password in an encrypted format. |
 | id        | number | The id of the group.                         |
-| members   | array  | The list of users in the group.              |
+| members   | table  | The list of users in the group.              |
 
 ```borealis
 Os.getGroup('sudo');
 
 /* The above code can return something like this:
- * obj {
- *     pub any name = 'sudo';
- *     pub any password = 'x';
- *     pub any id = 27;
- *     pub any members = [ 'alejandro' ];
- * }
+ * [
+ *     'name' = 'sudo',
+ *     'password' = 'x',
+ *     'id' = 27,
+ *     'members' = [ 'alejandro' ],
+ * ]
  */
 ```
 

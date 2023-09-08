@@ -1,4 +1,4 @@
-The standard object `Io` gives you multiple methods related with input and output operations.
+The standard table `Io` gives you multiple methods related with input and output operations.
 
 ## Functions
 
@@ -36,19 +36,10 @@ Io.printLine('one', 'two', 'three'); # It will print 'one\ntwo\nthree\n'
 
 Prints the given value in verbose mode.
 
-Usually useful for printing non-scalar values like arrays and objects.
+Usually useful for printing non-scalar values like tables.
 
 ```borealis
-Io.printV([ 1, 2, 3 ]); # It will print '(array) [0:(number) 1,1:(number) 2,2:(number) 3]'
-```
-
-```borealis
-Io.printV(obj {
-    pub any foo = 'a';
-    any bar = 'b';
-});
-
-# It will print '(object) {foo:(string) "a",bar:(string) "b"}'
+Io.printV([ 1, 2, 3 ]); # It will print '(table) [0:(number) 1,1:(number) 2,2:(number) 3]'
 ```
 
 ### Read char

@@ -18,14 +18,13 @@ The precedence of an operator specifies how "tightly" it binds two expressions t
 
 ## Table
 
-The operators table is ordered from higher to lower precedence.
+The operators table goes from higher to lower precedence.
 
 |  Operators                         | Associativity | Information                                                                  |
 |----------------------------------- |---------------|------------------------------------------------------------------------------|
 | `(` `)`                            | None          | parentheses                                                                  |
 | `**`                               | Left          | exponentiation                                                               |
 | `.` `?.` `++` `--` `:`             | Left          | property access, safe property access, pos increment, pos decrement, colon   |
-| `obj`                              | Left          | new object                                                                   |
 | `+` `-` `++` `--` `!` `&`          | Right         | positive, negative, pre increment, pre decrement, negation, reference        |
 | `*` `/` `%`                        | Left          | multiplication, division, modulus                                            |
 | `+` `-`                            | Left          | addition, subtraction                                                        |
@@ -38,11 +37,11 @@ The operators table is ordered from higher to lower precedence.
 | `=` `+=` `-=` `/=` `*=` `^=`, `%=` | Right         | assignation, addition/subtraction/division/concatenation/modulus assignation |
 | `...` `<<`                         | Left          | spread, bang                                                                 |
 
-_Borealis doesn't have bitwise operators, for manipulating bits use the functions of the standard object `Bit`._
+_Borealis doesn't have bitwise operators, for manipulating bits use the functions of the standard table `Bit`._
 
 ## Arithmetic operators
 
-All the arithmetic operators return a value of type `number`.
+All arithmetic operators return a value of type `number`.
 
 ```borealis
 2 + 5  # 7   Addition

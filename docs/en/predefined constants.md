@@ -6,8 +6,8 @@ The constants listed here are defined by the Borealis core and are available in 
 | _START_FILE | string | Initial file when the script was called.      | /home/user/Documents/main.bor     |
 | _FILE       | string | File name of the current file script.         | /home/user/Documents/imported.bor |
 | _VERSION    | string | Borealis version.                             | 1.0                               |
-| _ARGS       | array  | List of arguments given to the script.        | [ './borealis', '-f', 'main.bor' ]|
-| _GLOBALS    | array  | Array that can be used to store globals.      | []                                |
+| _ARGS       | table  | List of arguments given to the script.        | [ './borealis', '-f', 'main.bor' ]|
+| _GLOBALS    | table  | Table that can be used to store globals.      | []                                |
 
 ## Examples
 

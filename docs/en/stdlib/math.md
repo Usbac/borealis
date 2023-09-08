@@ -1,8 +1,8 @@
-The standard object `Math` gives you multiple methods related with math.
+The standard table `Math` gives you multiple methods related with math.
 
 ## Constants
 
-The object also has some useful constants.
+The table also has some useful constants.
 
 | Name   | Description                     |
 |--------|---------------------------------|

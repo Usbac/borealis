@@ -1,4 +1,4 @@
-The standard object `Date` gives you multiple methods related with dates.
+The standard table `Date` gives you multiple methods related with dates.
 
 _All of the unix timestamps explained below are in (or expected to be given in) seconds._
 
@@ -67,13 +67,13 @@ Valid date formats are 'year-month-day hours:minutes:seconds' (%Y-%m-%d %H:%M:%S
 Date.fromString('2021-04-04 13:30:32'); # Returns 1617557432
 ```
 
-### Date to object
+### Date to table
 
-`toObject(number date): object`
+`toTable(number date): table`
 
-Returns an object with data from the given unix timestamp.
+Returns a table with data from the given unix timestamp.
 
-The date object has the following properties:
+The date table has the following properties:
 
 | Name    | Description      |
 |---------|------------------|
@@ -90,21 +90,21 @@ The date object has the following properties:
 Date.toObject(1617557432);
 
 /* The above code will return:
- * obj {
- *     pub any seconds = 32;
- *     pub any minutes = 30;
- *     pub any hours = 13;
- *     pub any day = 4;
- *     pub any month = 4;
- *     pub any year = 2021;
- *     pub any yday = 94;
- *     pub any wday = 1;
- * }
+ * [
+ *     'seconds' = 32,
+ *     'minutes' = 30,
+ *     'hours' = 13,
+ *     'day' = 4,
+ *     'month' = 4,
+ *     'year' = 2021,
+ *     'yday' = 94,
+ *     'wday' = 1,
+ * ]
  */
 ```
 
 ```borealis
-object date = Date.toObject(1617557432);
+table date = Date.toTable(1617557432);
 
 printLine("The date's year is: " ^ date.year); # It will print 'The date's year is 2021'
 ```

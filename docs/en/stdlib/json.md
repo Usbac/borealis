@@ -1,4 +1,4 @@
-The standard object `Json` gives you multiple methods related with json handling.
+The standard table `Json` gives you multiple methods related with json handling.
 
 ## Functions
 
@@ -10,16 +10,6 @@ Returns the given value as a JSON.
 
 ```borealis
 Json.stringify([ 1, 2, 3 ]); # Returns '[1, 2, 3]'
-```
-
-For objects, only the public properties are taken into account and will be available in the Json string.
-
-```borealis
-Json.stringify(obj {
-    pub any name = 'foo';
-    pub any age = 23;
-    any bar = 1;
-}); # Returns '{"name":"foo","age":23}'
 ```
 
 ### Parse JSON
@@ -36,7 +26,7 @@ Json.parse('[1, 2, 3]'); # Returns [ 1, 2, 3 ]
 
 ```borealis
 Json.parse('{"name":"foo","age":23}');
-# Returns obj { pub any name = 'foo'; pub any age = 23; }
+# Returns [ 'name' = 'foo', 'age' = 23 ]
 ```
 
 ### Is valid

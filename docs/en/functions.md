@@ -67,7 +67,7 @@ Information can be passed to a function via the arguments list, which is a comma
 
 Borealis supports passing by value, passing by reference, default argument values and variable arguments list.
 
-The arguments list accepts a trailing comma just like in arrays.
+The arguments list accepts a trailing comma just like in tables.
 
 ```borealis
 any manyArgs(
@@ -122,11 +122,11 @@ increment(&num);
 
 With the spread operator you can define a variable-length arguments list.
 
-The arguments will be passed into the given variable as an array.
+The arguments will be passed into the given variable as a table.
 
 ```borealis
 any foo(arg1, ...args) {
-    # Here args will be an array with the arguments
+    # Here args will be a table with the arguments
 }
 ```
 
@@ -148,9 +148,9 @@ sum(1, 2, 3, 4); # It will return 10
 
 _The last parameter is the only one that can be defined with the spread operator._
 
-### Unpacking arrays as arguments
+### Unpacking tables as arguments
 
-An array can be used as arguments list by using the spread `...` operator.
+A table can be used as arguments list by using the spread `...` operator.
 
 ```borealis
 any args = [ 1, 2, 3 ];
@@ -158,7 +158,7 @@ any args = [ 1, 2, 3 ];
 func(...args); # Equivalent to func(1, 2, 3);
 ```
 
-The array can even be after normal arguments.
+The table can even be after normal arguments.
 
 ```borealis
 any printArgs(arg1, arg2, arg3) {

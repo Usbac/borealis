@@ -79,14 +79,14 @@ case (num) {
 
 ## Foreach
 
-Iterations over an iterable value (arrays) can be done with the `foreach` keyword.
+Iterations over an iterable value (tables) can be done with the `foreach` keyword.
 
 ```borealis
-foreach (arr, value) {
+foreach (tab, value) {
     # code
 }
 
-foreach (arr, key: value) {
+foreach (tab, key: value) {
     # code
 }
 ```
@@ -96,7 +96,7 @@ The first form will iterate `iterable_expr`, on each iteration the value of the 
 The second will do the same but will additionally store the current element's key in `key`.
 
 ```borealis
-array foo = [ 1, 2, 3, 4 ];
+table foo = [ 1, 2, 3, 4 ];
 
 foreach (foo, val) {
     print(val);
@@ -106,7 +106,7 @@ foreach (foo, val) {
 ```
 
 ```borealis
-array foo = [ 1, 2, 3, 4 ];
+table foo = [ 1, 2, 3, 4 ];
 
 foreach (foo, key: val) {
     foo[key] = val * 2;
@@ -190,7 +190,7 @@ If called from within an imported file, the return statement ends execution of t
 
 ```borealis
 # a.bor
-any my_array = import 'b.bor';
+any my_table = import 'b.bor';
 
 # b.bor
 return [ 1, 2, 3 ];

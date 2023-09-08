@@ -68,8 +68,7 @@ A value is considered empty if it's:
 
 * An empty string (`''`).
 * The number zero (`0`).
-* An empty array (`[]`).
-* An empty object (`obj {}`).
+* An empty table (`[]`).
 * Null (`null`).
 
 ```borealis
@@ -91,7 +90,7 @@ toString(20) # Returns '20'
 ```
 
 ```borealis
-toString([ 1, 2, 3 ]); # Returns '[array]'
+toString([ 1, 2, 3 ]); # Returns '[table]'
 ```
 
 ### To number
@@ -121,34 +120,6 @@ toBool('hello'); # Returns 1
 ```borealis
 toBool(''); # Returns 0
 ```
-
-### To array
-
-`toArray(any value): array`
-
-Returns the array representation of a value.
-
-```borealis
-toArray(obj {
-    pub any name = 'alex';
-    pub any age = 23;
-    any another = 1;
-});
-# Returns [ 'name' = 'alex', 'age' = 23, 'another' = 1 ]
-```
-
-### To object
-
-`toObject(any value): object`
-
-Returns the object representation of a value.
-
-```borealis
-toObject([ 'name' = 'alex', 'age' = 23 ]);
-# Returns obj { pub any name = 'alex'; pub any age = 23; }
-```
-
-When converting an array to an object, all the properties will be public.
 
 ### Sleep
 
@@ -211,7 +182,7 @@ print(foo); # Valid
 
 Returns the type of the given value.
 
-The returned string can be `string`, `number`, `array`, `object`, `function` or `null`.
+The returned string can be `string`, `number`, `table`, `function` or `null`.
 
 ```borealis
 typeof('hello'); # Returns 'string'

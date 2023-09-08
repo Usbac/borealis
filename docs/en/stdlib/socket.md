@@ -1,8 +1,8 @@
-The standard object `Socket` gives you multiple methods related with socket networking.
+The standard table `Socket` gives you multiple methods related with socket networking.
 
 ## Constants
 
-The object also has some useful constants.
+The table also has some useful constants.
 
 | Name         | Type           | Description                                                                                           |
 |--------------|----------------|-------------------------------------------------------------------------------------------------------|
@@ -37,7 +37,7 @@ Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
 
 ### Bind
 
-`bind(object socket, string address, number port = 0): number`
+`bind(table socket, string address, number port = 0): number`
 
 Binds a name to the given socket.
 
@@ -50,7 +50,7 @@ Socket.bind(sock, '127.0.0.1', 8080);
 
 ### Listen
 
-`listen(object socket, number backlog): number`
+`listen(table socket, number backlog): number`
 
 Listens for a connection on the given socket.
 
@@ -66,11 +66,11 @@ Socket.listen(socket_in_use, 10); # Returns false
 
 ### Accept
 
-`accept(object socket): object`
+`accept(table socket): table`
 
 Accepts a connection on the given socket.
 
-This function returns a new socket object on success, otherwise `null` will be returned.
+This function returns a new socket table on success, otherwise `null` will be returned.
 
 ```borealis
 Socket.accept(sock);
@@ -78,7 +78,7 @@ Socket.accept(sock);
 
 ### Recv
 
-`recv(object socket, number length, number flags = 0): any`
+`recv(table socket, number length, number flags = 0): any`
 
 Receives data from a connected socket, the length of the data to receive must be specified.
 
@@ -90,7 +90,7 @@ any data = Socket.recv(sock, 1024);
 
 ### Send
 
-`send(object socket, string data, number flags = 0): any`
+`send(table socket, string data, number flags = 0): any`
 
 Sends data to a connected socket.
 
@@ -102,7 +102,7 @@ Socket.send(sock, "HTTP/1.1 200 OK\r\n\r\n <h1>Hello world </h1>");
 
 ### Close
 
-`close(object socket)`
+`close(table socket)`
 
 Closes the given socket.
 
@@ -112,7 +112,7 @@ Socket.close(sock);
 
 ### Shutdown
 
-`shutdown(object socket, number how = 2)`
+`shutdown(table socket, number how = 2)`
 
 Shuts down a socket for receiving, sending, or both.
 
@@ -156,23 +156,23 @@ Socket.htonl(8080); # Returns 2417950720
 
 ### Set option
 
-`setOption(object socket, number option, number value): number`
+`setOption(table socket, number option, number value): number`
 
 Sets a socket option for the given socket.
 
 Returns `true` on success, `false` otherwise.
 
-The option parameter must be one of the socket option constants defined in the `Socket` object.
+The option parameter must be one of the socket option constants defined in the `Socket` table.
 
 ```borealis
-object server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
+table server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
 
 # Set the timeout value for input operations to 1200 milliseconds.
 Socket.setOption(server, Socket.SO_RCVTIMEO, 1200);
 ```
 
 ```borealis
-object server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
+table server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
 
 # Permit sending of broadcast messages.
 Socket.setOption(server, Socket.SO_BROADCAST, true);
@@ -180,7 +180,7 @@ Socket.setOption(server, Socket.SO_BROADCAST, true);
 
 ### Get option
 
-`getOption(object socket, number option): number`
+`getOption(table socket, number option): number`
 
 Returns the specified socket option of the given socket.
 
@@ -196,11 +196,11 @@ Socket.getOption(server, Socket.SO_BROADCAST);
 This example creates a simple web server that prints in the standard output the received request and returns a valid HTTP response with the "hello world" message.
 
 ```borealis
-object server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
+table server = Socket.new(Socket.AF_INET, Socket.SOCK_STREAM);
 Socket.bind(server, '127.0.0.1', Socket.htons(3000));
 Socket.listen(server, 10);
 
-object client = Socket.accept(server);
+table client = Socket.accept(server);
 printLine(Socket.recv(client, 1024));
 Socket.send(client, "HTTP/1.1 200 OK\r\n\r\n Hello world");
 

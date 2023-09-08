@@ -1,4 +1,4 @@
-The standard object `String` gives you multiple methods related with strings.
+The standard table `String` gives you multiple methods related with strings.
 
 ## Functions
 
@@ -150,9 +150,9 @@ String.lastIndexOf('hello world', 'o'); # Returns 7
 
 ### Split
 
-`split(string str, string separator): array`
+`split(string str, string separator): table`
 
-Returns an array of strings, each of which is a substring of string formed by splitting it on boundaries formed by the separator.
+Returns a table of strings, each of which is a substring of string formed by splitting it on boundaries formed by the separator.
 
 ```borealis
 String.split('i,love,you'); # Returns ['i', 'love', 'you']
@@ -337,9 +337,9 @@ String.containsChars('longyearbyen', 'aeui'); # Returns false
 
 ### Interpolate
 
-`interpolate(string str, array values): string`
+`interpolate(string str, table values): string`
 
-Returns the string with all the values in the array interpolated.
+Returns the string with all the values in the table interpolated.
 
 The keys must have the `{key}` format.
 

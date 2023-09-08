@@ -1,4 +1,4 @@
-The standard object `Crypt` gives you multiple methods related with cryptographic.
+The standard table `Crypt` gives you multiple methods related with cryptographic.
 
 ## Functions
 

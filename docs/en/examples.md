@@ -19,10 +19,10 @@ if (num % 2 == 0) {
 ## Find maximum value
 
 ```borealis
-any findMax(arr) {
+any findMax(tab) {
     any max = 0;
 
-    foreach (arr, val) {
+    foreach (tab, val) {
         if (val > max) {
             max = val;
         }
@@ -51,20 +51,20 @@ fib(9);
 ## Bubble sort
 
 ```borealis
-any sort(array arr) {
-    any length = Array.getSize(arr);
+any sort(table tab) {
+    any length = Table.getSize(tab);
 
-    foreach (Array.range(0, length - 1), i) {
-        foreach (Array.range(0, length - 1), j) {
-            if (arr[j + 1] !== null && arr[j] > arr[j + 1]) {
-                any tmp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = tmp;
+    foreach (Table.range(0, length - 1), i) {
+        foreach (Table.range(0, length - 1), j) {
+            if (tab[j + 1] !== null && tab[j] > tab[j + 1]) {
+                any tmp = tab[j];
+                tab[j] = tab[j + 1];
+                tab[j + 1] = tmp;
             }
         }
     }
 
-    return arr;
+    return tab;
 }
 
 sort([ 12, 234, 8765, 0, -123, 23, 2 ]);

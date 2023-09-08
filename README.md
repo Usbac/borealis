@@ -9,7 +9,7 @@
 
 <p align="center">
 <img src="https://app.travis-ci.com/Usbac/borealis.svg">
-<img src="https://img.shields.io/badge/stable-0.2.0-blue.svg">
+<img src="https://img.shields.io/badge/stable-0.3.0-blue.svg">
 <img src="https://img.shields.io/badge/license-MIT-orange.svg">
 </p>
 
@@ -19,7 +19,7 @@ Borealis is a small, elegant and consistent scripting language. Includes a C-lik
 
 * **Consistent**: Borealis offers a simple syntax and a consistent standard library. Forget about things like strange results when comparing different data types, standard functions with unexpected names or operators with weird behaviour.
 * **Easy to use**: Borealis tries to keep things simple and minimal, from its standard library and data types to its deployment and compilation. Even its source code has been meticulously written, following the [ANSI C99](https://wikipedia.org/wiki/C99) standard.
-* **Comprehensive**: The language offers multiple features useful for reducing common development headaches, like a built-in REPL debugger, statically typed variables, private scope by default, different operators for strings and numbers, first-class functions and more.
+* **Comprehensive**: The language offers multiple features useful for reducing common development headaches, like a built-in REPL debugger, statically typed variables, different operators for strings and numbers, first-class functions and more.
 
 ## Install
 
@@ -65,12 +65,12 @@ number fact(number n) {
 fact(7); # 5040
 ```
 
-Objects:
+Tables:
 ```borealis
-object user = obj {
-    pub string name = 'alex';
-    pub number age = 23;
-};
+table user = [
+    'name' = 'alex',
+    'age' = 23,
+];
 
 Io.printLine('Name: ' ^ user.name ^ '. Age: ' ^ user.age);
 ```
